@@ -7,6 +7,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import GoogleReCaptchaV3Provider from "../components/GoogleReCaptchaV3Provider";
 import ConditionalWhatsAppIcon from "../components/ConditionalWhatsAppIcon";
+import { Analytics } from '@vercel/analytics/next';
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -123,6 +124,7 @@ export default function RootLayout({ children }) {
               </CartProvider>
             </SupabaseClientProvider>
           </GoogleReCaptchaV3Provider>
+          <Analytics />
         </body>
       </html>
     </ClerkProviderWrapper>
