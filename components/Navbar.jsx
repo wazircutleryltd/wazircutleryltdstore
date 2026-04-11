@@ -102,7 +102,12 @@ export default function Navbar() {
             </div>
 
             {/* Mobile Menu Overlay */}
-            {/*<div className={`mobile-overlay md:hidden fixed inset-0 bg-black bg-opacity-50 z-30 ${isMenuOpen ? '' : 'hidden'}`} onClick={toggleMobileMenu}></div>*/}
+            {isMenuOpen && (
+                <div 
+                    className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-30 transition-opacity duration-300" 
+                    onClick={toggleMobileMenu}
+                ></div>
+            )}
         </nav>
     );
 }

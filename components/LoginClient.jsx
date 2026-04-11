@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import { useVerifyAdminLogin } from '@/lib/hooks';
 import { setAdminSession, getClientIP, getUserAgent } from '@/lib/utils';
 import ConditionalLayout from '@/components/ConditionalLayout';

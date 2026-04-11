@@ -3,12 +3,14 @@ import Image from 'next/image';
 import React from "react";
 import Link from 'next/link';
 import ConditionalLayout from "@/components/ConditionalLayout";
+import ProductCard from "@/components/ProductCard";
 import { useActiveProducts, useProductsByCategory, useCategoriesWithProductCounts } from "@/lib/hooks";
 import { useSearchParams, useRouter } from 'next/navigation';
 import Newsletter from "@/components/Newsletter";
 import RelatedProducts from "@/components/RelatedProducts";
 import { useCart } from "@/contexts/CartContext";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
+import ProductSkeleton from "@/components/ProductSkeleton";
 import { LoadingState, ErrorState, NoDataState } from "@/components/common/StateComponents";
 
 const ProductClient = () => {
@@ -181,7 +183,9 @@ const ProductContent = () => {
                     </div>
 
                     {isLoading ? (
-                        <LoadingState />
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-16">
+                            <ProductSkeleton count={displayedItems} />
+                        </div>
                     ) : error ? (
                         <ErrorState />
                     ) : total === 0 ? (
@@ -190,39 +194,7 @@ const ProductContent = () => {
                         <>
                             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-16">
                                 {pageItems.map((p) => (
-                                    <Link key={p._id} href={`/product/${encodeURIComponent(p.sku)}`} className="cursor-pointer">
-                                        <div className="card-border p-6 flex flex-col h-full hover:shadow-lg transition-shadow duration-300">
-                                            <div className="relative mb-4">
-                                                <div className="absolute top-2 right-2 z-10 flex flex-col gap-1">
-                                                    {(() => {
-                                                        const badges = [];
-                                                        if (p.is_best_selling) badges.push('Best Selling');
-                                                        if (p.is_featured) badges.push('Featured');
-                                                        if (p.is_trending) badges.push('Trending');
-
-                                                        return badges.slice(0, 2).map((badge, index) => (
-                                                            <span key={index} className="best-sale-badge text-xs px-2 py-1">
-                                                                {badge}
-                                                            </span>
-                                                        ));
-                                                    })()}
-                                                </div>
-                                                <div className="aspect-square rounded-lg flex items-center justify-center overflow-hidden">
-                                                    <Image src={p.main_image || '/product.jpg'} width={250} height={250} alt={p.name} className="w-full h-full object-contain" />
-                                                </div>
-                                            </div>
-                                            <div className="flex-1 flex flex-col justify-between">
-                                                <p className="product-name-new mb-3 h-10 line-clamp-2 font-semibold text-lg">{p.name}</p>
-                                                <span className="text-xl font-bold product-price-new mb-2">${p.price}</span>
-                                                <p className="text-sm text-[#0E0E0E] mb-2">{p.delivery_date || "Estimate delivery in 2-3 working days"}</p>
-                                                <button className="cta-button-new w-full py-2 rounded-md font-medium mt-2"
-                                                        onClick={(e) => handleAddToCart(p, e)}
-                                                >
-                                                    Add To Cart
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </Link>
+                                    <ProductCard key={p.id} product={p} />
                                 ))}
                             </div>
 

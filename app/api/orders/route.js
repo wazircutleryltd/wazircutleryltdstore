@@ -1,11 +1,40 @@
 import { supabase } from '../../../lib/supabase';
+import { auth } from "@clerk/nextjs/server";
+
+async function getAuthenticatedUser() {
+  const { userId: clerkId } = await auth();
+  if (!clerkId) return null;
+
+  const { data: user, error } = await supabase
+    .from('users')
+    .select('id, is_admin')
+    .eq('clerk_id', clerkId)
+    .single();
+
+  if (error || !user) {
+    console.error('Error identifying user:', error);
+    return null;
+  }
+
+  return user;
+}
 
 export async function GET() {
   try {
-    const { data, error } = await supabase
-      .from('orders')
-      .select('*')
-      .order('created_at', { ascending: false });
+    const user = await getAuthenticatedUser();
+    
+    if (!user) {
+      return Response.json({ error: 'Unauthorized. Please log in.' }, { status: 401 });
+    }
+
+    let query = supabase.from('orders').select('*');
+    
+    // If not admin, only show user's own orders
+    if (!user.is_admin) {
+      query = query.eq('user_id', user.id);
+    }
+
+    const { data, error } = await query.order('created_at', { ascending: false });
 
     if (error) {
       console.error('Error fetching orders:', error);
@@ -21,25 +50,31 @@ export async function GET() {
 
 export async function POST(request) {
   try {
+    const user = await getAuthenticatedUser();
+    
+    if (!user) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const orderData = await request.json();
     
     if (!orderData || !orderData.order_number) {
       return Response.json({ error: 'Invalid order data' }, { status: 400 });
     }
 
-    // Use the provided UUID or generate one if not provided
-    const orderId = orderData.id || crypto.randomUUID();
-    
+    // Ensure users can only create orders for themselves unless they are admin
+    const targetUserId = user.is_admin ? (orderData.user_id || user.id) : user.id;
+
     const orderToInsert = {
-      id: orderId,
+      id: orderData.id || crypto.randomUUID(),
       order_number: orderData.order_number,
-      user_id: orderData.user_id || null, // Allow null for anonymous orders
+      user_id: targetUserId,
       status: orderData.status || 'pending',
       items: orderData.items,
-      subtotal: parseFloat(orderData.subtotal),
-      shipping_cost: parseFloat(orderData.shipping_cost),
-      tax: parseFloat(orderData.tax),
-      total: parseFloat(orderData.total),
+      subtotal: parseFloat(orderData.subtotal) || 0,
+      shipping_cost: parseFloat(orderData.shipping_cost) || 0,
+      tax: parseFloat(orderData.tax) || 0,
+      total: parseFloat(orderData.total) || 0,
       shipping_address: orderData.shipping_address,
       payment_status: orderData.payment_status || 'pending',
       payment_method: orderData.payment_method,
@@ -55,7 +90,6 @@ export async function POST(request) {
 
     if (error) {
       console.error('Error creating order:', error);
-      console.error('Order data being inserted:', orderToInsert);
       return Response.json({ error: 'Failed to create order', details: error.message }, { status: 500 });
     }
 
@@ -68,10 +102,33 @@ export async function POST(request) {
 
 export async function PUT(request) {
   try {
+    const user = await getAuthenticatedUser();
+    
+    if (!user) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { orderId, updates } = await request.json();
     
     if (!orderId) {
       return Response.json({ error: 'Order ID is required' }, { status: 400 });
+    }
+
+    // Permission check: only admin can update any order, or user can update their own (if logic allows)
+    // For now, let's assume only admins can update order status/details via this API
+    if (!user.is_admin) {
+      // Check if the order belongs to the user
+      const { data: existingOrder } = await supabase
+        .from('orders')
+        .select('user_id')
+        .eq('id', orderId)
+        .single();
+      
+      if (!existingOrder || existingOrder.user_id !== user.id) {
+        return Response.json({ error: 'Forbidden' }, { status: 403 });
+      }
+      
+      // Further restriction: Users can't change status to 'delivered' etc if we wanted to be strict.
     }
 
     const { data, error } = await supabase

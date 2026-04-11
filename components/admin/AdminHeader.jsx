@@ -5,7 +5,7 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { useAdminAuth } from "../AdminAuthProvider";
 import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 

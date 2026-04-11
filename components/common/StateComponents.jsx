@@ -1,42 +1,70 @@
 'use client';
 
-export const LoadingState = () => (
-    <div className="w-full h-64 flex items-center justify-center">
-        <div className="flex flex-col items-center space-y-4">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-main-primary-buttons"></div>
-            <p className="text-gray-600">Loading...</p>
-        </div>
+import { motion } from 'framer-motion';
+import { AlertCircle, Inbox, RefreshCcw } from 'lucide-react';
+
+export const LoadingState = ({ message = "Loading...", minHeight = "h-64" }) => (
+    <div className={`w-full ${minHeight} flex flex-col items-center justify-center space-y-4`}>
+        <motion.div
+            animate={{ 
+                rotate: 360,
+                scale: [1, 1.1, 1],
+            }}
+            transition={{ 
+                rotate: { duration: 2, repeat: Infinity, ease: "linear" },
+                scale: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+            }}
+            className="w-16 h-16 border-4 border-[#D6AF66]/20 border-t-[#D6AF66] rounded-full shadow-lg shadow-[#D6AF66]/10"
+        />
+        <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-gray-500 font-medium outfit-font tracking-wide"
+        >
+            {message}
+        </motion.p>
     </div>
 );
 
-export const ErrorState = ({ message = "Something went wrong. Please try again." }) => (
-    <div className="w-full h-64 flex items-center justify-center">
-        <div className="text-center space-y-4">
-            <div className="text-red-500">
-                <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
-            </div>
-            <p className="text-gray-600">{message}</p>
-            <button
-                onClick={() => window.location.reload()}
-                className="px-4 py-2 bg-main-primary-buttons text-white rounded-lg hover:bg-opacity-90"
-            >
-                Try Again
-            </button>
+export const ErrorState = ({ 
+    message = "Something went wrong. Please try again.", 
+    minHeight = "h-64",
+    onRetry = () => window.location.reload()
+}) => (
+    <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className={`w-full ${minHeight} flex flex-col items-center justify-center p-6 text-center`}
+    >
+        <div className="bg-red-50 p-4 rounded-full mb-4 shadow-inner">
+            <AlertCircle className="h-10 w-10 text-red-500" />
         </div>
-    </div>
+        <h3 className="text-xl font-bold text-gray-900 mb-2">Unexpected Error</h3>
+        <p className="text-gray-500 max-w-xs mb-6 outfit-font">{message}</p>
+        <button
+            onClick={onRetry}
+            className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#D6AF66] text-white rounded-xl font-semibold hover:bg-[#C19A5A] transition-all active:scale-95 shadow-lg shadow-[#D6AF66]/20 cursor-pointer"
+        >
+            <RefreshCcw className="h-4 w-4" />
+            Try Again
+        </button>
+    </motion.div>
 );
 
-export const NoDataState = ({ message = "No data found" }) => (
-    <div className="w-full h-64 flex items-center justify-center">
-        <div className="text-center space-y-4">
-            <div className="text-gray-400">
-                <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                </svg>
-            </div>
-            <p className="text-gray-600">{message}</p>
+export const NoDataState = ({ 
+    message = "No data found", 
+    description = "We couldn't find what you're looking for.",
+    minHeight = "h-64" 
+}) => (
+    <motion.div 
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className={`w-full ${minHeight} flex flex-col items-center justify-center p-6 text-center`}
+    >
+        <div className="bg-gray-50 p-6 rounded-3xl mb-4 border border-gray-100 shadow-sm">
+            <Inbox className="h-12 w-12 text-gray-300" />
         </div>
-    </div>
+        <h3 className="text-xl font-bold text-gray-900 mb-2">{message}</h3>
+        <p className="text-gray-400 max-w-xs outfit-font">{description}</p>
+    </motion.div>
 );

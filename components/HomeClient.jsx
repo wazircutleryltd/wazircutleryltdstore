@@ -58,7 +58,7 @@ const NewHeroSection = () => {
                     <div className="relative">
                         <div className="relative">
                             <div className="p-8 relative overflow-hidden">
-                                <Image src="/hero-section-image.svg" alt="" width={500} height={500} />
+                                <Image src="/hero-section-image.svg" alt="Wazir Cutlery Forged Blades and Chef Knives" width={500} height={500} />
                             </div>
                         </div>
                     </div>
@@ -201,7 +201,7 @@ function HomeContent() {
                         {/* Daraz */}
                         <div className="flex items-center justify-center w-full h-24 md:h-28 bg-[#F8F3F0] border border-[#E0E0E0] rounded-2xl shadow-md p-6 md:p-8 transition-all duration-300 hover:scale-105 hover:shadow-xl">
                             <Image src="daraz-logo.svg" width={256} height={256}
-                                   alt="Daraz" className="max-w-full max-h-full object-contain" />
+                                   alt="Daraz Online Shopping Mall" className="max-w-full max-h-full object-contain" />
                         </div>
                     </div>
                 </div>
@@ -290,7 +290,7 @@ function HomeContent() {
                                     src="/about-section-img.jpg"
                                     width={256}
                                     height={256}
-                                    alt="About"
+                                    alt="Wazir Cutlery Artisan Workshop in Wazirabad"
                                     className="w-full h-full rounded-2xl"
                                 />
                                 <div className="absolute inset-0 flex items-center justify-center">

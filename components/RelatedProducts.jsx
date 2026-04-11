@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 import { useCart } from '../contexts/CartContext';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 
 const RelatedProducts = ({ products }) => {
     const { addToCart } = useCart();
@@ -29,10 +29,10 @@ const RelatedProducts = ({ products }) => {
                 <div className="flex-1 h-px bg-sub-texts-mute-lable"></div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-16">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 md:gap-6 mb-16">
                 {products.map((product) => (
-                    <Link key={product.id} href={`/product/${product.sku}`} className="cursor-pointer">
-                        <div className="card-border p-6 flex flex-col h-full hover:shadow-lg transition-shadow duration-300">
+                    <Link key={product.id} href={`/product/${product.sku}`} className="cursor-pointer group">
+                        <div className="card-border p-3 md:p-6 flex flex-col h-full hover:shadow-lg transition-all duration-300 bg-white rounded-2xl">
                             <div className="relative mb-4">
                                 <div className="absolute top-2 right-2 z-10 flex flex-col gap-1">
                                     {(() => {
@@ -59,7 +59,9 @@ const RelatedProducts = ({ products }) => {
                                 </div>
                             </div>
 
-                            <h3 className="outfit-font product-title mb-3 capitalize">{product.name}</h3>
+                            <h3 className="outfit-font text-sm md:text-base font-semibold text-gray-900 mb-2 md:mb-3 capitalize line-clamp-2 min-h-[2.5rem] md:min-h-0">
+                                {product.name}
+                            </h3>
 
                             <div className="flex items-center mb-3">
                                 <div className="flex star-rating">
@@ -68,20 +70,20 @@ const RelatedProducts = ({ products }) => {
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-2 mb-3">
-                                <span className="outfit-font sale-price">${product.price}</span>
+                            <div className="flex flex-wrap items-center gap-1.5 md:gap-2 mb-2 md:mb-3">
+                                <span className="outfit-font text-[#D6AF66] font-bold text-base md:text-lg">${product.price}</span>
                                 {product.compare_price && (
-                                    <span className="outfit-font normal-price">${product.compare_price}</span>
+                                    <span className="outfit-font text-gray-400 line-through text-xs md:text-sm">${product.compare_price}</span>
                                 )}
                             </div>
 
-                            <p className="outfit-font delivery-text mb-4 flex-grow">
+                            <p className="outfit-font text-[10px] md:text-xs text-gray-500 mb-3 md:mb-4 flex-grow line-clamp-2">
                                 {product.estimated_delivery || 'Estimate delivery in 2-3 working days'}
                             </p>
 
-                            <div className="flex gap-2 mt-2">
+                            <div className="flex gap-2 mt-auto">
                                 <button 
-                                    className="flex-1 bg-main-primary-buttons text-white py-2 rounded-md font-medium hover:bg-opacity-90 transition-colors cursor-pointer"
+                                    className="flex-1 bg-[#D6AF66] text-white py-2 md:py-2.5 rounded-xl text-xs md:text-sm font-semibold hover:bg-[#C19A5A] transition-all active:scale-95 shadow-lg shadow-[#D6AF66]/20 cursor-pointer"
                                     onClick={(e) => handleAddToCart(product, e)}
                                 >
                                     Add to Cart

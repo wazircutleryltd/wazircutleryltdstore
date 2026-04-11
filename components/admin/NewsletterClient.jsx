@@ -7,7 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Search, Trash2 } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
+import { LoadingState, ErrorState, NoDataState } from "../common/StateComponents";
 
 export default function NewsletterClient() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -91,10 +92,29 @@ export default function NewsletterClient() {
             <TableBody>
               {subscribersLoading ? (
                 <TableRow>
-                  <TableCell colSpan="3" className="text-center">Loading...</TableCell>
+                  <TableCell colSpan={3}>
+                    <LoadingState message="Fetching subscribers..." minHeight="h-48" />
+                  </TableCell>
                 </TableRow>
-              ) : filteredSubscribers.map((subscriber) => (
-                <TableRow key={subscriber.id}>
+              ) : error ? (
+                <TableRow>
+                  <TableCell colSpan={3}>
+                    <ErrorState message="Could not load subscribers." minHeight="h-48" />
+                  </TableCell>
+                </TableRow>
+              ) : filteredSubscribers.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={3}>
+                    <NoDataState 
+                        message="No subscribers" 
+                        description="Your newsletter audience is waiting to grow." 
+                        minHeight="h-48" 
+                    />
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredSubscribers.map((subscriber) => (
+                  <TableRow key={subscriber.id}>
                   <TableCell>
                     <div className="font-medium">{subscriber.email}</div>
                   </TableCell>
@@ -111,7 +131,7 @@ export default function NewsletterClient() {
                     </Button>
                   </TableCell>
                 </TableRow>
-              ))}
+              )))}
             </TableBody>
           </Table>
         </CardContent>

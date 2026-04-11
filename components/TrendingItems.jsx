@@ -1,6 +1,8 @@
-import Link from 'next/link';
 import { useTrendingProducts } from '@/lib/supabase-hooks';
+import Link from 'next/link';
 import ProductCard from './ProductCard';
+import ProductSkeleton from './ProductSkeleton';
+import { ErrorState, NoDataState } from './common/StateComponents';
 
 const TrendingItems = () => {
     const { data: products, isLoading, error } = useTrendingProducts(5);
@@ -11,15 +13,7 @@ const TrendingItems = () => {
                 <div className="container mx-auto">
                     <h2 className="cabin-font text-4xl font-normal text-black text-center mb-12">Trending Items</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-16">
-                        {[...Array(5)].map((_, i) => (
-                            <div key={i} className="card-border p-6 flex flex-col h-full animate-pulse">
-                                <div className="aspect-square rounded-lg bg-gray-200 mb-4"></div>
-                                <div className="h-4 bg-gray-200 rounded mb-3"></div>
-                                <div className="h-4 bg-gray-200 rounded mb-3 w-3/4"></div>
-                                <div className="h-4 bg-gray-200 rounded mb-4 w-1/2"></div>
-                                <div className="h-10 bg-gray-200 rounded"></div>
-                            </div>
-                        ))}
+                        <ProductSkeleton count={5} />
                     </div>
                 </div>
             </div>
@@ -31,7 +25,7 @@ const TrendingItems = () => {
             <div className="p-6 lg:p-12">
                 <div className="container mx-auto">
                     <h2 className="cabin-font text-4xl font-normal text-black text-center mb-12">Trending Items</h2>
-                    <div className="text-center text-red-500">Error loading products: {error.message}</div>
+                    <ErrorState message="Could not load trending items." minHeight="h-48" />
                 </div>
             </div>
         );
@@ -42,7 +36,11 @@ const TrendingItems = () => {
             <div className="p-6 lg:p-12">
                 <div className="container mx-auto">
                     <h2 className="cabin-font text-4xl font-normal text-black text-center mb-12">Trending Items</h2>
-                    <div className="text-center text-gray-500">No trending products available at the moment.</div>
+                    <NoDataState 
+                        message="New Trends Loading" 
+                        description="Stay tuned as we update our top-trending handcrafted blades." 
+                        minHeight="h-48" 
+                    />
                 </div>
             </div>
         );

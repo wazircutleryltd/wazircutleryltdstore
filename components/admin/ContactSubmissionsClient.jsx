@@ -2,6 +2,8 @@
 import { useState, useEffect } from 'react';
 import { Eye, Mail, Clock, CheckCircle, XCircle } from 'lucide-react';
 import { useAllContactSubmissions, useUpdateContactSubmissionStatus } from '../../lib/supabase-hooks';
+import { motion, AnimatePresence } from 'framer-motion';
+import { LoadingState, ErrorState, NoDataState } from '../common/StateComponents';
 
 const ContactSubmissionsClient = () => {
     const { data: submissions, isLoading: loading, error } = useAllContactSubmissions();
@@ -32,9 +34,11 @@ const ContactSubmissionsClient = () => {
         switch (status) {
             case 'new':
                 return <Clock className="w-4 h-4 text-yellow-500" />;
-            case 'read':
+            case 'in_progress':
+                return <Eye className="w-4 h-4 text-blue-500" />;
+            case 'completed':
                 return <CheckCircle className="w-4 h-4 text-green-500" />;
-            case 'archived':
+            case 'cancelled':
                 return <XCircle className="w-4 h-4 text-red-500" />;
             default:
                 return <Mail className="w-4 h-4 text-gray-500" />;
@@ -45,9 +49,11 @@ const ContactSubmissionsClient = () => {
         switch (status) {
             case 'new':
                 return 'bg-yellow-100 text-yellow-800';
-            case 'read':
+            case 'in_progress':
+                return 'bg-blue-100 text-blue-800';
+            case 'completed':
                 return 'bg-green-100 text-green-800';
-            case 'archived':
+            case 'cancelled':
                 return 'bg-red-100 text-red-800';
             default:
                 return 'bg-gray-100 text-gray-800';
@@ -58,24 +64,16 @@ const ContactSubmissionsClient = () => {
         setSelectedSubmission(submission);
         setShowModal(true);
         if (submission.status === 'new') {
-            handleUpdateStatus(submission.id, 'read');
+            handleUpdateStatus(submission.id, 'in_progress');
         }
     };
 
     if (loading) {
-        return (
-            <div className="flex items-center justify-center h-64">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#D6AF66]"></div>
-            </div>
-        );
+        return <LoadingState message="Fetching inquiries..." minHeight="h-[60vh]" />;
     }
 
     if (error) {
-        return (
-            <div className="text-center py-12 text-red-500">
-                <p>Error loading submissions. Please try again later.</p>
-            </div>
-        )
+        return <ErrorState message="Could not load contact submissions." minHeight="h-[60vh]" />;
     }
 
     return (
@@ -88,13 +86,11 @@ const ContactSubmissionsClient = () => {
             </div>
 
             {localSubmissions.length === 0 ? (
-                <div className="text-center py-12">
-                    <Mail className="mx-auto h-12 w-12 text-gray-400" />
-                    <h3 className="mt-2 text-sm font-medium text-gray-900">No submissions yet</h3>
-                    <p className="mt-1 text-sm text-gray-500">
-                        Submissions will appear here once users start contacting you.
-                    </p>
-                </div>
+                <NoDataState 
+                    message="No submissions yet" 
+                    description="User inquiries will appear here once customers contact you." 
+                    minHeight="h-[40vh]" 
+                />
             ) : (
                 <div className="bg-white shadow overflow-hidden sm:rounded-md">
                     <ul className="divide-y divide-gray-200">
@@ -108,14 +104,14 @@ const ContactSubmissionsClient = () => {
                                         <div className="min-w-0 flex-1">
                                             <div className="flex items-center space-x-2">
                                                 <p className="text-sm font-medium text-gray-900 truncate">
-                                                    {submission.subject}
+                                                    {submission.message?.substring(0, 40)}{submission.message?.length > 40 ? '...' : ''}
                                                 </p>
                                                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(submission.status)}`}>
                                                     {submission.status.charAt(0).toUpperCase() + submission.status.slice(1)}
                                                 </span>
                                             </div>
                                             <div className="mt-1 flex items-center space-x-4 text-sm text-gray-500">
-                                                <p>{submission.name}</p>
+                                                <p>{submission.full_name}</p>
                                                 <p>{submission.email}</p>
                                                 <p>{new Date(submission.created_at).toLocaleDateString()}</p>
                                             </div>
@@ -137,25 +133,45 @@ const ContactSubmissionsClient = () => {
                 </div>
             )}
 
-            {showModal && selectedSubmission && (
-                <SubmissionDetailsModal
-                    submission={selectedSubmission}
-                    onClose={() => setShowModal(false)}
-                />
-            )}
+            <AnimatePresence>
+                {showModal && selectedSubmission && (
+                    <SubmissionDetailsModal
+                        submission={selectedSubmission}
+                        onClose={() => setShowModal(false)}
+                    />
+                )}
+            </AnimatePresence>
         </div>
     );
 };
 
 const SubmissionDetailsModal = ({ submission, onClose }) => {
     return (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-            <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
-                <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-medium text-gray-900">Submission Details</h3>
+        <motion.div 
+            key="submission-modal-container"
+            className="fixed inset-0 flex items-center justify-center p-4 z-50"
+        >
+            <motion.div 
+                key="submission-modal-backdrop"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={onClose}
+                className="fixed inset-0 bg-gray-900/60 backdrop-blur-md"
+            ></motion.div>
+            <motion.div 
+                key="submission-modal-content"
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                className="relative mx-auto p-6 border w-full max-w-2xl shadow-2xl rounded-2xl bg-white overflow-hidden z-50"
+            >
+                <div className="flex justify-between items-center mb-6">
+                    <h3 className="text-xl font-bold text-gray-900">Submission Details</h3>
                     <button
                         onClick={onClose}
-                        className="text-gray-400 hover:text-gray-600"
+                        className="text-gray-400 hover:text-gray-600 rounded-full h-8 w-8 flex items-center justify-center hover:bg-gray-100 transition-colors"
                     >
                         <XCircle className="w-6 h-6" />
                     </button>
@@ -179,31 +195,32 @@ const SubmissionDetailsModal = ({ submission, onClose }) => {
                     <div className="bg-gray-50 p-4 rounded-lg">
                         <h4 className="font-medium text-gray-900 mb-2">Submitter Information</h4>
                         <div className="text-sm space-y-1">
-                            <p><span className="text-gray-500">Name:</span> {submission.name}</p>
+                            <p><span className="text-gray-500">Name:</span> {submission.full_name}</p>
                             <p><span className="text-gray-500">Email:</span> {submission.email}</p>
-                            {submission.phone && <p><span className="text-gray-500">Phone:</span> {submission.phone}</p>}
+                            {submission.phone_number && <p><span className="text-gray-500">Phone:</span> {submission.phone_number}</p>}
+                            {submission.whatsapp_number && <p><span className="text-gray-500">WhatsApp:</span> {submission.whatsapp_number}</p>}
+                            {submission.company_name && <p><span className="text-gray-500">Company:</span> {submission.company_name}</p>}
                         </div>
                     </div>
 
                     <div className="bg-gray-50 p-4 rounded-lg">
                         <h4 className="font-medium text-gray-900 mb-2">Message</h4>
                         <div className="text-sm">
-                            <p className="font-medium text-gray-800">{submission.subject}</p>
-                            <p className="mt-2 text-gray-600 whitespace-pre-wrap">{submission.message}</p>
+                            <p className="text-gray-600 whitespace-pre-wrap">{submission.message}</p>
                         </div>
                     </div>
                 </div>
 
-                <div className="mt-6 flex justify-end">
+                <div className="mt-8 flex justify-end">
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 bg-[#D6AF66] text-white rounded-md hover:bg-[#C19A5A] focus:outline-none focus:ring-2 focus:ring-[#D6AF66]"
+                        className="px-6 py-2.5 bg-[#D6AF66] text-white font-medium rounded-lg hover:bg-[#C19A5A] focus:outline-none focus:ring-4 focus:ring-[#D6AF66]/20 transition-all active:scale-95 shadow-lg shadow-[#D6AF66]/20"
                     >
                         Close
                     </button>
                 </div>
-            </div>
-        </div>
+            </motion.div>
+        </motion.div>
     );
 };
 

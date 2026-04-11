@@ -2,7 +2,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCart } from '../contexts/CartContext';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 
 const ProductCard = ({ product, showAddToCart = true }) => {
     const { addToCart } = useCart();

@@ -3,7 +3,7 @@ import Image from 'next/image';
 import React, { useState, useEffect } from 'react';
 import RelatedProducts from "@/components/RelatedProducts";
 import { useCart } from '../contexts/CartContext';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 
 const ProductDetails = ({ product }) => {
     const { name, short_description, description, price, main_image, images, category, tags, delivery_date, rating } = product;
@@ -45,8 +45,8 @@ const ProductDetails = ({ product }) => {
     return (
 <>
         <main className="container mx-auto px-4 md:px-8 lg:px-24 py-8">
-            <h1 className="font-outfit font-medium text-variable-collection-main-primary-color text-3xl md:text-[64px] text-center mb-8 md:mb-16">
-                Product Detail
+            <h1 className="font-outfit font-medium text-variable-collection-main-primary-color text-3xl md:text-4xl lg:text-[64px] text-center mb-8 md:mb-16 capitalize">
+                {name}
             </h1>
 
             <section className="flex flex-col lg:flex-row items-start justify-center gap-6 mb-16">
@@ -116,40 +116,40 @@ const ProductDetails = ({ product }) => {
 
                     <div className="flex items-center gap-4">
                         <span className="font-outfit text-black text-lg">Share this product:</span>
-                        <div className="flex gap-4">
-                            <button onClick={() => handleShare('facebook')} className="w-8 h-8 rounded flex items-center justify-center transition-transform duration-200 hover:-translate-y-1 cursor-pointer">
+                        <div className="flex gap-6">
+                            <button onClick={() => handleShare('facebook')} className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center transition-all duration-200 hover:-translate-y-1 hover:bg-blue-50 cursor-pointer shadow-sm">
                                 <Image
                                     src="/facebook-logo.svg"
-                                    width={18}
-                                    height={18}
-                                    className="w-full h-full object-contain"
+                                    width={20}
+                                    height={20}
+                                    className="w-5 h-5 object-contain"
                                     alt="Facebook Logo"
                                 />
                             </button>
-                            <button onClick={() => handleShare('instagram')} className="w-8 h-8 rounded flex items-center justify-center transition-transform duration-200 hover:-translate-y-1 cursor-pointer">
+                            <button onClick={() => handleShare('instagram')} className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center transition-all duration-200 hover:-translate-y-1 hover:bg-pink-50 cursor-pointer shadow-sm">
                                 <Image
                                     src="/instagram-logo.svg"
-                                    width={18}
-                                    height={18}
-                                    className="w-full h-full object-contain"
+                                    width={20}
+                                    height={20}
+                                    className="w-5 h-5 object-contain"
                                     alt="Instagram Logo"
                                 />
                             </button>
-                            <button onClick={() => handleShare('youtube')} className="w-8 h-8 rounded flex items-center justify-center transition-transform duration-200 hover:-translate-y-1 cursor-pointer">
+                            <button onClick={() => handleShare('youtube')} className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center transition-all duration-200 hover:-translate-y-1 hover:bg-red-50 cursor-pointer shadow-sm">
                                 <Image
                                     src="/youtube.svg"
-                                    width={18}
-                                    height={18}
-                                    className="w-full h-full object-contain"
+                                    width={20}
+                                    height={20}
+                                    className="w-5 h-5 object-contain"
                                     alt="YouTube Logo"
                                 />
                             </button>
-                            <button onClick={() => handleShare('tiktok')} className="w-8 h-8 rounded flex items-center justify-center transition-transform duration-200 hover:-translate-y-1 cursor-pointer">
+                            <button onClick={() => handleShare('tiktok')} className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center transition-all duration-200 hover:-translate-y-1 hover:bg-gray-100 cursor-pointer shadow-sm">
                                 <Image
                                     src="/tiktok.svg"
-                                    width={18}
-                                    height={18}
-                                    className="w-full h-full object-contain"
+                                    width={20}
+                                    height={20}
+                                    className="w-5 h-5 object-contain"
                                     alt="Tik Tok Logo"
                                 />
                             </button>
@@ -182,7 +182,7 @@ const ProductDetails = ({ product }) => {
                     Description
                 </h2>
 
-                <p className="font-outfit text-variable-collection-main-primary-color text-lg leading-normal text-justify">
+                <p className="font-outfit text-variable-collection-main-primary-color text-lg leading-relaxed text-left">
                     {description}
                 </p>
             </section>

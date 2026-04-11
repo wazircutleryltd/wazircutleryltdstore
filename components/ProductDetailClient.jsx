@@ -1,12 +1,12 @@
 'use client';
-import { useProductBySku, useActiveProducts, useProductsByCategory, useCategoriesWithProductCounts } from "@/lib/hooks";
+import { useProductBySlug, useActiveProducts, useProductsByCategory, useCategoriesWithProductCounts } from "@/lib/hooks";
 import ProductDetails from "@/components/ProductDetails";
 import ConditionalLayout from "@/components/ConditionalLayout";
 import RelatedProducts from "@/components/RelatedProducts";
 import { LoadingState, ErrorState, NoDataState } from "@/components/common/StateComponents";
 
-export default function ProductDetailClient({ sku }) {
-    const { data: product, isLoading, error } = useProductBySku(sku);
+export default function ProductDetailClient({ slug }) {
+    const { data: product, isLoading, error } = useProductBySlug(slug);
     const { data: categories } = useCategoriesWithProductCounts();
     const { data: relatedProducts, isLoading: isLoadingRelated } = useProductsByCategory(product?.category_id);
     const { data: allProducts, isLoading: isLoadingAll } = useActiveProducts();
@@ -35,8 +35,8 @@ export default function ProductDetailClient({ sku }) {
 
     return (
         <ConditionalLayout>
-            {!sku ? (
-                <ErrorState message="Invalid product SKU." />
+            {!slug ? (
+                <ErrorState message="Invalid product slug." />
             ) : isLoading ? (
                 <LoadingState />
             ) : error ? (

@@ -1,63 +1,62 @@
 "use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
-import { DollarSign, Package, ShoppingCart, Users, TrendingUp, TrendingDown } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { DollarSign, Package, ShoppingCart, Users, TrendingUp } from "lucide-react";
 
-export default function DashboardStats() {
-  const stats = [
+export default function DashboardStats({ stats }) {
+  const items = [
     {
       title: "Total Revenue",
-      value: "$45,231.89",
-      description: "+20.1% from last month",
+      value: `$${(stats?.totalRevenue || 0).toLocaleString()}`,
+      description: "Lifetime earnings",
       icon: DollarSign,
-      trend: "up",
-      color: "text-green-600"
+      color: "bg-emerald-50 text-emerald-600 border-emerald-100",
+      iconColor: "text-emerald-600"
     },
     {
-      title: "Products Sold",
-      value: "2,350",
-      description: "+180.1% from last month",
+      title: "Catalog Size",
+      value: (stats?.productsCount || 0).toLocaleString(),
+      description: "Total live products",
       icon: Package,
-      trend: "up",
-      color: "text-blue-600"
+      color: "bg-blue-50 text-blue-600 border-blue-100",
+      iconColor: "text-blue-600"
     },
     {
       title: "Active Orders",
-      value: "12,234",
-      description: "+19% from last month",
+      value: (stats?.ordersCount || 0).toLocaleString(),
+      description: "Processed transactions",
       icon: ShoppingCart,
-      trend: "up",
-      color: "text-purple-600"
+      color: "bg-amber-50 text-amber-600 border-amber-100",
+      iconColor: "text-amber-600"
     },
     {
-      title: "Total Customers",
-      value: "1,234",
-      description: "+201 since last month",
+      title: "Customer Base",
+      value: (stats?.customersCount || 0).toLocaleString(),
+      description: "Registered members",
       icon: Users,
-      trend: "up",
-      color: "text-orange-600"
+      color: "bg-rose-50 text-rose-600 border-rose-100",
+      iconColor: "text-rose-600"
     }
   ];
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      {stats.map((stat, index) => (
-        <Card key={index}>
+      {items.map((item, index) => (
+        <Card key={index} className="border-none shadow-sm hover:shadow-md transition-shadow duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">
-              {stat.title}
+            <CardTitle className="text-sm font-semibold text-gray-500 font-geist">
+              {item.title}
             </CardTitle>
-            <stat.icon className={`h-4 w-4 ${stat.color}`} />
+            <div className={`p-2 rounded-xl ${item.color} border`}>
+              <item.icon className="h-4 w-4" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900">{stat.value}</div>
-            <p className="text-xs text-gray-500 flex items-center mt-1">
-              {stat.trend === "up" ? (
-                <TrendingUp className="h-3 w-3 text-green-600 mr-1" />
-              ) : (
-                <TrendingDown className="h-3 w-3 text-red-600 mr-1" />
-              )}
-              {stat.description}
+            <div className="text-2xl font-bold text-[#2C2C2C] font-geist tabular-nums">
+              {item.value}
+            </div>
+            <p className="text-xs text-gray-400 mt-1 font-medium italic">
+              {item.description}
             </p>
           </CardContent>
         </Card>
