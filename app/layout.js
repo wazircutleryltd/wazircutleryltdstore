@@ -71,10 +71,15 @@ export const metadata = {
       'max-video-preview': -1,
     },
   },
-  themeColor: '#111827',
   icons: {
     icon: "/favicon.svg",
   },
+};
+
+export const viewport = {
+  themeColor: "#111827",
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({ children }) {
