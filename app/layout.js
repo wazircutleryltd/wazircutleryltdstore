@@ -6,6 +6,8 @@ import { CartProvider } from "@/contexts/CartContext";
 import { Toaster } from "sonner";
 import GoogleReCaptchaV3Provider from "../components/GoogleReCaptchaV3Provider";
 import ConditionalWhatsAppIcon from "../components/ConditionalWhatsAppIcon";
+import { Analytics } from "@vercel/analytics/next";
+
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -162,6 +164,7 @@ export default function RootLayout({ children }) {
             <SupabaseClientProvider>
               <CartProvider>
                 {children}
+                <Analytics />
                 <Toaster richColors position="top-right" />
                 <ConditionalWhatsAppIcon />
               </CartProvider>
