@@ -3,6 +3,8 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAdminAuth } from './AdminAuthProvider';
 
+import { LoadingState } from './common/StateComponents';
+
 export default function AdminRouteProtection({ children }) {
   const { isAdminLoggedIn, isLoading } = useAdminAuth();
   const router = useRouter();
@@ -13,19 +15,16 @@ export default function AdminRouteProtection({ children }) {
     }
   }, [isAdminLoggedIn, isLoading, router]);
 
-  // Show loading while checking authentication
+  // Show premium loading state while verifying artisan credentials
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#D6AF66] mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
-        </div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+        <LoadingState message="Verifying Artisan Credentials..." />
       </div>
     );
   }
 
-  // Don't render children if not authenticated
+  // Prevent leak of admin UI elements during redirect
   if (!isAdminLoggedIn) {
     return null;
   }

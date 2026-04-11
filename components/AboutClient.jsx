@@ -121,7 +121,7 @@ const AboutContent = () => {
                 <div className="w-full lg:w-1/2 h-64 lg:h-96 relative rounded-3xl overflow-hidden">
                     <Image
                         src="/forging-work.jpg"
-                        alt="Craftsmanship in Action"
+                        alt="Artisan Forging High Carbon Steel Blade at Wazir Cutlery Workshop"
                         fill
                         style={{ objectFit: 'cover' }}
                         className="rounded-3xl"

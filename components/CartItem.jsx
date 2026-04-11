@@ -36,26 +36,26 @@ const CartItem = ({ item }) => {
       </div>
 
       {/* Product Card */}
-      <div className="flex-1 w-full bg-white rounded-3xl border border-borders p-4 lg:p-6">
-        <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
+      <div className="flex-1 w-full bg-white rounded-3xl border border-borders p-3 md:p-6 overflow-hidden">
+        <div className="flex flex-col md:flex-row gap-4 md:gap-6">
           {/* Product Image */}
-          <div className="w-full lg:w-32 h-32 bg-gray-100 rounded-2xl border border-sub-texts-mute-lable flex-shrink-0">
+          <div className="w-full md:w-32 h-40 md:h-32 bg-gray-50 rounded-2xl border border-gray-100 flex-shrink-0 overflow-hidden">
             <Image 
               src={product.main_image}
               alt={product.name} 
-              className="rounded-2xl object-cover w-full h-full" 
-              width={150} 
-              height={150} 
+              className="object-cover w-full h-full transform hover:scale-105 transition-transform duration-500" 
+              width={200} 
+              height={200} 
             />
           </div>
 
           {/* Product Details */}
           <div className="flex-1 space-y-4">
-            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-2">
-              <h3 className="text-base lg:text-lg font-medium text-black lg:flex-1">
+            <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-1 md:gap-2">
+              <h3 className="text-base md:text-lg font-semibold text-gray-900 md:flex-1 line-clamp-1 md:line-clamp-none">
                 {product.name}
               </h3>
-              <div className="text-xl lg:text-2xl font-bold text-main-primary-buttons">
+              <div className="text-xl md:text-2xl font-bold text-[#D6AF66]">
                 ${product.price.toFixed(2)}
               </div>
             </div>
@@ -73,22 +73,22 @@ const CartItem = ({ item }) => {
               {product.estimated_delivery || 'Estimate delivery in 2-3 working days'}
             </p>
 
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex items-center justify-between gap-4 pt-2 border-t border-gray-50 mt-2">
               {/* Quantity Controls */}
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4 bg-gray-50 rounded-xl px-3 py-1.5 shadow-sm border border-gray-100">
                 <button
-                  className="w-7 h-7 bg-sections-background rounded-lg flex items-center justify-center bg-gray-200 transition-colors hover:bg-gray-300"
+                  className="w-8 h-8 rounded-lg flex items-center justify-center bg-white border border-gray-200 shadow-sm transition-all active:scale-90 hover:bg-gray-50"
                   onClick={() => handleQuantityChange(-1)}
                 >
-                  <svg className="w-3 h-0.5 text-black" viewBox="0 0 12 2" fill="currentColor">
+                  <svg className="w-3 h-0.5 text-gray-600" viewBox="0 0 12 2" fill="currentColor">
                     <path d="M0 .5h12v1H0z" />
                   </svg>
                 </button>
-                <span className="text-sm font-semibold text-body-text-headings min-w-[20px] text-center">
+                <span className="text-sm font-bold text-gray-900 min-w-[20px] text-center">
                   {quantity}
                 </span>
                 <button
-                  className="w-7 h-7 bg-main-primary-buttons rounded-lg flex items-center justify-center hover:bg-opacity-80 transition-colors"
+                  className="w-8 h-8 bg-[#D6AF66] rounded-lg flex items-center justify-center shadow-lg shadow-[#D6AF66]/20 transition-all active:scale-90 hover:bg-[#C19A5A]"
                   onClick={() => handleQuantityChange(1)}
                 >
                   <svg className="w-2.5 h-2.5 text-white" viewBox="0 0 10 10" fill="currentColor">
@@ -96,20 +96,22 @@ const CartItem = ({ item }) => {
                   </svg>
                 </button>
               </div>
-
-              {/* Subtotal */}
-              <div className="text-lg font-semibold text-black">
-                Subtotal: ${subtotal.toFixed(2)}
+              
+              <div className="flex flex-col items-end">
+                  <div className="text-xs text-gray-400 font-medium">Subtotal</div>
+                  <div className="text-lg font-bold text-gray-900">
+                    ${subtotal.toFixed(2)}
+                  </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center gap-4">
+              <div className="flex items-center">
                 <button
-                  className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded transition-colors"
+                  className="w-10 h-10 flex items-center justify-center bg-red-50 hover:bg-red-100 rounded-xl transition-all group active:scale-90"
                   onClick={handleRemove}
                   title="Remove item"
                 >
-                  <svg className="w-6 h-6 text-gray-400 hover:text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg className="w-5 h-5 text-red-400 group-hover:text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14zM10 11v6M14 11v6" />
                   </svg>
                 </button>

@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRandomProducts } from '../lib/supabase-hooks';
 import ProductCard from './ProductCard';
+import { ErrorState, NoDataState } from './common/StateComponents';
 
 const ForYouItems = () => {
     const { data: products, isLoading, error } = useRandomProducts(5);
@@ -33,7 +34,7 @@ const ForYouItems = () => {
             <div className="p-6 lg:p-12">
                 <div className="container mx-auto">
                     <h2 className="cabin-font text-4xl font-normal text-black mb-12">This must have for you 👇</h2>
-                    <div className="text-center text-red-500">Error loading products: {error.message}</div>
+                    <ErrorState message="Could not load your personalized collection." minHeight="h-48" />
                 </div>
             </div>
         );
@@ -44,7 +45,11 @@ const ForYouItems = () => {
             <div className="p-6 lg:p-12">
                 <div className="container mx-auto">
                     <h2 className="cabin-font text-4xl font-normal text-black mb-12">This must have for you 👇</h2>
-                    <div className="text-center text-gray-500">No products available at the moment.</div>
+                    <NoDataState 
+                        message="Curating Your Collection" 
+                        description="We are picking items just for you. Check back shortly." 
+                        minHeight="h-48" 
+                    />
                 </div>
             </div>
         );

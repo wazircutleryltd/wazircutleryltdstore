@@ -3,8 +3,7 @@ import "./globals.css";
 import SupabaseClientProvider from "../components/SupabaseClientProvider";
 import ClerkProviderWrapper from "../components/ClerkProviderWrapper";
 import { CartProvider } from "@/contexts/CartContext";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { Toaster } from "sonner";
 import GoogleReCaptchaV3Provider from "../components/GoogleReCaptchaV3Provider";
 import ConditionalWhatsAppIcon from "../components/ConditionalWhatsAppIcon";
 
@@ -32,7 +31,7 @@ export const metadata = {
     template: "%s | Wazir Cutlery",
   },
   description: "Discover premium quality knives and cutlery from Wazir Cutlery. Handcrafted for chefs and home cooks. Shop now for the best deals.",
-  keywords: ["knives", "cutlery", "chef knives", "kitchen knives", "Wazir Cutlery", "handmade knives"],
+  keywords: ["knives", "cutlery", "chef knives", "kitchen knives", "Wazir Cutlery", "handmade knives", "Wazirabad knives", "Pakistan cutlery"],
   alternates: {
     canonical: 'https://wazircutlery.com/',
   },
@@ -70,36 +69,81 @@ export const metadata = {
       'max-video-preview': -1,
     },
   },
-  themeColor: '#111827',
   icons: {
     icon: "/favicon.svg",
   },
 };
 
+export const viewport = {
+  themeColor: '#111827',
+  width: 'device-width',
+  initialScale: 1,
+};
+
 export default function RootLayout({ children }) {
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Organization',
-    name: 'Wazir Cutlery',
-    url: 'https://wazircutlery.com',
-    logo: 'https://wazircutlery.com/logo.svg',
-    sameAs: [
-      'https://www.linkedin.com/company/wazircutlery',
-      'https://twitter.com/wazircutlery',
-      'https://www.instagram.com/wazircutlery',
-    ],
-    description: 'Wazir Cutlery offers premium quality knives and cutlery, handcrafted for chefs and home cooks.',
-    founder: [
-      {
-        '@type': 'Person',
-        name: 'Hassan Mughal',
+  const jsonLd = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: 'Wazir Cutlery',
+      url: 'https://wazircutlery.com',
+      logo: 'https://wazircutlery.com/logo.svg',
+      sameAs: [
+        'https://www.linkedin.com/company/wazircutlery',
+        'https://twitter.com/wazircutlery',
+        'https://www.instagram.com/wazircutlery',
+        'https://facebook.com/wazircutlery',
+        'https://youtube.com/@wazircutlery'
+      ],
+      description: 'Wazir Cutlery offers premium quality knives and cutlery, handcrafted for chefs and home cooks.',
+      founder: [
+        {
+          '@type': 'Person',
+          name: 'Hassan Mughal',
+        },
+        {
+          '@type': 'Person',
+          name: 'Qamar Shahzad',
+        },
+      ],
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'LocalBusiness',
+      '@id': 'https://wazircutlery.com/#local-business',
+      'name': 'Wazir Cutlery Works',
+      'image': 'https://wazircutlery.com/logo.svg',
+      'url': 'https://wazircutlery.com',
+      'telephone': '+923080601995',
+      'address': {
+        '@type': 'PostalAddress',
+        'streetAddress': 'Near High Class Bakers G.T. Road',
+        'addressLocality': 'Wazirabad',
+        'addressRegion': 'Punjab',
+        'postalCode': '52000',
+        'addressCountry': 'PK'
       },
-      {
-        '@type': 'Person',
-        name: 'Qamar',
+      'geo': {
+        '@type': 'GeoCoordinates',
+        'latitude': '32.4411',
+        'longitude': '74.1200'
       },
-    ],
-  };
+      'openingHoursSpecification': {
+        '@type': 'OpeningHoursSpecification',
+        'dayOfWeek': [
+          'Monday',
+          'Tuesday',
+          'Wednesday',
+          'Thursday',
+          'Friday',
+          'Saturday'
+        ],
+        'opens': '09:00',
+        'closes': '18:00'
+      },
+      'priceRange': '$$'
+    }
+  ];
 
   return (
     <ClerkProviderWrapper>
@@ -118,7 +162,7 @@ export default function RootLayout({ children }) {
             <SupabaseClientProvider>
               <CartProvider>
                 {children}
-                <ToastContainer position="top-right" />
+                <Toaster richColors position="top-right" />
                 <ConditionalWhatsAppIcon />
               </CartProvider>
             </SupabaseClientProvider>

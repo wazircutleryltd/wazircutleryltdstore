@@ -2,9 +2,13 @@
 import { useState, useEffect } from 'react';
 import { Eye, Package, Truck, CheckCircle, XCircle, Clock } from 'lucide-react';
 import { useAllOrders, useUpdateOrderStatus } from '../../lib/supabase-hooks';
+import { motion, AnimatePresence } from 'framer-motion';
+import { LoadingState, ErrorState, NoDataState } from '../common/StateComponents';
 
 const OrdersClient = () => {
-    const { data: orders, isLoading: loading, error } = useAllOrders();
+    const [page, setPage] = useState(1);
+    const pageSize = 10;
+    const { data: orders, isLoading: loading, error, totalPages, totalCount } = useAllOrders(page, pageSize);
     const [localOrders, setLocalOrders] = useState([]);
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [showModal, setShowModal] = useState(false);
@@ -12,9 +16,7 @@ const OrdersClient = () => {
 
     useEffect(() => {
         if (orders) {
-            // Sort by date, newest first
-            const sortedOrders = [...orders].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-            setLocalOrders(sortedOrders);
+            setLocalOrders(orders);
         }
     }, [orders]);
 
@@ -73,19 +75,11 @@ const OrdersClient = () => {
     };
 
     if (loading) {
-        return (
-            <div className="flex items-center justify-center h-64">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#D6AF66]"></div>
-            </div>
-        );
+        return <LoadingState message="Fetching orders..." minHeight="h-[60vh]" />;
     }
 
     if (error) {
-        return (
-            <div className="text-center py-12 text-red-500">
-                <p>Error loading orders. Please try again later.</p>
-            </div>
-        )
+        return <ErrorState message="Could not load orders. Please check your connection." minHeight="h-[60vh]" />;
     }
 
     return (
@@ -93,18 +87,16 @@ const OrdersClient = () => {
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-bold text-gray-900">Orders</h1>
                 <div className="text-sm text-gray-500">
-                    Total Orders: {localOrders.length}
+                    Total Orders: {totalCount}
                 </div>
             </div>
 
             {localOrders.length === 0 ? (
-                <div className="text-center py-12">
-                    <Package className="mx-auto h-12 w-12 text-gray-400" />
-                    <h3 className="mt-2 text-sm font-medium text-gray-900">No orders yet</h3>
-                    <p className="mt-1 text-sm text-gray-500">
-                        Orders will appear here once customers start placing them.
-                    </p>
-                </div>
+                <NoDataState 
+                    message="No orders yet" 
+                    description="Orders will appear here once customers start placing them." 
+                    minHeight="h-[40vh]" 
+                />
             ) : (
                 <div className="bg-white shadow overflow-hidden sm:rounded-md">
                     <ul className="divide-y divide-gray-200">
@@ -157,35 +149,78 @@ const OrdersClient = () => {
                             </li>
                         ))}
                     </ul>
+                    {totalPages > 1 && (
+                        <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-between">
+                            <div className="text-sm text-gray-700">
+                                Showing page <span className="font-medium">{page}</span> of <span className="font-medium">{totalPages}</span>
+                            </div>
+                            <div className="flex space-x-2">
+                                <button
+                                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                                    disabled={page === 1}
+                                    className={`px-3 py-1 border border-gray-300 rounded-md text-sm font-medium ${page === 1 ? 'bg-gray-100 text-gray-400' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+                                >
+                                    Previous
+                                </button>
+                                <button
+                                    onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                                    disabled={page === totalPages}
+                                    className={`px-3 py-1 border border-gray-300 rounded-md text-sm font-medium ${page === totalPages ? 'bg-gray-100 text-gray-400' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             )}
 
             {/* Order Details Modal */}
-            {showModal && selectedOrder && (
-                <OrderDetailsModal 
-                    order={selectedOrder} 
-                    onClose={() => setShowModal(false)} 
-                />
-            )}
+            <AnimatePresence>
+                {showModal && selectedOrder && (
+                    <OrderDetailsModal 
+                        order={selectedOrder} 
+                        onClose={() => setShowModal(false)} 
+                    />
+                )}
+            </AnimatePresence>
         </div>
     );
 };
 
 const OrderDetailsModal = ({ order, onClose }) => {
     return (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-            <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
-                <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-medium text-gray-900">Order Details</h3>
+        <motion.div 
+            key="order-modal-container"
+            className="fixed inset-0 flex items-center justify-center p-4 z-50"
+        >
+            <motion.div 
+                key="order-modal-backdrop"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={onClose}
+                className="fixed inset-0 bg-gray-900/60 backdrop-blur-md"
+            ></motion.div>
+            <motion.div 
+                key="order-modal-content"
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                className="relative mx-auto p-6 border w-full max-w-2xl shadow-2xl rounded-2xl bg-white overflow-hidden z-50 flex flex-col max-h-[90vh]"
+            >
+                <div className="flex justify-between items-center mb-6">
+                    <h3 className="text-xl font-bold text-gray-900">Order Details</h3>
                     <button
                         onClick={onClose}
-                        className="text-gray-400 hover:text-gray-600"
+                        className="text-gray-400 hover:text-gray-600 rounded-full h-8 w-8 flex items-center justify-center hover:bg-gray-100 transition-colors"
                     >
                         <XCircle className="w-6 h-6" />
                     </button>
                 </div>
-
-                <div className="space-y-6">
+                
+                <div className="overflow-y-auto pr-2 space-y-6">
                     {/* Order Information */}
                     <div className="bg-gray-50 p-4 rounded-lg">
                         <h4 className="font-medium text-gray-900 mb-2">Order Information</h4>
@@ -269,16 +304,16 @@ const OrderDetailsModal = ({ order, onClose }) => {
                     </div>
                 </div>
 
-                <div className="mt-6 flex justify-end">
+                <div className="mt-8 flex justify-end">
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 bg-[#D6AF66] text-white rounded-md hover:bg-[#C19A5A] focus:outline-none focus:ring-2 focus:ring-[#D6AF66]"
+                        className="px-6 py-2.5 bg-[#D6AF66] text-white font-medium rounded-lg hover:bg-[#C19A5A] focus:outline-none focus:ring-4 focus:ring-[#D6AF66]/20 transition-all active:scale-95 shadow-lg shadow-[#D6AF66]/20"
                     >
                         Close
                     </button>
                 </div>
-            </div>
-        </div>
+            </motion.div>
+        </motion.div>
     );
 };
 

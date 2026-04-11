@@ -8,7 +8,9 @@ import { Label } from "../ui/label";
 import { Textarea } from "../ui/textarea";
 import { Switch } from "../ui/switch";
 import { X, Upload, Image as ImageIcon, Trash2 } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
+import { motion, AnimatePresence } from "framer-motion";
+import ImageCropper from "./ImageCropper";
 
 export default function CategoryModal({ isOpen, onClose, category }) {
   const [formData, setFormData] = useState({
@@ -21,6 +23,7 @@ export default function CategoryModal({ isOpen, onClose, category }) {
   });
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
+  const [croppingImage, setCroppingImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const fileInputRef = useRef(null);
@@ -85,7 +88,7 @@ export default function CategoryModal({ isOpen, onClose, category }) {
         
         const reader = new FileReader();
         reader.onload = (e) => {
-          setImagePreview(e.target.result);
+          setCroppingImage(e.target.result);
         };
         reader.readAsDataURL(file);
       }
@@ -98,37 +101,25 @@ export default function CategoryModal({ isOpen, onClose, category }) {
         setErrors(prev => ({ ...prev, image: "Please select a valid image file" }));
         return false;
       }
-      if (file.size > 1024 * 1024) {
-        setErrors(prev => ({ ...prev, image: "Image size must be less than 1MB" }));
+      // Relaxed size limit as we handle compression in ImageCropper
+      if (file.size > 10 * 1024 * 1024) {
+        setErrors(prev => ({ ...prev, image: "Image size must be less than 10MB (it will be compressed automatically)" }));
         return false;
       }
-      return new Promise((resolve) => {
-        const img = new window.Image();
-        img.onload = function () {
-          const { width, height } = img;
-          const isAllowed = (
-            (width === 1000 && height === 100) ||
-            (width === 800 && height === 800) ||
-            (width === height && width < 2000)
-          );
-          if (!isAllowed) {
-            setErrors(prev => ({ ...prev, image: "Image dimensions must be 800x800px, 1000x100px, or any square less than 2000px." }));
-            resolve(false);
-          } else {
-            setErrors(prev => ({ ...prev, image: "" }));
-            resolve(true);
-          }
-        };
-        img.onerror = function () {
-          setErrors(prev => ({ ...prev, image: "Could not read image dimensions." }));
-          resolve(false);
-        };
-        img.src = URL.createObjectURL(file);
-      });
+      return true;
     } catch (err) {
-      setErrors(prev => ({ ...prev, image: "Image validation failed. Please try another image." }));
+      setErrors(prev => ({ ...prev, image: "Image validation failed." }));
       return false;
     }
+  };
+
+  const onCropComplete = (croppedBlob) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result);
+      setCroppingImage(null);
+    };
+    reader.readAsDataURL(croppedBlob);
   };
 
   const handleDrop = (e) => {
@@ -144,7 +135,7 @@ export default function CategoryModal({ isOpen, onClose, category }) {
         
         const reader = new FileReader();
         reader.onload = (e) => {
-          setImagePreview(e.target.result);
+          setCroppingImage(e.target.result);
         };
         reader.readAsDataURL(file);
       }
@@ -233,29 +224,43 @@ export default function CategoryModal({ isOpen, onClose, category }) {
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div 
-      className="fixed inset-0 bg-gray-100 bg-opacity-80 backdrop-blur-md flex items-center justify-center z-50 p-4"
-    >
-      <div 
-        className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] flex flex-col"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-2xl font-bold text-[#2C2C2C]">
-            {category ? "Edit Category" : "Add New Category"}
-          </h2>
-          <Button
-            variant="ghost"
-            size="sm"
+    <AnimatePresence mode="wait">
+      {isOpen && (
+        <motion.div 
+          key="category-modal-overlay"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        >
+          <motion.div
+            key="category-modal-backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             onClick={onClose}
-            className="text-[#2C2C2C] hover:bg-gray-100"
+            className="fixed inset-0 bg-gray-900/60 backdrop-blur-md"
+          />
+          <motion.div
+            key="category-modal-content"
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col relative z-50 overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
           >
-            <X className="h-5 w-5" />
-          </Button>
-        </div>
+            <div className="flex items-center justify-between p-6 border-b border-gray-100">
+              <h2 className="text-2xl font-bold text-[#2C2C2C]">
+                {category ? "Edit Category" : "Add New Category"}
+              </h2>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onClose}
+                className="text-[#2C2C2C] hover:bg-gray-100 rounded-full h-10 w-10 p-0"
+              >
+                <X className="h-6 w-6" />
+              </Button>
+            </div>
 
         <form id="category-form" onSubmit={handleSubmit} className="flex-grow overflow-y-auto p-6 space-y-6">
           {/* Category Name */}
@@ -438,9 +443,20 @@ export default function CategoryModal({ isOpen, onClose, category }) {
                     category ? "Update Category" : "Create Category"
                 )}
                 </Button>
-            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
+      )}
+
+      {croppingImage && (
+        <ImageCropper
+          key="category-image-cropper"
+          image={croppingImage}
+          onCropComplete={onCropComplete}
+          onCancel={() => setCroppingImage(null)}
+        />
+      )}
+    </AnimatePresence>
   );
 }

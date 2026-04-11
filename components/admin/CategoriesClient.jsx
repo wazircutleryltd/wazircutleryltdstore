@@ -10,7 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, Search, Edit, Trash2, Eye, EyeOff, FolderOpen } from "lucide-react";
 import CategoryModal from "@/components/admin/CategoryModal";
 import Image from "next/image";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
+import { LoadingState, ErrorState, NoDataState } from "../common/StateComponents";
 
 export default function CategoriesClient() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -18,7 +19,7 @@ export default function CategoriesClient() {
   const [editingCategory, setEditingCategory] = useState(null);
   const [filterStatus, setFilterStatus] = useState("all");
 
-  const { data: categories, isLoading: categoriesLoading } = useAllCategories();
+  const { data: categories, isLoading: categoriesLoading, error } = useAllCategories();
   const { deleteCategory, isLoading: isDeleting } = useDeleteCategory();
 
   const filteredCategories = categories?.filter(category => {
@@ -126,8 +127,31 @@ export default function CategoriesClient() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredCategories.map((category) => (
-                <TableRow key={category.id}>
+              {categoriesLoading ? (
+                <TableRow>
+                  <TableCell colSpan={6}>
+                    <LoadingState message="Organizing categories..." minHeight="h-64" />
+                  </TableCell>
+                </TableRow>
+              ) : error ? (
+                <TableRow>
+                  <TableCell colSpan={6}>
+                    <ErrorState message="Could not load categories." minHeight="h-64" />
+                  </TableCell>
+                </TableRow>
+              ) : filteredCategories.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6}>
+                    <NoDataState 
+                        message="No categories found" 
+                        description="Start organizing your catalog by adding your first category." 
+                        minHeight="h-64" 
+                    />
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredCategories.map((category) => (
+                  <TableRow key={category.id}>
                   <TableCell>
                     <div className="flex items-center gap-3">
                       {category.image_url ? (
@@ -195,7 +219,7 @@ export default function CategoriesClient() {
                     </div>
                   </TableCell>
                 </TableRow>
-              ))}
+              )))}
             </TableBody>
           </Table>
         </CardContent>
