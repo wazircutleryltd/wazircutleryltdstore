@@ -1,9 +1,10 @@
-# 🦌 Stag-Horn: Agent Operating Guide
+# 🦌 Wazir Cutlery Ltd Store: Agent Operating Guide
 
-This document provides AI agents (Antigravity, Cursor, etc.) with a map and context of the **Stag-Horn** e-commerce project to ensure efficient development and consistent styling.
+This document provides AI agents (Antigravity, Cursor, etc.) with a map and context of the **Wazir Cutlery Ltd** e-commerce project to ensure efficient development and consistent styling.
 
 ## 🚀 Project Overview
-**Stag-Horn** is a premium e-commerce platform specializing in high-quality knives, swords, and related items. It is built using the latest Next.js features and a robust backend.
+**Wazir Cutlery Ltd Store** is a premium e-commerce platform specializing in high-quality knives, swords, and related items.
+ It is built using the latest Next.js features and a robust backend.
 
 ## 🛠️ Technology Stack
 - **Framework**: [Next.js 15+](https://nextjs.org/) (App Router)
@@ -48,25 +49,12 @@ When creating or modifying UI:
 ## ⚠️ Potential Issues & Discrepancies (Analysis Notes)
 - **Schema vs. UI**: Some components (like `ContactSubmissionsClient.jsx`) may use field names (e.g., `submission.name`, `submission.subject`) that differ from the SQL schema in `README.md` (e.g., `full_name`, `message`). Always verify fields against the actual table structure in Supabase before refactoring.
 - **Next.js 15 + Turbopack**: The project uses the latest Next.js features. Be mindful of Server vs. Client component boundaries (`'use client'`).
+- **ESM vs CJS**: Due to Webpack/Turbopack requirements in Next.js 15, `postcss.config.js` MUST use CommonJS (`module.exports = { plugins: { '@tailwindcss/postcss': {} } }`) to maintain build stability. Avoid using `.mjs` for PostCSS.
 
 ## 🌍 SEO & Dynamic Routing
-- **Title-Based Slugs**: Products use descriptive slugs (e.g., `/product/damascus-chef-knife`) instead of SKUs.
+- **Title-Based Slugs**: Products use descriptive slugs (e.g., `/product/damascus-chef-knife-uh-12`) which are unique name+SKU combinations.
+- **Sitemap**: A dynamic sitemap is generated at `app/sitemap.js`. Ensure any new public routes are added to this file.
 - **Slug Generation**: Use the `slugify` utility in `lib/utils.js` for all product and category name transformations.
-- **Canonicalization**: Every public route must include `alternates.canonical` in its metadata to prevent duplicate indexing.
-- **Structured Data**: Product pages must implement JSON-LD (Schema.org) for rich results (Price, Inventory, Rating).
-
-## 📡 Data Fetching & Scaling
-- **Pagination**: Admin tables (Products, Orders, etc.) MUST use server-side pagination via the `range(from, to)` Supabase method.
-- **Hooks with Meta**: Data hooks like `useAllProducts` return `{ data, totalPages, totalCount }` to support navigation UI.
-- **Server Actions/APIs**: Favor custom API routes in `/app/api` for sensitive operations (Orders, Newsletter) to enforce Clerk-based RBAC.
-
-## 📝 Rules for AI Agents
-1. **No Placeholders**: Always generate real content or use `generate_image` for missing assets.
-2. **SEO First**: Ensure every new page has proper metadata (Title, Description, Canonical).
-3. **Viewport Export**: Next.js 15 requires `themeColor` and `width` to be in a separate `viewport` export, NOT in `metadata`.
-4. **Semantic HTML**: Use `<header>`, `<footer>`, `<main>`, `<h1>-<h6>` correctly.
-5. **Patterns**: Follow the `*Client.jsx` convention for client-side functionality.
-6. **Consistency**: Check existing UI components in `components/ui` before building new ones.
 
 ---
-*Last updated on 2026-04-06*
+*Last updated on 2026-04-11*

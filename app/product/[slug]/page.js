@@ -12,7 +12,7 @@ export async function generateMetadata({ params }) {
 
   const { data: product } = await supabase
     .from('products')
-    .select('name, description, short_description')
+    .select('name, description, short_description, price, stock_quantity, main_image')
     .eq('slug', slug)
     .single();
 
@@ -31,7 +31,20 @@ export async function generateMetadata({ params }) {
         description: description,
         type: 'website',
         url: `https://wazircutlery.com/product/${slug}`,
-      }
+        images: [
+          {
+            url: product.main_image,
+            width: 800,
+            height: 800,
+            alt: product.name,
+          },
+        ],
+      },
+      other: {
+        'product:price:amount': product.price,
+        'product:price:currency': 'USD',
+        'product:availability': product.stock_quantity > 0 ? 'instock' : 'oos',
+      },
     };
   }
 
@@ -89,11 +102,40 @@ export default async function ProductPage({ params }) {
     })
   };
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://wazircutlery.com"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Categories",
+        "item": "https://wazircutlery.com/categories"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": product.name,
+        "item": `https://wazircutlery.com/product/${product.slug}`
+      }
+    ]
+  };
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <ProductDetailClient slug={slug} />
     </>
