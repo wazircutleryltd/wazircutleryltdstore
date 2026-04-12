@@ -37,10 +37,17 @@ const OrderSummary = () => {
           </span>
         </div>
         
-        {deliveryFee === 0 && (
-          <div className="text-sm text-green-600 bg-green-50 p-2 rounded-lg">
-            🎉 You've qualified for free delivery! (Orders over $200)
+        {deliveryFee === 0 ? (
+          <div className="text-sm text-green-600 bg-green-50 p-2 rounded-lg border border-green-100 flex items-center gap-2">
+            <span className="text-lg">🎉</span>
+            <span>You've qualified for free delivery!</span>
           </div>
+        ) : (
+          subtotal > 0 && (
+            <div className="text-sm text-[#D6AF66] bg-amber-50 p-3 rounded-lg border border-amber-100 italic font-medium">
+              Add worth <span className="font-bold underline">${(200 - subtotal).toFixed(2)}</span> more to get <span className="font-bold text-[#2C2C2C]">FREE</span> delivery!
+            </div>
+          )
         )}
         
         <hr className="border-gray-200" />

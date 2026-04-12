@@ -89,24 +89,46 @@ export default function RootLayout({ children }) {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
+    '@id': 'https://wazircutlery.com/#organization',
     name: 'Wazir Cutlery',
     url: 'https://wazircutlery.com',
     logo: 'https://wazircutlery.com/logo.svg',
-    sameAs: [
-      'https://www.linkedin.com/company/wazircutlery',
-      'https://twitter.com/wazircutlery',
-      'https://www.instagram.com/wazircutlery',
-    ],
-    description: 'Wazir Cutlery offers premium quality knives and cutlery, handcrafted for chefs and home cooks.',
+    image: 'https://wazircutlery.com/og-cover.png',
+    description: 'Wazir Cutlery offers premium quality knives and cutlery, handcrafted for chefs and home cooks. Forged in Wazirabad, the city of cutlery.',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: 'Near High Class Bakers G.T. Road',
+      addressLocality: 'Wazirabad',
+      addressRegion: 'Punjab',
+      postalCode: '52000',
+      addressCountry: 'PK'
+    },
+    contactPoint: {
+      '@type': 'ContactPoint',
+      telephone: '+923126209302',
+      contactType: 'customer service',
+      areaServed: 'Worldwide',
+      availableLanguage: ['English', 'Urdu']
+    },
     founder: [
       {
         '@type': 'Person',
         name: 'Hassan Mughal',
+        jobTitle: 'Founder',
+        sameAs: 'https://wa.me/+923080601995'
       },
       {
         '@type': 'Person',
-        name: 'Qamar',
+        name: 'Qamar Shahzad',
+        jobTitle: 'Founder',
+        sameAs: 'https://wa.me/+923126209302'
       },
+    ],
+    sameAs: [
+        'https://www.facebook.com/share/16z6hKB6KL/',
+        'https://www.instagram.com/wazircutlery',
+        'https://youtube.com/@wazircutleryltd',
+        'https://www.tiktok.com/@wazircutlery'
     ],
   };
 

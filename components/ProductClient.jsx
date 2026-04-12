@@ -24,12 +24,21 @@ const ProductClient = () => {
 const ProductContent = () => {
     const searchParams = useSearchParams();
     const router = useRouter();
-    const categoryId = searchParams.get('categoryId');
+    const categorySlug = searchParams.get('category');
+    let categoryId = searchParams.get('categoryId');
     const filterType = searchParams.get('filter');
-    const type = searchParams.get('type'); // Add this to check if coming from home page sections
+    const type = searchParams.get('type');
     const pageParam = parseInt(searchParams.get('page') || '1', 10);
     const page = Number.isNaN(pageParam) || pageParam < 1 ? 1 : pageParam;
-    const pageSize = 15; // Changed to 15 products per page (3 rows of 5)
+    const pageSize = 15;
+
+    const { data: categories } = useCategoriesWithProductCounts();
+
+    // If we have a category slug but no categoryId, find it from categories
+    if (!categoryId && categorySlug && categories) {
+        const found = categories.find(c => c.slug === categorySlug);
+        if (found) categoryId = found.id;
+    }
 
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
     const [displayedItems, setDisplayedItems] = React.useState(pageSize);
@@ -38,7 +47,6 @@ const ProductContent = () => {
 
     const { data: allProducts, isLoading: isLoadingAll, error: errorAll } = useActiveProducts();
     const { data: productsByCategory, isLoading: isLoadingCategory, error: errorCategory } = useProductsByCategory(categoryId);
-    const { data: categories } = useCategoriesWithProductCounts();
 
     const isLoading = categoryId ? isLoadingCategory : isLoadingAll;
     const error = categoryId ? errorCategory : errorAll;

@@ -1,5 +1,5 @@
 'use client';
-import { useProductBySlug, useActiveProducts, useProductsByCategory, useCategoriesWithProductCounts } from "@/lib/hooks";
+import { useProductBySlug, useActiveProducts, useProductsByCategory } from "@/lib/hooks";
 import ProductDetails from "@/components/ProductDetails";
 import ConditionalLayout from "@/components/ConditionalLayout";
 import RelatedProducts from "@/components/RelatedProducts";
@@ -7,27 +7,17 @@ import { LoadingState, ErrorState, NoDataState } from "@/components/common/State
 
 export default function ProductDetailClient({ slug }) {
     const { data: product, isLoading, error } = useProductBySlug(slug);
-    const { data: categories } = useCategoriesWithProductCounts();
     const { data: relatedProducts, isLoading: isLoadingRelated } = useProductsByCategory(product?.category_id);
     const { data: allProducts, isLoading: isLoadingAll } = useActiveProducts();
-
-    // Add category info to product
-    const productWithCategory = product && categories
-        ? { ...product, category: categories.find(c => c.id === product.category_id) }
-        : product;
-
-    let displayProducts = [];
     const isLoadingRecommendations = isLoadingRelated || isLoadingAll;
 
+    let displayProducts = [];
     if (product && relatedProducts) {
         const filteredRelated = relatedProducts.filter(r => r.id !== product.id);
         if (filteredRelated.length > 0) {
             displayProducts = filteredRelated.slice(0, 5);
         } else if (allProducts) {
-            const otherCategoryProducts = allProducts.filter(p => p.category_id !== product.category_id).slice(0, 5);
-            if (otherCategoryProducts.length > 0) {
-                displayProducts = otherCategoryProducts;
-            }
+            displayProducts = allProducts.filter(p => p.category_id !== product.category_id).slice(0, 5);
         }
     }
 
@@ -45,7 +35,7 @@ export default function ProductDetailClient({ slug }) {
                 <NoDataState message="Product not found." />
             ) : (
                 <>
-                    <ProductDetails product={productWithCategory} />
+                    <ProductDetails product={product} />
 
                     <div className="container mx-auto px-4 md:px-8 lg:px-24 py-8">
                         {isLoadingRecommendations && (

@@ -19,7 +19,7 @@ const ProductCard = ({ product, showAddToCart = true }) => {
 
     return (
         <div className="card-border p-6 flex flex-col h-full hover:shadow-lg transition-shadow duration-300">
-            <Link href={`/product/${product.sku}`} className="cursor-pointer flex-grow">
+            <Link href={`/product/${product.slug}`} className="cursor-pointer flex-grow">
                 <div className="relative mb-4">
                     <div className="absolute top-2 right-2 z-10 flex flex-col gap-1">
                         {(() => {

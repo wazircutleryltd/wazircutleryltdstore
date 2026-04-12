@@ -52,9 +52,9 @@ When creating or modifying UI:
 - **ESM vs CJS**: Due to Webpack/Turbopack requirements in Next.js 15, `postcss.config.js` MUST use CommonJS (`module.exports = { plugins: { '@tailwindcss/postcss': {} } }`) to maintain build stability. Avoid using `.mjs` for PostCSS.
 
 ## 🌍 SEO & Dynamic Routing
-- **Title-Based Slugs**: Products use descriptive slugs (e.g., `/product/damascus-chef-knife-uh-12`) which are unique name+SKU combinations.
-- **Sitemap**: A dynamic sitemap is generated at `app/sitemap.js`. Ensure any new public routes are added to this file.
-- **Slug Generation**: Use the `slugify` utility in `lib/utils.js` for all product and category name transformations.
+- **Title-Based Slugs**: Products use descriptive slugs (e.g., `/product/damascus-chef-knife-uh-12`) which are unique name+SKU combinations. **NEVER** link using SKU alone in UI components; always use `product.slug`.
+- **GEO (Generative Experience Optimization)**: The site is optimized for AI agents (Gemini, Claude, GPT). Always maintain the JSON-LD schemas (FAQ, Organization, Store) in `app/page.js` and individual product pages.
+- **Sitemap & Robots**: A dynamic sitemap is generated at `app/sitemap.js`, and AI-specific crawl rules are in `app/robots.js`.
 
 ---
-*Last updated on 2026-04-11*
+*Last updated on 2026-04-12*

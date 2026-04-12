@@ -43,7 +43,7 @@ const Footer = () => {
               <ul className="space-y-4">
                 {topCategories?.map((category) => (
                   <li key={category.id}>
-                    <Link href={`/categories/${category.slug}`} className="footer-link text-base capitalize">
+                    <Link href={`/product?category=${category.slug}`} className="footer-link text-base capitalize">
                       {category.name}
                     </Link>
                   </li>
@@ -115,7 +115,7 @@ const Footer = () => {
         {/* Copyright */}
         <div className="border-t border-[#C0C0C0] pt-8 text-end">
           <p className="footer-text text-sm">
-            © 2025 Wazir Cutlery works. All rights reserved.
+            © {new Date().getFullYear()} Wazir Cutlery works. All rights reserved.
           </p>
         </div>
       </div>

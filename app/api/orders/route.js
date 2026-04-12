@@ -51,19 +51,20 @@ export async function GET() {
 export async function POST(request) {
   try {
     const user = await getAuthenticatedUser();
-    
-    if (!user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const orderData = await request.json();
     
     if (!orderData || !orderData.order_number) {
       return Response.json({ error: 'Invalid order data' }, { status: 400 });
     }
 
-    // Ensure users can only create orders for themselves unless they are admin
-    const targetUserId = user.is_admin ? (orderData.user_id || user.id) : user.id;
+    // Determine targetUserId: 
+    // - If admin: use provided user_id or current user id
+    // - If user: use current user id
+    // - If guest: use null
+    let targetUserId = null;
+    if (user) {
+      targetUserId = user.is_admin ? (orderData.user_id || user.id) : user.id;
+    }
 
     const orderToInsert = {
       id: orderData.id || crypto.randomUUID(),

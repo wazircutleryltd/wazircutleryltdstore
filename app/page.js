@@ -43,22 +43,88 @@ export const metadata = {
 };
 
 export default function Home() {
-  const jsonLd = {
+  const websiteJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     url: 'https://wazircutlery.com/',
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: 'https://wazircutlery.com/search?q={search_term_string}',
-      'query-input': 'required name=search_term_string',
+  };
+
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Where is Wazir Cutlery located?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Wazir Cutlery is based in Wazirabad, Pakistan, a city world-renowned for its heritage in craftsmanship and cutlery."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What materials are used for Wazir Cutlery knives?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "We use premium materials including Damascus steel, high-carbon steel, and authentic stag horn for our handcrafted blades and handles."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does Wazir Cutlery ship worldwide?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, we ship our handcrafted knives and collector swords to customers globally, ensuring secure packaging and delivery."
+        }
+      }
+    ]
+  };
+
+  const localBusinessJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Store",
+    "name": "Wazir Cutlery Ltd",
+    "image": "https://wazircutlery.com/og-home.png",
+    "@id": "https://wazircutlery.com",
+    "url": "https://wazircutlery.com",
+    "telephone": "+923126209302",
+    "priceRange": "$$",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "G.T. Road",
+      "addressLocality": "Wazirabad",
+      "addressRegion": "Punjab",
+      "postalCode": "52000",
+      "addressCountry": "PK"
     },
+    "openingHoursSpecification": {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ],
+      "opens": "09:00",
+      "closes": "18:00"
+    }
   };
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
       />
       <HomeClient />
     </>

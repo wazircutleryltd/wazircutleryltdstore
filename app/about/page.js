@@ -47,7 +47,7 @@ export default function AboutPage() {
     '@context': 'https://schema.org',
     '@type': 'AboutPage',
     name: 'About Wazir Cutlery',
-    description: 'Learn how Wazir Cutlery delivers smart, scalable, AI-powered digital solutions. We turn data into strategy to help businesses grow with confidence.',
+    description: 'Learn about the heritage of Wazir Cutlery, master artisans of handcrafted knives and swords from Wazirabad. We combine generations of tradition with premium materials to forge exceptional blades.',
     url: 'https://wazircutlery.com/about',
     mainEntity: {
       '@type': 'Organization',

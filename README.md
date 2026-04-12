@@ -20,8 +20,8 @@
 - 💎 **Artisan UI**: A high-end, responsive interface designed with the "Stag-Horn" premium aesthetic.
 - 🖼️ **Intelligent Image Engine**: Automated runtime cropping, compression (sub-1MB), and 1:1 aspect ratio enforcement.
 - 📈 **Dynamic Analytics Dashboard**: Real-time sales data, metric cards, and revenue history powered by Supabase RPC.
-- 🔍 **Advanced SEO Hardening**: Dynamic `sitemap.xml`, title-based unique slugs, and JSON-LD Rich Snippets (Price, Availability, Breadcrumbs).
-- 🔐 **Hardened Security**: Multi-layer admin route protection and Clerk-integrated customer workflows.
+- 🔍 **AI-First SEO (GEO)**: Optimized for the "Generative Search" era with FAQ, Organization, and Store Schemas. Custom AI-bot friendly `robots.js` facilitates ranking in LLM-driven answers (Claude, GPT, Gemini).
+- 🔐 **Hardened Security**: Multi-layer admin route protection and Clerk-integrated customer workflows. Zero-dependency on local storage fallbacks.
 - 📧 **Newsletter & Engagement**: Integrated subscription management and automated lead tracking.
 
 ---
@@ -71,4 +71,4 @@ bun run dev
 ---
 
 Created by **Antigravity** for **Wazir Cutlery Ltd**.
-*Last updated: 2026-04-11*
+*Last updated: 2026-04-12*

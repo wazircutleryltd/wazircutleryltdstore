@@ -1,0 +1,15 @@
+/* TEAM */
+    Founder: Hassan Mughal
+    Founder: Qamar Shahzad
+    Site: https://wazircutlery.com
+    Location: Wazirabad, Punjab, Pakistan
+
+/* THANKS */
+    Crafted with passion in the City of Cutlery.
+
+/* SITE */
+    Last update: 2026/04/12
+    Language: English
+    Standards: HTML5, CSS3, Next.js 15
+    Components: Tailwing CSS 4, Framer Motion, Supabase
+    Software: Antigravity AI

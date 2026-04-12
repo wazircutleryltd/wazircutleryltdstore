@@ -1,7 +1,6 @@
 'use client';
 import Image from 'next/image';
 import React, { useState, useEffect } from 'react';
-import RelatedProducts from "@/components/RelatedProducts";
 import { useCart } from '../contexts/CartContext';
 import { toast } from 'sonner';
 
@@ -187,7 +186,6 @@ const ProductDetails = ({ product }) => {
                 </p>
             </section>
         </main>
-        <RelatedProducts />
     </>
     );
 };
