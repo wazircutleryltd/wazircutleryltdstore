@@ -85,11 +85,6 @@ const PaymentContent = () => {
                 created_at: new Date().toISOString()
             };
 
-            // Store order in localStorage for admin panel
-            const existingOrders = JSON.parse(localStorage.getItem('stag-horn-orders') || '[]');
-            existingOrders.push(orderData);
-            localStorage.setItem('stag-horn-orders', JSON.stringify(existingOrders));
-
             // Also save to database
             try {
                 const dbResponse = await fetch('/api/orders', {

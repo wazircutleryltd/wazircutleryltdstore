@@ -166,7 +166,8 @@ export function CartProvider({ children }) {
     subtotal: parseFloat(subtotal.toFixed(2)),
     tax: parseFloat(tax.toFixed(2)),
     deliveryFee: parseFloat(deliveryFee.toFixed(2)),
-    total: parseFloat(total.toFixed(2))
+    total: parseFloat(total.toFixed(2)),
+    remainingForFreeDelivery: subtotal > 0 && subtotal < 200 ? parseFloat((200 - subtotal).toFixed(2)) : 0
   };
 
   return (

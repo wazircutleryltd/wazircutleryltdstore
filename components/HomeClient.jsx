@@ -70,87 +70,6 @@ const NewHeroSection = () => {
 };
 
 
-const PromoCardsSection = () => {
-    return (
-        <div className="p-6 lg:p-12">
-            <div className="container mx-auto grid md:grid-cols-2 gap-8">
-                <div className="bg-[#F8F3F0] shadow-xl rounded-3xl p-8 flex items-center space-x-6">
-                    <div className="flex-1">
-                        <h3 className="text-2xl font-bold mb-2">Deals & Promotions</h3>
-                        <p className="text-gray-600">Shop Today&apos;s Deals, Lightning Deals, and limited time discounts</p>
-                    </div>
-                    <div className="flex-shrink-0">
-                        <div className="w-24 h-24 flex items-center justify-center relative">
-                            <Image src="/clock.png" alt="clock" width={96} height={96} />
-                        </div>
-                    </div>
-                </div>
-                <div className="bg-[#F8F3F0] shadow-xl rounded-3xl p-8 flex items-center space-x-6">
-                    <div className="flex-1">
-                        <h3 className="text-2xl font-bold mb-2">Deals & Promotions</h3>
-                        <p className="text-gray-600">Shop Today&apos;s Deals, Lightning Deals, and limited time discounts</p>
-                    </div>
-                    <div className="flex-shrink-0">
-                        <div className="w-24 h-24 flex items-center justify-center relative">
-                            <Image src="/clock.png" alt="clock" width={96} height={96} />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-};
-
-const HeroImageSlider = () => {
-    const images = [
-        '/sale-offer.png',
-        '/sale-offer.png',
-        '/sale-offer.png',
-    ];
-    const [currentSlide, setCurrentSlide] = useState(0);
-    const totalSlides = images.length;
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setCurrentSlide((prev) => (prev + 1) % totalSlides);
-        }, 4000);
-        return () => clearInterval(interval);
-    }, [totalSlides]);
-    const goToSlide = (idx) => setCurrentSlide(idx);
-    return (
-        <div className="p-6 lg:p-12">
-            <div className="container mx-auto">
-                <div className="rounded-3xl shadow-xl overflow-hidden relative h-96 md:h-80">
-                    {images.map((src, idx) => (
-                        <div
-                            key={idx}
-                            className={`slide absolute inset-0 flex items-center justify-between ${idx === currentSlide ? 'active' : ''} ${idx < currentSlide ? 'prev' : ''}`}
-                            style={{ transition: 'all 0.5s ease-in-out' }}
-                        >
-                            <Image src={src} alt="slider" fill className="object-cover" />
-                        </div>
-                    ))}
-                </div>
-                <div className="flex justify-center mt-6 space-x-2">
-                    {images.map((_, idx) => (
-                        <button
-                            key={idx}
-                            className={`dot w-2 h-2 rounded-full bg-gray-400${idx === currentSlide ? ' active' : ''}`}
-                            onClick={() => goToSlide(idx)}
-                            aria-label={`Go to slide ${idx + 1}`}
-                        />
-                    ))}
-                </div>
-                <style jsx>{`
-                    .slide { opacity: 0.4; transform: translateX(100%); }
-                    .slide.active { opacity: 1; transform: translateX(0); }
-                    .slide.prev { transform: translateX(-100%); }
-                    .dot { transition: all 0.3s ease; }
-                    .dot.active { background-color: #F27F0C; }
-                `}</style>
-            </div>
-        </div>
-    );
-};
 
 export default function HomeClient() {
     return (
@@ -167,8 +86,6 @@ function HomeContent() {
     return (
         <>
             <NewHeroSection />
-            <HeroImageSlider />
-            <PromoCardsSection />
             {/* Store Availability Section */}
             <section className="py-16 lg:py-24">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -200,7 +117,7 @@ function HomeContent() {
                         </div>
                         {/* Daraz */}
                         <div className="flex items-center justify-center w-full h-24 md:h-28 bg-[#F8F3F0] border border-[#E0E0E0] rounded-2xl shadow-md p-6 md:p-8 transition-all duration-300 hover:scale-105 hover:shadow-xl">
-                            <Image src="daraz-logo.svg" width={256} height={256}
+                            <Image src="/daraz-logo.svg" width={256} height={256}
                                    alt="Daraz Online Shopping Mall" className="max-w-full max-h-full object-contain" />
                         </div>
                     </div>
