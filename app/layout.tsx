@@ -5,8 +5,7 @@ import "./globals.css";
 import SupabaseClientProvider from "../components/SupabaseClientProvider";
 import ClerkProviderWrapper from "../components/ClerkProviderWrapper";
 import { CartProvider } from "@/contexts/CartContext";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { Toaster } from "sonner";
 import GoogleReCaptchaV3Provider from "../components/GoogleReCaptchaV3Provider";
 import ConditionalWhatsAppIcon from "../components/ConditionalWhatsAppIcon";
 import QueryProvider from "../components/QueryProvider";
@@ -172,7 +171,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
               <QueryProvider>
                 <CartProvider>
                   {children}
-                  <ToastContainer position="top-right" />
+                  <Toaster richColors closeButton position="top-right" />
                   <ConditionalWhatsAppIcon />
                 </CartProvider>
               </QueryProvider>

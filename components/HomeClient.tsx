@@ -12,6 +12,7 @@ import KnivesItems from "@/components/KnivesItems";
 import FeaturedItems from "@/components/FeaturedItems";
 import ForYouItems from "@/components/ForYouItems";
 import Newsletter from "@/components/Newsletter";
+import ArtisanCraftReel from "@/components/ArtisanCraftReel";
 
 const NewHeroSection = () => {
   return (
@@ -179,53 +180,8 @@ function HomeContent() {
             <KnivesItems />
             <FeaturedItems />
 
-            <section className="bg-[#F27F0C] p-6 py-12 lg:py-20">
-                <div className="container mx-auto">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center py-16">
-                        <div className="order-2 lg:order-1">
-                            <h3 className="other-heading font-medium text-heading-lg text-white mb-6">
-                                Wazir Cutlery – Forged in Tradition, Sharpened for the Future
-                            </h3>
-                            <p className="font-body font-normal text-base lg:text-lg text-white leading-relaxed">
-                                Wazir Cutlery – Forged in Tradition, Sharpened for the Future
-                                Nestled in the heart of Wazirabad, the historic city known as the “City of Cutlery”,
-                                Wazir Cutlery has been crafting excellence for over 5 years. Our journey began with a simple mission — to
-                                bring Pakistan’s rich cutlery heritage to the global stage through uncompromising quality,
-                                timeless design, and passionate craftsmanship.
-                            </p>
-                            <p className="font-normal text-base lg:text-lg text-white leading-relaxed">
-                                At Wazir Cutlery, every blade tells a story. From professional chef knives and elegant dining sets
-                                to exquisite collector swords, we fuse traditional forging techniques with modern aesthetics.
-                                Our artisans, trained in generations-old craftsmanship, forge each product with precision, strength,
-                                and a commitment to beauty.
-                            </p>
-                            <p className="font-normal text-base lg:text-lg text-white leading-relaxed">
-                                What started in a small workshop in Wazirabad is now a name recognized by chefs, collectors,
-                                and cutlery connoisseurs across borders. Whether you’re slicing in the kitchen, gifting elegance,
-                                or adding to your collection, Wazir Cutlery delivers a cut above the rest.
-                            </p>
-                            <strong className="text-base lg:text-lg text-white leading-relaxed">Because here, it’s not just metal — it’s mastery in your hands.</strong>
-                        </div>
-
-                        <div className="order-1 lg:order-2 h-full">
-                            <div className="relative h-full">
-                                <Image
-                                    src="/about-section-img.jpg"
-                                    width={256}
-                                    height={256}
-                                    alt="Wazir Cutlery Artisan Workshop in Wazirabad"
-                                    className="w-full h-full rounded-2xl"
-                                />
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                    <button className="bg-[#D6AF66] w-28 h-28 rounded-full flex items-center justify-center">
-                                        <Image src="/play-icon.svg" width={56} height={56} alt="Play" className="w-8 h-8 text-white" />
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+            {/* Artisanal Damascus Bladesmithing Video Showcase */}
+            <ArtisanCraftReel />
 
             <TestimonialScroller />
             <ForYouItems />

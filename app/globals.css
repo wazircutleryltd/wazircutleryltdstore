@@ -26,18 +26,30 @@
   --variable-collection-product-card-section-background: rgba(237, 230, 218, 1);
   --variable-collection-sub-text-descriptions-lables: rgba(124, 124, 124, 1);
   --variable-collection-success-states: rgba(168, 155, 109, 1);
+  --gold-primary: #D6AF66;
+  --gold-hover: #C59E55;
+  --gold-dark: #A88238;
+  --gold-light: #F3E5AB;
+  --charcoal-deep: #0E0E0E;
+  --forge-slate: #1A1D20;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-gold: var(--gold-primary);
+  --color-gold-hover: var(--gold-hover);
+  --color-gold-dark: var(--gold-dark);
+  --color-gold-light: var(--gold-light);
+  --color-charcoal: var(--charcoal-deep);
+  --color-forge: var(--forge-slate);
   --font-cabin: var(--font-cabin);
   --font-outfit: var(--font-outfit);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #F27F0C;
+    --background: #0E0E0E;
     --foreground: #ededed;
   }
 }

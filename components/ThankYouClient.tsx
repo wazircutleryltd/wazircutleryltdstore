@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import ConditionalLayout from '@/components/ConditionalLayout';
 import { useCart } from '@/contexts/CartContext';
+import confetti from 'canvas-confetti';
 
 const ThankYouClient = () => {
     return (
@@ -25,6 +26,17 @@ const ThankYouContent = () => {
                 setOrderData(JSON.parse(storedOrderData));
                 clearCart();
                 sessionStorage.removeItem('checkout-data');
+                // Trigger celebratory gold and metallic confetti
+                try {
+                    confetti({
+                        particleCount: 90,
+                        spread: 70,
+                        origin: { y: 0.55 },
+                        colors: ['#D6AF66', '#F27F0C', '#E5E7EB', '#0E0E0E'],
+                    });
+                } catch {
+                    // Ignore if window context unavailable
+                }
             } catch (e) {
                 console.error('Failed to parse order confirmation:', e);
                 router.push('/');
