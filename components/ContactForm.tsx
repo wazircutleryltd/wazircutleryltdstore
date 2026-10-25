@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import { MessageSquare, Send, Phone, Mail, MapPin, CheckCircle2, ShieldCheck, Sparkles, Building2 } from "lucide-react";
+import { FiArrowUpRight } from "react-icons/fi";
 import ReCAPTCHA from "react-google-recaptcha";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -155,7 +156,10 @@ export default function ContactForm() {
                   <div className="text-[11px] text-neutral-400 font-mono">+92 308 0601995</div>
                 </div>
               </div>
-              <span className="text-[10px] font-bold px-2.5 py-1 rounded-md bg-[#25D366]/20 text-[#25D366]">Chat ↗</span>
+              <span className="text-[10px] font-bold px-2.5 py-1 rounded-md bg-[#25D366]/20 text-[#25D366] inline-flex items-center gap-0.5">
+                <span>Chat</span>
+                <FiArrowUpRight className="h-3 w-3" />
+              </span>
             </a>
 
             <a
@@ -173,7 +177,10 @@ export default function ContactForm() {
                   <div className="text-[11px] text-neutral-400 font-mono">+92 312 6209302</div>
                 </div>
               </div>
-              <span className="text-[10px] font-bold px-2.5 py-1 rounded-md bg-[#25D366]/20 text-[#25D366]">Chat ↗</span>
+              <span className="text-[10px] font-bold px-2.5 py-1 rounded-md bg-[#25D366]/20 text-[#25D366] inline-flex items-center gap-0.5">
+                <span>Chat</span>
+                <FiArrowUpRight className="h-3 w-3" />
+              </span>
             </a>
           </div>
         </div>

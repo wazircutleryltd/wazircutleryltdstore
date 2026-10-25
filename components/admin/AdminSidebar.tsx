@@ -16,6 +16,7 @@ import {
   Upload,
   Mail
 } from "lucide-react";
+import { FiArrowUpRight } from "react-icons/fi";
 
 const navigation = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
@@ -89,7 +90,7 @@ export default function AdminSidebar() {
                 <Home className="mr-2.5 h-4 w-4 text-neutral-500 group-hover:text-[#D6AF66] transition-colors" />
                 <span>Live Storefront</span>
               </div>
-              <span className="text-[10px] text-neutral-500 group-hover:text-[#D6AF66] font-mono">↗</span>
+              <FiArrowUpRight className="h-3.5 w-3.5 text-neutral-500 group-hover:text-[#D6AF66] transition-colors" />
             </Link>
           </div>
         </div>

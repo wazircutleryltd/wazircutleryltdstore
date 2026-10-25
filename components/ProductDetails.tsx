@@ -1,8 +1,21 @@
 'use client';
+
 import Image from 'next/image';
 import React, { useState, useEffect } from 'react';
 import { useCart } from '../contexts/CartContext';
 import { toast } from 'sonner';
+import { 
+    FaStar, 
+    FaTruckFast, 
+    FaShieldHalved, 
+    FaWhatsapp, 
+    FaFacebookF, 
+    FaXTwitter, 
+    FaPinterestP, 
+    FaLink, 
+    FaShareNodes 
+} from 'react-icons/fa6';
+import { HiSparkles } from 'react-icons/hi2';
 
 const ProductDetails = ({ product }: { product: any }) => {
     const { name, short_description, description, price, main_image, images, category, tags, delivery_date, rating } = product;
@@ -10,10 +23,17 @@ const ProductDetails = ({ product }: { product: any }) => {
 
     const [activeImage, setActiveImage] = useState(main_image);
     const [quantity, setQuantity] = useState(1);
+    const [canNativeShare, setCanNativeShare] = useState(false);
 
     useEffect(() => {
         setActiveImage(main_image);
     }, [main_image]);
+
+    useEffect(() => {
+        if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
+            setCanNativeShare(true);
+        }
+    }, []);
 
     const allImages = [main_image, ...(images || [])].filter(Boolean);
     const uniqueImages = Array.from(new Set(allImages));
@@ -26,20 +46,53 @@ const ProductDetails = ({ product }: { product: any }) => {
         });
     };
 
-    const socialLinks: Record<string, string> = {
-        tiktok: 'https://www.tiktok.com/@wazircutlery?_t=ZP-8zmHjcDQuLe&_r=1',
-        youtube: 'https://youtube.com/@wazircutleryltd?si=1_jqdKkNlecHfcFz',
-        facebook: 'https://www.facebook.com/share/16z6hKB6KL/',
-        instagram: 'https://www.instagram.com/wazircutlery?utm_source=qr&igsh=am4yc3Z2ZDV1bTM4'
-    };
+    const handleSocialShare = (platform: 'whatsapp' | 'facebook' | 'twitter' | 'pinterest' | 'copy' | 'native') => {
+        const shareUrl = typeof window !== 'undefined' ? window.location.href : `https://wazircutlery.com/product/${product.slug || ''}`;
+        const shareTitle = `${name} | Handcrafted by Wazir Cutlery`;
+        const shareSummary = short_description || `Discover ${name}, authentic handcrafted Damascus cutlery and collector blades forged in Wazirabad.`;
 
-    const handleShare = (platform: string) => {
-        const url = socialLinks[platform];
-        if (url) {
-            window.open(url, '_blank');
+        if (platform === 'copy') {
+            if (navigator?.clipboard) {
+                navigator.clipboard.writeText(shareUrl).then(() => {
+                    toast.success('Piece link copied to clipboard!');
+                }).catch(() => {
+                    toast.info(shareUrl);
+                });
+            }
+            return;
+        }
+
+        if (platform === 'native') {
+            if (navigator?.share) {
+                navigator.share({
+                    title: shareTitle,
+                    text: shareSummary,
+                    url: shareUrl,
+                }).catch(() => {});
+                return;
+            }
+        }
+
+        let targetUrl = '';
+        switch (platform) {
+            case 'whatsapp':
+                targetUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(`${shareTitle}\n${shareUrl}`)}`;
+                break;
+            case 'facebook':
+                targetUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+                break;
+            case 'twitter':
+                targetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareTitle)}&url=${encodeURIComponent(shareUrl)}`;
+                break;
+            case 'pinterest':
+                targetUrl = `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(shareUrl)}&media=${encodeURIComponent(activeImage || '')}&description=${encodeURIComponent(shareTitle)}`;
+                break;
+        }
+
+        if (targetUrl) {
+            window.open(targetUrl, '_blank', 'noopener,noreferrer,width=600,height=500');
         }
     };
-
 
     return (
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
@@ -102,9 +155,12 @@ const ProductDetails = ({ product }: { product: any }) => {
 
                     {/* Ratings & Stock */}
                     <div className="flex items-center gap-3 mb-4">
-                        <div className="flex items-center text-amber-500" role="img" aria-label={`${rating || 5} star rating`}>
+                        <div className="flex items-center text-amber-500 gap-0.5" role="img" aria-label={`${rating || 5} star rating`}>
                             {Array.from({ length: 5 }).map((_, i) => (
-                                <span key={i} className={i < Math.floor(rating || 5) ? "text-amber-400" : "text-neutral-300"}>★</span>
+                                <FaStar 
+                                    key={i} 
+                                    className={`h-3.5 w-3.5 ${i < Math.floor(rating || 5) ? "text-amber-400 fill-amber-400" : "text-neutral-300 fill-neutral-300"}`} 
+                                />
                             ))}
                             <span className="text-xs text-neutral-500 font-mono ml-1.5">
                                 ({(rating || 5.0).toFixed(1)})
@@ -155,19 +211,20 @@ const ProductDetails = ({ product }: { product: any }) => {
                             </button>
                         </div>
 
-                        <p className="text-xs text-neutral-500 font-medium">
-                            🚚 {product.delivery_date || 'Estimate delivery in 2-4 working days via tracked courier.'}
+                        <p className="text-xs text-neutral-600 font-medium flex items-center gap-2">
+                            <FaTruckFast className="h-4 w-4 text-[#D6AF66] flex-shrink-0" />
+                            <span>{product.delivery_date || 'Estimate delivery in 2-4 working days via tracked courier.'}</span>
                         </p>
                     </div>
 
                     {/* Trust Signals */}
                     <div className="grid grid-cols-2 gap-3 py-4 px-4 bg-neutral-50/80 rounded-xl border border-neutral-200/60 mb-6">
                         <div className="flex items-center gap-2">
-                            <span className="text-sm">🛡️</span>
+                            <FaShieldHalved className="h-4 w-4 text-[#D6AF66]" />
                             <span className="text-xs font-semibold text-neutral-800">100% Hand-Forged Steel</span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <span className="text-sm">✨</span>
+                            <HiSparkles className="h-4 w-4 text-[#D6AF66]" />
                             <span className="text-xs font-semibold text-neutral-800">Master Crafter Verified</span>
                         </div>
                     </div>
@@ -186,22 +243,73 @@ const ProductDetails = ({ product }: { product: any }) => {
                         )}
                     </div>
 
-                    {/* Share Buttons */}
-                    <div className="flex items-center gap-3">
-                        <span className="text-xs font-semibold text-neutral-700">Share this piece:</span>
-                        <div className="flex gap-2">
-                            <button onClick={() => handleShare('facebook')} className="w-8 h-8 rounded-full bg-white border border-neutral-200 flex items-center justify-center transition-all hover:bg-neutral-100 cursor-pointer shadow-2xs" aria-label="Share on Facebook">
-                                <Image src="/facebook-logo.svg" width={16} height={16} className="w-4 h-4 object-contain" alt="Facebook" />
+                    {/* 1-Click Social Media Share Section */}
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-3 pt-2">
+                        <span className="text-xs font-bold text-neutral-700 tracking-wide uppercase font-geist">
+                            Share Piece:
+                        </span>
+                        <div className="flex items-center gap-2 flex-wrap">
+                            {/* WhatsApp Share */}
+                            <button 
+                                onClick={() => handleSocialShare('whatsapp')} 
+                                className="w-9 h-9 rounded-xl bg-white border border-neutral-200 hover:border-[#25D366] text-neutral-600 hover:text-[#25D366] hover:bg-[#25D366]/5 flex items-center justify-center transition-all cursor-pointer shadow-2xs group" 
+                                title="Share on WhatsApp"
+                                aria-label="Share on WhatsApp"
+                            >
+                                <FaWhatsapp className="h-4 w-4 transition-transform group-hover:scale-110" />
                             </button>
-                            <button onClick={() => handleShare('instagram')} className="w-8 h-8 rounded-full bg-white border border-neutral-200 flex items-center justify-center transition-all hover:bg-neutral-100 cursor-pointer shadow-2xs" aria-label="Share on Instagram">
-                                <Image src="/instagram-logo.svg" width={16} height={16} className="w-4 h-4 object-contain" alt="Instagram" />
+
+                            {/* Facebook Share */}
+                            <button 
+                                onClick={() => handleSocialShare('facebook')} 
+                                className="w-9 h-9 rounded-xl bg-white border border-neutral-200 hover:border-[#1877F2] text-neutral-600 hover:text-[#1877F2] hover:bg-[#1877F2]/5 flex items-center justify-center transition-all cursor-pointer shadow-2xs group" 
+                                title="Share on Facebook"
+                                aria-label="Share on Facebook"
+                            >
+                                <FaFacebookF className="h-3.5 w-3.5 transition-transform group-hover:scale-110" />
                             </button>
-                            <button onClick={() => handleShare('youtube')} className="w-8 h-8 rounded-full bg-white border border-neutral-200 flex items-center justify-center transition-all hover:bg-neutral-100 cursor-pointer shadow-2xs" aria-label="Share on YouTube">
-                                <Image src="/youtube.svg" width={16} height={16} className="w-4 h-4 object-contain" alt="YouTube" />
+
+                            {/* X / Twitter Share */}
+                            <button 
+                                onClick={() => handleSocialShare('twitter')} 
+                                className="w-9 h-9 rounded-xl bg-white border border-neutral-200 hover:border-black text-neutral-600 hover:text-black hover:bg-neutral-100 flex items-center justify-center transition-all cursor-pointer shadow-2xs group" 
+                                title="Share on X (Twitter)"
+                                aria-label="Share on X"
+                            >
+                                <FaXTwitter className="h-3.5 w-3.5 transition-transform group-hover:scale-110" />
                             </button>
-                            <button onClick={() => handleShare('tiktok')} className="w-8 h-8 rounded-full bg-white border border-neutral-200 flex items-center justify-center transition-all hover:bg-neutral-100 cursor-pointer shadow-2xs" aria-label="Share on TikTok">
-                                <Image src="/tiktok.svg" width={16} height={16} className="w-4 h-4 object-contain" alt="TikTok" />
+
+                            {/* Pinterest Share */}
+                            <button 
+                                onClick={() => handleSocialShare('pinterest')} 
+                                className="w-9 h-9 rounded-xl bg-white border border-neutral-200 hover:border-[#E60023] text-neutral-600 hover:text-[#E60023] hover:bg-[#E60023]/5 flex items-center justify-center transition-all cursor-pointer shadow-2xs group" 
+                                title="Pin on Pinterest"
+                                aria-label="Share on Pinterest"
+                            >
+                                <FaPinterestP className="h-3.5 w-3.5 transition-transform group-hover:scale-110" />
                             </button>
+
+                            {/* Copy Direct Link */}
+                            <button 
+                                onClick={() => handleSocialShare('copy')} 
+                                className="w-9 h-9 rounded-xl bg-white border border-neutral-200 hover:border-[#D6AF66] text-neutral-600 hover:text-[#B89249] hover:bg-[#D6AF66]/10 flex items-center justify-center transition-all cursor-pointer shadow-2xs group" 
+                                title="Copy Piece Link"
+                                aria-label="Copy Direct Link"
+                            >
+                                <FaLink className="h-3.5 w-3.5 transition-transform group-hover:scale-110" />
+                            </button>
+
+                            {/* Native Mobile Share Sheet if available */}
+                            {canNativeShare && (
+                                <button 
+                                    onClick={() => handleSocialShare('native')} 
+                                    className="px-3 h-9 rounded-xl bg-neutral-900 hover:bg-[#D6AF66] text-white hover:text-neutral-900 flex items-center gap-1.5 text-xs font-bold transition-all cursor-pointer shadow-2xs" 
+                                    title="More Share Options"
+                                >
+                                    <FaShareNodes className="h-3.5 w-3.5" />
+                                    <span>Share</span>
+                                </button>
+                            )}
                         </div>
                     </div>
                 </article>

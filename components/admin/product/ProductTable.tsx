@@ -11,6 +11,7 @@ import {
 } from "@tanstack/react-table";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Edit, Trash2, Eye, EyeOff, Star, TrendingUp, Award, ArrowUpDown, ArrowUp, ArrowDown, Copy, ExternalLink } from "lucide-react";
+import { FaPen } from "react-icons/fa6";
 import { LoadingState, ErrorState, NoDataState } from "../../common/StateComponents";
 import type { Product, Category } from "@/types";
 
@@ -165,7 +166,7 @@ export default function ProductTable({
             title={onQuickUpdate ? "Click to quick edit price" : undefined}
           >
             <span>${(Number(product.price) || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-            {onQuickUpdate && <span className="text-[10px] text-gray-300 opacity-0 group-hover/price:opacity-100 transition-opacity">✎</span>}
+            {onQuickUpdate && <FaPen className="h-2.5 w-2.5 text-gray-300 opacity-0 group-hover/price:opacity-100 transition-opacity" />}
           </div>
         );
       },
@@ -222,7 +223,7 @@ export default function ProductTable({
             {stock < 10 && (
               <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
             )}
-            {onQuickUpdate && <span className="text-[10px] text-gray-300 opacity-0 group-hover/stock:opacity-100 transition-opacity">✎</span>}
+            {onQuickUpdate && <FaPen className="h-2.5 w-2.5 text-gray-300 opacity-0 group-hover/stock:opacity-100 transition-opacity" />}
           </div>
         );
       },
@@ -261,7 +262,7 @@ export default function ProductTable({
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2.5 bg-white border border-gray-100 rounded-xl shadow-sm text-gray-400 hover:text-[#D6AF66] hover:border-[#D6AF66]/30 transition-all active:scale-95 inline-flex items-center justify-center"
-                title="View on Live Storefront ↗"
+                title="View on Live Storefront"
               >
                 <ExternalLink className="h-4 w-4" />
               </a>

@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { Label } from "../../ui/label";
 import { Button } from "../../ui/button";
 import { Upload, X, Trash2, Plus } from "lucide-react";
+import { FaBolt, FaLightbulb } from "react-icons/fa6";
 import { AnimatePresence } from "framer-motion";
 import ImageCropper from "../ImageCropper";
 import { uploadImage } from "@/lib/storage";
@@ -269,8 +270,9 @@ export default function ProductMediaManager({
             Gallery Collection ({additionalImages?.length || 0})
           </Label>
           {isUploading && (
-            <span className="text-xs font-bold text-[#D6AF66] animate-pulse">
-              ⚡ Optimizing & uploading...
+            <span className="text-xs font-bold text-[#D6AF66] animate-pulse inline-flex items-center gap-1">
+              <FaBolt className="h-3 w-3" />
+              <span>Optimizing & uploading...</span>
             </span>
           )}
         </div>
@@ -337,8 +339,9 @@ export default function ProductMediaManager({
           }}
           className="hidden"
         />
-        <p className="mt-2.5 text-[11px] text-gray-400">
-          💡 Drag & drop multiple photos directly here. They are automatically compressed to WebP and uploaded to the CDN.
+        <p className="mt-2.5 text-[11px] text-gray-400 flex items-center gap-1.5">
+          <FaLightbulb className="h-3 w-3 text-amber-500/80 flex-shrink-0" />
+          <span>Drag & drop multiple photos directly here. They are automatically compressed to WebP and uploaded to the CDN.</span>
         </p>
       </div>
 

@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { FiArrowUpRight } from "react-icons/fi";
 import { supabase } from "@/lib/supabase";
 
 export default function TrackOrderClient() {
@@ -219,7 +220,9 @@ export default function TrackOrderClient() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 text-xs font-bold text-[#25D366] hover:underline"
             >
-              <MessageSquare className="h-3.5 w-3.5" /> Inquire with Master Artisan on WhatsApp ↗
+              <MessageSquare className="h-3.5 w-3.5" />
+              <span>Inquire with Master Artisan on WhatsApp</span>
+              <FiArrowUpRight className="h-3 w-3" />
             </a>
           </div>
         </div>

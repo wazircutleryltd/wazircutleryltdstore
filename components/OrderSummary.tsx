@@ -1,5 +1,6 @@
 'use client';
 import { useCart } from '../contexts/CartContext';
+import { FaGift } from 'react-icons/fa6';
 
 const OrderSummary = () => {
   const { 
@@ -38,8 +39,8 @@ const OrderSummary = () => {
         </div>
         
         {deliveryFee === 0 ? (
-          <div className="text-sm text-green-600 bg-green-50 p-2 rounded-lg border border-green-100 flex items-center gap-2">
-            <span className="text-lg">🎉</span>
+          <div className="text-sm text-green-600 bg-green-50 p-2.5 rounded-lg border border-green-100 flex items-center gap-2">
+            <FaGift className="h-4 w-4 text-emerald-600 flex-shrink-0" />
             <span>You&apos;ve qualified for free delivery!</span>
           </div>
         ) : (

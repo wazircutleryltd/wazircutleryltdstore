@@ -7,7 +7,7 @@ const RECAPTCHA_SCORE_THRESHOLD = 0.5;
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { recaptchaToken, ...formData } = body;
+    const { recaptchaToken, inquiry_type, ...formData } = body;
 
     // 1. Resilient reCAPTCHA Verification (if token provided)
     const recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY;
@@ -29,10 +29,25 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, message: "Full name, email, and message are required." }, { status: 400 });
     }
 
-    // 2. Prepare and Insert into Supabase
+    // 2. Prepare only valid Supabase columns
+    const formattedMessage = inquiry_type
+      ? `[Inquiry Type: ${inquiry_type}]\n\n${formData.message.trim()}`
+      : formData.message.trim();
+
     const submissionData = {
-      ...formData,
-      product_quantity: formData.product_quantity ? parseInt(formData.product_quantity, 10) : undefined,
+      full_name: formData.full_name.trim(),
+      email: formData.email.trim(),
+      phone_number: formData.phone_number?.trim() || null,
+      whatsapp_number: formData.whatsapp_number?.trim() || null,
+      company_name: formData.company_name?.trim() || null,
+      company_email: formData.company_email?.trim() || null,
+      country: formData.country?.trim() || null,
+      location: formData.location?.trim() || null,
+      city: formData.city?.trim() || null,
+      product_quantity: formData.product_quantity ? parseInt(formData.product_quantity, 10) : null,
+      shipment_address: formData.shipment_address?.trim() || null,
+      emergency_contact: formData.emergency_contact?.trim() || null,
+      message: formattedMessage,
       status: 'new',
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()

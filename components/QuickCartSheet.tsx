@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/sheet";
 import { useCart } from "@/contexts/CartContext";
 import { Trash2, ShoppingBag, ArrowRight, Plus, Minus } from "lucide-react";
+import { FaGift } from "react-icons/fa6";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface QuickCartSheetProps {
@@ -66,7 +67,10 @@ export default function QuickCartSheet({ open, onOpenChange }: QuickCartSheetPro
                   Add <span className="text-[#8C6D23] font-bold">${remainingForFreeDelivery.toFixed(2)}</span> more for <span className="font-semibold text-neutral-900">FREE delivery</span>
                 </span>
               ) : (
-                <span className="text-emerald-700 font-semibold">🎉 You unlocked FREE delivery!</span>
+                <span className="text-emerald-700 font-semibold inline-flex items-center gap-1.5">
+                  <FaGift className="h-3.5 w-3.5 text-emerald-600" />
+                  <span>You unlocked FREE delivery!</span>
+                </span>
               )}
               <span>{Math.round(freeDeliveryProgress)}%</span>
             </div>

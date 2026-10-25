@@ -13,6 +13,7 @@ import FeaturedItems from "@/components/FeaturedItems";
 import ForYouItems from "@/components/ForYouItems";
 import Newsletter from "@/components/Newsletter";
 import ArtisanCraftReel from "@/components/ArtisanCraftReel";
+import { FaStar, FaArrowRight, FaHammer } from "react-icons/fa6";
 
 const NewHeroSection = () => {
   return (
@@ -58,7 +59,10 @@ const NewHeroSection = () => {
                             <div className="text-xs text-neutral-500 font-medium mt-0.5">Hand Crafted</div>
                         </div>
                         <div className="border-l border-neutral-200 pl-4">
-                            <div className="text-2xl lg:text-3xl font-bold text-neutral-900 font-[family-name:var(--font-outfit)]">5.0 ★</div>
+                            <div className="text-2xl lg:text-3xl font-bold text-neutral-900 font-[family-name:var(--font-outfit)] flex items-center">
+                                <span>5.0</span>
+                                <FaStar className="h-4 w-4 text-amber-500 fill-amber-500 ml-1.5" />
+                            </div>
                             <div className="text-xs text-neutral-500 font-medium mt-0.5">Artisan Rating</div>
                         </div>
                     </div>
@@ -170,8 +174,9 @@ function HomeContent() {
                                                 <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-[#D6AF66] transition-colors leading-tight capitalize">
                                                     {cat.name}
                                                 </h3>
-                                                <span className="text-xs text-neutral-300 font-medium mt-1 inline-flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                                                    View Collection &rarr;
+                                                <span className="text-xs text-neutral-300 font-medium mt-1 inline-flex items-center gap-1.5 group-hover:text-[#D6AF66] transition-colors">
+                                                    <span>View Collection</span>
+                                                    <FaArrowRight className="h-2.5 w-2.5 group-hover:translate-x-1 transition-transform" />
                                                 </span>
                                             </div>
                                         </div>
@@ -198,7 +203,25 @@ function HomeContent() {
             <TestimonialScroller />
             <ForYouItems />
             <Newsletter />
-            <ContactForm />
+
+            {/* Bespoke Commission & Artisan Contact Section */}
+            <section id="contact" className="py-16 md:py-24 bg-[#F9F9F6] border-t border-neutral-200/70">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+                    <div className="text-center max-w-2xl mx-auto space-y-3">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#D6AF66]/15 border border-[#D6AF66]/35 text-[#8C6D23] text-xs font-semibold tracking-wider uppercase">
+                            <FaHammer className="h-3.5 w-3.5 text-[#D6AF66]" />
+                            <span>Custom Bladesmithing & Wholesale</span>
+                        </div>
+                        <h2 className="text-3xl sm:text-4xl font-extrabold text-neutral-900 tracking-tight font-[family-name:var(--font-outfit)]">
+                            Commission a Masterpiece
+                        </h2>
+                        <p className="text-sm sm:text-base text-neutral-600 leading-relaxed font-[family-name:var(--font-cabin)]">
+                            Collaborate directly with our master bladesmiths in Wazirabad. From bespoke Damascus hunting knives to commercial B2B cutlery supply, our masters shape steel to your exact vision.
+                        </p>
+                    </div>
+                    <ContactForm />
+                </div>
+            </section>
         </>
     );
 }

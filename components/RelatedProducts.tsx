@@ -4,6 +4,7 @@ import Link from 'next/link';
 import React from 'react';
 import { useCart } from '../contexts/CartContext';
 import { toast } from 'sonner';
+import { FaStar } from 'react-icons/fa6';
 
 const RelatedProducts = ({ products = [] }: { products?: any[] }) => {
     const { addToCart } = useCart();
@@ -66,9 +67,13 @@ const RelatedProducts = ({ products = [] }: { products?: any[] }) => {
                             </h3>
 
                             <div className="flex items-center mb-3">
-                                <div className="flex star-rating">
-                                    {'★'.repeat(Math.floor(product.rating || 0))}
-                                    {'☆'.repeat(5 - Math.floor(product.rating || 0))}
+                                <div className="flex items-center gap-0.5">
+                                    {Array.from({ length: 5 }).map((_, i) => (
+                                        <FaStar 
+                                            key={i} 
+                                            className={`h-3 w-3 ${i < Math.floor(product.rating || 0) ? 'text-amber-400 fill-amber-400' : 'text-neutral-200 fill-neutral-200'}`} 
+                                        />
+                                    ))}
                                 </div>
                             </div>
 
