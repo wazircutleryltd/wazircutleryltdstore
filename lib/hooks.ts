@@ -1,2 +1,2 @@
-// Re-export all hooks from supabase-hooks
-export * from './supabase-hooks';
+// Re-export all modern TanStack Query hooks
+export * from './query-hooks';
