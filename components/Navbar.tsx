@@ -36,21 +36,21 @@ export default function Navbar({ isAdminLoggedIn }: { isAdminLoggedIn?: boolean 
         <>
             <header className={`sticky top-0 z-40 transition-all duration-300 ${
                 isScrolled 
-                    ? 'bg-[#F9F9F6]/90 backdrop-blur-md shadow-md border-b border-[#D6AF66]/20 py-2.5' 
-                    : 'bg-[#F9F9F6] border-b border-transparent py-4'
+                    ? 'bg-[#F9F9F6]/95 backdrop-blur-md shadow-sm border-b border-[#D6AF66]/25' 
+                    : 'bg-[#F9F9F6] border-b border-neutral-200/60'
             }`}>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center h-16">
                         {/* Logo */}
-                        <div className="flex items-center space-x-3">
-                            <Link href="/" className="transition-transform duration-200 hover:scale-[1.02]">
+                        <div className="flex items-center">
+                            <Link href="/" className="flex items-center py-1 transition-transform duration-200 hover:opacity-90">
                                 <Image 
                                     src="/logo.svg" 
                                     alt="Wazir Cutlery Logo" 
-                                    width={96} 
-                                    height={64} 
+                                    width={110} 
+                                    height={44} 
                                     priority
-                                    className="h-12 w-auto object-contain"
+                                    className="h-10 w-auto object-contain"
                                 />
                             </Link>
                         </div>

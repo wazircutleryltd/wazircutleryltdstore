@@ -16,58 +16,73 @@ import ArtisanCraftReel from "@/components/ArtisanCraftReel";
 
 const NewHeroSection = () => {
   return (
-    <section className="relative overflow-hidden">
-        <div className="p-6 lg:p-12">
-            <div className="container mx-auto px-8 py-8 relative z-10 shadow-xl bg-[#F2F3F5] rounded-3xl overflow-hidden">
-                <div className="grid lg:grid-cols-2 gap-12 items-center">
-                    {/* Left Content */}
-                    <div className="space-y-8">
-                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-medium leading-tight">
-                            Forged Blades of Power, Strength, and Timeless Legacy
-                        </h1>
+    <section className="relative overflow-hidden pt-8 pb-12 lg:pt-12 lg:pb-16 bg-gradient-to-b from-[#F5EFE6]/50 via-[#F9F9F6] to-[#F9F9F6]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+                {/* Left Content */}
+                <div className="lg:col-span-7 space-y-6">
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#D6AF66]/15 border border-[#D6AF66]/35 text-[#8C6D23] text-xs font-semibold tracking-wider uppercase">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#D6AF66] animate-pulse" />
+                        <span>Master Forge • Wazirabad, Pakistan</span>
+                    </div>
 
-                        <p className="text-lg leading-relaxed max-w-lg">
-                            Where ancient artistry meets modern mastery, shaping legends that endure.
-                        </p>
+                    <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-neutral-900 leading-[1.12]">
+                        Forged Blades of Power, Strength, and Timeless Legacy
+                    </h1>
 
-                        <Link href={"/categories"}>
-                            <button
-                                className="cta-button px-8 py-4 rounded-lg transition-colors duration-300 text-lg">
+                    <p className="text-base sm:text-lg text-neutral-600 max-w-xl leading-relaxed">
+                        Where centuries of traditional Pakistani bladesmithing meet modern metallurgy, shaping knives and swords destined to become heirlooms.
+                    </p>
+
+                    <div className="flex flex-wrap items-center gap-3 pt-2">
+                        <Link href="/product">
+                            <button className="cta-button">
                                 Explore Collection
                             </button>
                         </Link>
-
-                        {/* Stats */}
-                        <div className="grid grid-cols-3 gap-8 pt-8">
-                            <div className="text-center lg:text-left">
-                                <div className="text-3xl lg:text-4xl font-bold">283</div>
-                                <div className="text-sm mt-1">Total Customers</div>
-                            </div>
-                            <div className="text-center lg:text-left border-l border-gray-300 pl-8">
-                                <div className="text-3xl lg:text-4xl font-bold">270</div>
-                                <div className="text-sm mt-1">Happy Customers</div>
-                            </div>
-                            <div className="text-center lg:text-left border-l border-gray-300 pl-8">
-                                <div className="text-3xl lg:text-4xl font-bold">239</div>
-                                <div className="text-sm mt-1">Total Reviews</div>
-                            </div>
-                        </div>
+                        <Link href="/contact">
+                            <button className="inline-flex items-center justify-center py-2.5 px-6 rounded-lg text-sm font-semibold text-neutral-800 bg-white border border-neutral-300 hover:border-[#D6AF66] hover:text-[#8C6D23] transition-all duration-200 shadow-2xs">
+                                Custom Order
+                            </button>
+                        </Link>
                     </div>
 
-                    {/* Right Content - Image with overlays */}
-                    <div className="relative">
-                        <div className="relative">
-                            <div className="p-8 relative overflow-hidden">
-                                <Image 
-                                    src="/hero-section-image.svg" 
-                                    alt="Wazir Cutlery Forged Blades and Chef Knives" 
-                                    width={500} 
-                                    height={500} 
-                                    priority
-                                    style={{ width: 'auto', height: 'auto' }}
-                                    className="max-w-full"
-                                />
+                    {/* Compact Metrics */}
+                    <div className="grid grid-cols-3 gap-4 pt-6 border-t border-neutral-200/80 max-w-lg">
+                        <div>
+                            <div className="text-2xl lg:text-3xl font-bold text-neutral-900 font-[family-name:var(--font-outfit)]">280+</div>
+                            <div className="text-xs text-neutral-500 font-medium mt-0.5">Pieces Forged</div>
+                        </div>
+                        <div className="border-l border-neutral-200 pl-4">
+                            <div className="text-2xl lg:text-3xl font-bold text-neutral-900 font-[family-name:var(--font-outfit)]">100%</div>
+                            <div className="text-xs text-neutral-500 font-medium mt-0.5">Hand Crafted</div>
+                        </div>
+                        <div className="border-l border-neutral-200 pl-4">
+                            <div className="text-2xl lg:text-3xl font-bold text-neutral-900 font-[family-name:var(--font-outfit)]">5.0 ★</div>
+                            <div className="text-xs text-neutral-500 font-medium mt-0.5">Artisan Rating</div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Right Content - Framed Luxury Blade Display */}
+                <div className="lg:col-span-5 flex justify-center">
+                    <div className="relative w-full max-w-md aspect-square rounded-2xl bg-white border border-[#D6AF66]/25 shadow-xl p-6 flex items-center justify-center group overflow-hidden">
+                        <Image 
+                            src="/hero-section-image.svg" 
+                            alt="Wazir Cutlery Forged Blades and Chef Knives" 
+                            width={440} 
+                            height={440} 
+                            priority
+                            className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
+                        />
+                        <div className="absolute bottom-3 left-3 right-3 bg-neutral-950/85 backdrop-blur-md rounded-xl p-3 border border-white/10 text-white flex items-center justify-between shadow-lg">
+                            <div>
+                                <div className="text-xs font-semibold text-[#D6AF66]">Authentic Steel Craft</div>
+                                <div className="text-[11px] text-neutral-300">Custom heat-treated Damascus</div>
                             </div>
+                            <span className="text-[10px] font-mono uppercase bg-[#D6AF66]/25 text-[#D6AF66] border border-[#D6AF66]/40 px-2 py-0.5 rounded font-semibold">
+                                60+ HRC
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -94,65 +109,70 @@ function HomeContent() {
         <>
             <NewHeroSection />
             {/* Store Availability Section */}
-            <section className="py-16 lg:py-24">
+            <section className="py-10 md:py-14 border-y border-neutral-200/70 bg-white/70">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <h2 className=" text-primary text-center text-3xl lg:text-4xl font-bold mb-16">
-                        Available on
-                    </h2>
+                    <div className="text-center mb-6">
+                        <h2 className="text-xs font-bold uppercase tracking-widest text-neutral-500">
+                            Available Worldwide On Trusted Marketplaces
+                        </h2>
+                    </div>
 
-                    <p className="font-body font-normal text-base text-center lg:text-lg mb-16 leading-relaxed">
-                        Easily discover and access our products across trusted
-                        global platforms, ensuring convenience, reliability, and
-                        a seamless shopping experience wherever you are.
-                    </p>
-
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 items-center justify-items-center">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 items-center justify-items-center">
                         {/* Noon */}
-                        <div className="flex items-center justify-center w-full h-24 md:h-28 bg-[#F8F3F0] border border-[#E0E0E0] rounded-2xl shadow-md p-6 md:p-8 transition-all duration-300 hover:scale-105 hover:shadow-xl">
-                            <Image src="/noon-logo.svg" width={256} height={256}
-                                   alt="Noon" className="max-w-full max-h-full object-contain" />
+                        <div className="flex items-center justify-center w-full h-16 md:h-20 bg-neutral-50/80 border border-neutral-200/70 rounded-xl p-4 transition-all duration-300 hover:border-[#D6AF66] hover:bg-white hover:shadow-sm">
+                            <Image src="/noon-logo.svg" width={140} height={40}
+                                   alt="Noon" className="max-h-7 w-auto object-contain" />
                         </div>
                         {/* Amazon */}
-                        <div className="flex items-center justify-center w-full h-24 md:h-28 bg-[#F8F3F0] border border-[#E0E0E0] rounded-2xl shadow-md p-6 md:p-8 transition-all duration-300 hover:scale-105 hover:shadow-xl">
-                            <Image src="/amazon-logo.svg"  width={256} height={256}
-                                   alt="Amazon" className="max-w-full max-h-full object-contain" />
+                        <div className="flex items-center justify-center w-full h-16 md:h-20 bg-neutral-50/80 border border-neutral-200/70 rounded-xl p-4 transition-all duration-300 hover:border-[#D6AF66] hover:bg-white hover:shadow-sm">
+                            <Image src="/amazon-logo.svg"  width={140} height={40}
+                                   alt="Amazon" className="max-h-7 w-auto object-contain" />
                         </div>
                         {/* Etsy */}
-                        <div className="flex items-center justify-center w-full h-24 md:h-28 bg-[#F8F3F0] border border-[#E0E0E0] rounded-2xl shadow-md p-6 md:p-8 transition-all duration-300 hover:scale-105 hover:shadow-xl">
-                            <Image src="/etsy-logo.svg" width={256} height={256}
-                                   alt="Etsy" className="max-w-full max-h-full object-contain" />
+                        <div className="flex items-center justify-center w-full h-16 md:h-20 bg-neutral-50/80 border border-neutral-200/70 rounded-xl p-4 transition-all duration-300 hover:border-[#D6AF66] hover:bg-white hover:shadow-sm">
+                            <Image src="/etsy-logo.svg" width={140} height={40}
+                                   alt="Etsy" className="max-h-7 w-auto object-contain" />
                         </div>
                         {/* Daraz */}
-                        <div className="flex items-center justify-center w-full h-24 md:h-28 bg-[#F8F3F0] border border-[#E0E0E0] rounded-2xl shadow-md p-6 md:p-8 transition-all duration-300 hover:scale-105 hover:shadow-xl">
-                            <Image src="/daraz-logo.svg" width={256} height={256}
-                                   alt="Daraz Online Shopping Mall" className="max-w-full max-h-full object-contain" />
+                        <div className="flex items-center justify-center w-full h-16 md:h-20 bg-neutral-50/80 border border-neutral-200/70 rounded-xl p-4 transition-all duration-300 hover:border-[#D6AF66] hover:bg-white hover:shadow-sm">
+                            <Image src="/daraz-logo.svg" width={140} height={40}
+                                   alt="Daraz Online Shopping Mall" className="max-h-7 w-auto object-contain" />
                         </div>
                     </div>
                 </div>
             </section>
 
             {/* Categories Section */}
-            <section className="p-6 lg:p-12">
-                <div className="container mx-auto">
-                    <h2 className=" text-primary text-center text-3xl lg:text-4xl font-bold mb-16">
-                        Categories
-                    </h2>
+            <section className="py-12 md:py-16">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center mb-8 md:mb-10">
+                        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900">
+                            Featured Categories
+                        </h2>
+                        <p className="text-sm text-neutral-500 mt-1.5 max-w-md mx-auto">
+                            Explore handcrafted blades designed for culinary precision, bushcraft survival, and historic display.
+                        </p>
+                    </div>
+
                     {categoriesLoading ? (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 px-4">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
                             {[...Array(5)].map((_, i) => (
-                                <div key={i} className="w-full category-card-item animate-pulse">
-                                    <div className="category-card h-[300px] bg-gray-200 rounded-lg"></div>
-                                </div>
+                                <div key={i} className="w-full aspect-[4/5] bg-neutral-200/60 rounded-xl animate-pulse" />
                             ))}
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 px-4">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
                             {categories && categories.length > 0 ? categories.slice(0, 5).map((cat: any) => (
-                                <div key={cat.id} className="w-full category-card-item">
-                                    <Link href={`/product?categoryId=${cat.id}`} className="cursor-pointer">
-                                        <div className="category-card h-[300px]" style={{backgroundImage: `url('${cat.image_url}')`}}>
-                                            <div className="category-overlay w-full h-full flex items-center justify-center p-6">
-                                                <h3 className=" text-2xl lg:text-3xl font-bold text-white leading-tight text-center capitalize">{cat.name}</h3>
+                                <div key={cat.id} className="w-full">
+                                    <Link href={`/product?categoryId=${cat.id}`} className="group block">
+                                        <div className="category-card aspect-[4/5] rounded-xl overflow-hidden shadow-xs hover:shadow-lg transition-all duration-300" style={{backgroundImage: `url('${cat.image_url}')`}}>
+                                            <div className="category-overlay w-full h-full flex flex-col justify-end p-4">
+                                                <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-[#D6AF66] transition-colors leading-tight capitalize">
+                                                    {cat.name}
+                                                </h3>
+                                                <span className="text-xs text-neutral-300 font-medium mt-1 inline-flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                                                    View Collection &rarr;
+                                                </span>
                                             </div>
                                         </div>
                                     </Link>
@@ -164,14 +184,6 @@ function HomeContent() {
                             )}
                         </div>
                     )}
-                    {/* Explore Collection Button */}
-                    <div className="text-center mt-12">
-                        <Link href="/categories">
-                            <button className="bg-highlight text-white px-10 py-4 rounded-lg font-medium text-lg hover:opacity-90 transition-opacity shadow-lg cursor-pointer">
-                                Explore Collection
-                            </button>
-                        </Link>
-                    </div>
                 </div>
             </section>
 

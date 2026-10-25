@@ -57,36 +57,41 @@
 body {
   background: var(--Background, #F9F9F6);
   color: var(--primary-text-products-name, #2C2C2C);
-  font-family: Poppins, Arial, Helvetica, sans-serif;
+  font-family: var(--font-cabin), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Custom Navbar Styles */
 .glass-bg {
-    background: rgba(237, 230, 218, 0.25);
+  background: rgba(237, 230, 218, 0.25);
 }
 .backdrop-blur-navbar {
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
 }
 
 .cta-button {
-    background-color: var(--ct-as-buttons-highlights, #F27F0C);
-    color: white;
-    font-family: Outfit, sans-serif;
-    font-size: 18px;
-    font-weight: 500;
-    padding: 16px 32px;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-decoration: none;
-    display: inline-block;
+  background-color: var(--ct-as-buttons-highlights, #F27F0C);
+  color: white;
+  font-family: var(--font-outfit), sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 10px 24px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 .cta-button:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(214, 175, 102, 0.3);
-    background-color: #F17E0F;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(214, 175, 102, 0.35);
+  background-color: #E07307;
 }
 .cta-button:active {
   transform: translateY(0);
@@ -107,50 +112,34 @@ body {
   }
 }
 
-h1 {
-  color: var(--Main-Primary-Color, #0E0E0E);
-  font-family: Cabin, serif;
-  font-size: 52px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: normal;
-}
-
-h2 {
-  color: var(--Main-Primary-Color, #0E0E0E);
-  font-family: Cabin, serif;
-  font-size: 34px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-}
-.about-subtitle {
+@layer base {
+  h1 {
     color: var(--Main-Primary-Color, #0E0E0E);
-    text-align: center;
-    font-family: Cabin, serif;
-    font-size: 44px;
-    font-style: normal;
+    font-family: var(--font-outfit), sans-serif;
     font-weight: 700;
-    line-height: normal;
+    letter-spacing: -0.02em;
+  }
+
+  h2 {
+    color: var(--Main-Primary-Color, #0E0E0E);
+    font-family: var(--font-outfit), sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  h3, h4, h5, h6 {
+    color: var(--Main-Primary-Color, #0E0E0E);
+    font-family: var(--font-outfit), sans-serif;
+    font-weight: 600;
+  }
 }
 
-p, span, li, a, div, input, textarea, button {
-  /*color: var(--primary-text-products-name, #2C2C2C);*/
-  font-family: Poppins, Arial, Helvetica, sans-serif;
-  font-size: 18px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-}
-
-.navbar-link {
+.about-subtitle {
   color: var(--Main-Primary-Color, #0E0E0E);
-  font-family: Poppins, Arial, Helvetica, sans-serif;
-  font-size: 20px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-  transition: color 0.2s;
+  text-align: center;
+  font-family: var(--font-outfit), sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
 }
 
 .font-Cabin {
@@ -637,13 +626,13 @@ p, span, li, a, div, input, textarea, button {
 }
 
 .category-overlay {
-    background: rgba(0, 0, 0, 0.4);
+    background: linear-gradient(180deg, rgba(14, 14, 14, 0.15) 0%, rgba(14, 14, 14, 0.75) 100%);
     border-radius: 24px;
     transition: all 0.3s ease;
 }
 
 .category-card:hover .category-overlay {
-    background: rgba(0, 0, 0, 0.5);
+    background: linear-gradient(180deg, rgba(14, 14, 14, 0.25) 0%, rgba(14, 14, 14, 0.9) 100%);
 }
 
 .category-title {
@@ -1014,12 +1003,25 @@ p, span, li, a, div, input, textarea, button {
     background: #F27F0C;
 }
 .see-button {
-    padding: 14px 34px;
-    background: #F27F0C;
-    border-radius: 12px;
+    padding: 10px 24px;
+    background: #0E0E0E;
+    color: #ffffff;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: var(--font-outfit), sans-serif;
+    border: 1px solid rgba(214, 175, 102, 0.4);
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 .see-button:hover {
-    background-color: #f2860c;
+    background-color: #D6AF66;
+    color: #0E0E0E;
+    border-color: #D6AF66;
+    box-shadow: 0 4px 14px rgba(214, 175, 102, 0.35);
+    transform: translateY(-1px);
 }
 .best-sale-badge {
     color: #fff;
