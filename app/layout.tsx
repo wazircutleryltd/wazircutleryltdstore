@@ -108,6 +108,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       areaServed: 'Worldwide',
       availableLanguage: ['English', 'Urdu']
     },
+    priceRange: '$$',
+    knowsAbout: [
+      'Damascus Steel Metallurgy',
+      'Pattern Welding',
+      'Stag Horn Cutlery',
+      'High Carbon 1095 Steel',
+      '15N20 Nickel Alloy Steel',
+      'Chef Knives',
+      'Hunting Bowie Knives',
+      'Collector Swords',
+      'Rockwell Hardness Vacuum Heat Treatment',
+      'Full-Grain Leather Sheath Craftsmanship'
+    ],
     founder: [
       {
         '@type': 'Person',

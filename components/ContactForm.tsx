@@ -1,329 +1,372 @@
-'use client';
-import { useState, useRef } from 'react';
-import ReCAPTCHA from 'react-google-recaptcha';
+"use client";
+
+import { useState, useRef } from "react";
+import { MessageSquare, Send, Phone, Mail, MapPin, CheckCircle2, ShieldCheck, Sparkles, Building2 } from "lucide-react";
+import ReCAPTCHA from "react-google-recaptcha";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function ContactForm() {
-    const [formData, setFormData] = useState({
-        full_name: '',
-        email: '',
-        phone_number: '',
-        whatsapp_number: '',
-        company_name: '',
-        company_email: '',
-        country: '',
-        location: '',
-        city: '',
-        product_quantity: '',
-        shipment_address: '',
-        emergency_contact: '',
-        message: ''
-    });
+  const [formData, setFormData] = useState({
+    full_name: "",
+    email: "",
+    phone_number: "",
+    whatsapp_number: "",
+    company_name: "",
+    country: "",
+    city: "",
+    inquiry_type: "Custom Bespoke Commission",
+    product_quantity: "",
+    shipment_address: "",
+    message: ""
+  });
 
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [submitStatus, setSubmitStatus] = useState<string | null>(null);
-    const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
-    const recaptchaRef = useRef<any>(null);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+  const recaptchaRef = useRef<any>(null);
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
-    };
+  const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "";
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsSubmitting(true);
-        setSubmitStatus(null);
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
 
-        if (!recaptchaToken) {
-            setSubmitStatus('error');
-            setIsSubmitting(false);
-            return;
-        }
-
-        try {
-            const res = await fetch('/api/contact', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ ...formData, recaptchaToken }),
-            });
-
-            if (!res.ok) {
-                const errorData = await res.json();
-                console.error('Error submitting form:', errorData);
-                throw new Error(errorData.message || 'Failed to submit form');
-            }
-            
-            setSubmitStatus('success');
-            setFormData({
-                full_name: '',
-                email: '',
-                phone_number: '',
-                whatsapp_number: '',
-                company_name: '',
-                company_email: '',
-                country: '',
-                location: '',
-                city: '',
-                product_quantity: '',
-                shipment_address: '',
-                emergency_contact: '',
-                message: ''
-            });
-            if (recaptchaRef.current) {
-                recaptchaRef.current.reset();
-            }
-            setRecaptchaToken(null);
-        } catch (error) {
-            console.error('Error submitting form:', error);
-            setSubmitStatus('error');
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-
-    if (submitStatus === 'success') {
-        return (
-            <div className="p-6 lg:p-12">
-                <div className="container mx-auto">
-                    <div className="form-container">
-                        <div className="text-center py-12">
-                            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                                </svg>
-                            </div>
-                            <h2 className="text-2xl font-bold text-[#0E0E0E] mb-2">Thank You!</h2>
-                            <p className="text-[#2C2C2C] mb-6">
-                                Your order request has been submitted successfully. We&apos;ll get back to you soon!
-                            </p>
-                            <button
-                                onClick={() => setSubmitStatus(null)}
-                                className="bg-[#F27F0C] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#C49F5A] transition-colors duration-200"
-                            >
-                                Submit Another Request
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.full_name.trim() || !formData.email.trim() || !formData.message.trim()) {
+      toast.error("Please provide your full name, email address, and message.");
+      return;
     }
 
+    setIsSubmitting(true);
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          recaptchaToken: recaptchaToken || undefined
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || "Failed to dispatch message to the forge.");
+      }
+
+      setIsSubmitted(true);
+      toast.success("Inquiry Dispatched! Our master artisans will contact you shortly.");
+      
+      setFormData({
+        full_name: "",
+        email: "",
+        phone_number: "",
+        whatsapp_number: "",
+        company_name: "",
+        country: "",
+        city: "",
+        inquiry_type: "Custom Bespoke Commission",
+        product_quantity: "",
+        shipment_address: "",
+        message: ""
+      });
+
+      if (recaptchaRef.current) {
+        recaptchaRef.current.reset();
+      }
+      setRecaptchaToken(null);
+    } catch (error: any) {
+      console.error("Submission error:", error);
+      toast.error(error?.message || "There was an issue sending your message. Please reach us via WhatsApp.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (isSubmitted) {
     return (
-        <div className="p-6 lg:p-12">
-            <div className="container mx-auto">
-                <div className="form-container">
-                    <h2 className="form-title">Let&apos;s Talk</h2>
-
-                    {submitStatus === 'error' && (
-                        <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-                            There was an error submitting your form. Please complete the reCAPTCHA and try again.
-                        </div>
-                    )}
-
-                    <form onSubmit={handleSubmit}>
-                        <div className="form-row">
-                            <div className="form-group">
-                                <label htmlFor="full_name" className="form-label">Full Name</label>
-                                <input 
-                                    type="text" 
-                                    id="full_name"
-                                    name="full_name"
-                                    className="form-input" 
-                                    placeholder="Full Name" 
-                                    value={formData.full_name}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="email" className="form-label">Email</label>
-                                <input 
-                                    type="email" 
-                                    id="email" 
-                                    name="email" 
-                                    className="form-input" 
-                                    placeholder="Email" 
-                                    value={formData.email}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            </div>
-                        </div>
-
-                        <div className="form-row">
-                            <div className="form-group">
-                                <label htmlFor="phone_number" className="form-label">Phone Number</label>
-                                <input 
-                                    type="tel" 
-                                    id="phone_number"
-                                    name="phone_number"
-                                    className="form-input" 
-                                    placeholder="+92 Phone Number" 
-                                    value={formData.phone_number}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="whatsapp_number" className="form-label">Whatsapp Number</label>
-                                <input 
-                                    type="tel" 
-                                    id="whatsapp_number"
-                                    name="whatsapp_number"
-                                    className="form-input" 
-                                    placeholder="+92 Phone Number" 
-                                    value={formData.whatsapp_number}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="form-row">
-                            <div className="form-group">
-                                <label htmlFor="company_name" className="form-label">Company Name (Optional)</label>
-                                <input 
-                                    type="text" 
-                                    id="company_name" 
-                                    name="company_name" 
-                                    className="form-input" 
-                                    placeholder="Company Name (Optional)" 
-                                    value={formData.company_name}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="company_email" className="form-label">Company Email (Optional)</label>
-                                <input 
-                                    type="email" 
-                                    id="company_email" 
-                                    name="company_email" 
-                                    className="form-input" 
-                                    placeholder="Company Email (Optional)" 
-                                    value={formData.company_email}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="form-row">
-                            <div className="form-group">
-                                <label htmlFor="country" className="form-label">Country</label>
-                                <input 
-                                    type="text" 
-                                    id="country" 
-                                    name="country" 
-                                    className="form-input" 
-                                    placeholder="Country" 
-                                    value={formData.country}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="location" className="form-label">Location</label>
-                                <input 
-                                    type="text" 
-                                    id="location" 
-                                    name="location" 
-                                    className="form-input" 
-                                    placeholder="Location" 
-                                    value={formData.location}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="form-row">
-                            <div className="form-group">
-                                <label htmlFor="city" className="form-label">City</label>
-                                <input 
-                                    type="text" 
-                                    id="city" 
-                                    name="city" 
-                                    className="form-input" 
-                                    placeholder="City" 
-                                    value={formData.city}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="product_quantity" className="form-label">Product Quantity</label>
-                                <input 
-                                    type="number" 
-                                    id="product_quantity"
-                                    name="product_quantity"
-                                    className="form-input" 
-                                    placeholder="Product Quantity" 
-                                    value={formData.product_quantity}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="form-row">
-                            <div className="form-group">
-                                <label htmlFor="shipment_address" className="form-label">Shipment Address</label>
-                                <input 
-                                    type="text" 
-                                    id="shipment_address"
-                                    name="shipment_address"
-                                    className="form-input" 
-                                    placeholder="Enter full shipment address..." 
-                                    value={formData.shipment_address}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="emergency_contact" className="form-label">Emergency Contact Number</label>
-                                <input 
-                                    type="tel" 
-                                    id="emergency_contact"
-                                    name="emergency_contact"
-                                    className="form-input" 
-                                    placeholder="Enter emergency contact number" 
-                                    value={formData.emergency_contact}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="form-group">
-                            <label htmlFor="message" className="form-label">Message</label>
-                            <textarea 
-                                id="message" 
-                                name="message" 
-                                className="form-textarea" 
-                                placeholder="Write Message..."
-                                value={formData.message}
-                                onChange={handleInputChange}
-                            ></textarea>
-                        </div>
-
-                        <div className="mb-6">
-                            <ReCAPTCHA
-                                ref={recaptchaRef}
-                                sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
-                                onChange={(token: string | null) => setRecaptchaToken(token)}
-                                onExpired={() => setRecaptchaToken(null)}
-                            />
-                        </div>
-
-                        <div className="form-actions">
-                            <button 
-                                type="submit" 
-                                className="submit-button"
-                                disabled={isSubmitting}
-                            >
-                                {isSubmitting ? 'Submitting...' : 'Submit'}
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+      <div className="bg-[#0C0D0E] text-white p-8 sm:p-12 rounded-[2.5rem] border border-neutral-800 shadow-2xl max-w-2xl mx-auto text-center space-y-6">
+        <div className="w-20 h-20 rounded-full bg-[#D6AF66]/20 border border-[#D6AF66]/40 flex items-center justify-center mx-auto text-[#D6AF66]">
+          <CheckCircle2 className="h-10 w-10" />
         </div>
+        <div className="space-y-2">
+          <h3 className="text-3xl font-black font-geist text-white tracking-tight">Inquiry Received by the Forge</h3>
+          <p className="text-neutral-400 text-sm max-w-md mx-auto leading-relaxed">
+            Thank you for reaching out to Wazir Cutlery. Our master artisans in Wazirabad review bespoke commissions and inquiries daily and will respond within 24 business hours.
+          </p>
+        </div>
+        <div className="pt-4 flex flex-col sm:flex-row gap-4 justify-center">
+          <a
+            href="https://wa.me/+923080601995"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-6 py-3 rounded-xl bg-[#25D366] hover:bg-[#1EBE5D] text-neutral-950 font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-lg active:scale-95"
+          >
+            <MessageSquare className="h-4 w-4" /> Priority WhatsApp Chat
+          </a>
+          <Button
+            type="button"
+            onClick={() => setIsSubmitted(false)}
+            variant="outline"
+            className="h-11 px-6 rounded-xl border-neutral-800 text-neutral-300 hover:text-white hover:bg-neutral-900 font-bold text-xs"
+          >
+            Submit Another Request
+          </Button>
+        </div>
+      </div>
     );
+  }
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      {/* Left Column: Direct Artisan Contact Channels */}
+      <div className="lg:col-span-5 space-y-6">
+        {/* Direct WhatsApp Card */}
+        <div className="bg-[#0C0D0E] text-white p-7 rounded-[2rem] border border-neutral-800 shadow-xl space-y-6">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-[#D6AF66]/15 rounded-xl text-[#D6AF66]">
+              <Sparkles className="h-5 w-5" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold font-geist text-white">Direct Artisan Access</h3>
+              <p className="text-xs text-neutral-400">Immediate response via WhatsApp</p>
+            </div>
+          </div>
+
+          <div className="space-y-3.5">
+            <a
+              href="https://wa.me/+923080601995"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-4 bg-neutral-900/80 hover:bg-neutral-800 border border-neutral-800/80 rounded-2xl flex items-center justify-between group transition-all"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-[#25D366]/20 text-[#25D366] flex items-center justify-center">
+                  <Phone className="h-4 w-4" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-white group-hover:text-[#D6AF66] transition-colors">Hassan Mughal</div>
+                  <div className="text-[11px] text-neutral-400 font-mono">+92 308 0601995</div>
+                </div>
+              </div>
+              <span className="text-[10px] font-bold px-2.5 py-1 rounded-md bg-[#25D366]/20 text-[#25D366]">Chat ↗</span>
+            </a>
+
+            <a
+              href="https://wa.me/+923126209302"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-4 bg-neutral-900/80 hover:bg-neutral-800 border border-neutral-800/80 rounded-2xl flex items-center justify-between group transition-all"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-[#25D366]/20 text-[#25D366] flex items-center justify-center">
+                  <Phone className="h-4 w-4" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-white group-hover:text-[#D6AF66] transition-colors">Qamar Shahzad</div>
+                  <div className="text-[11px] text-neutral-400 font-mono">+92 312 6209302</div>
+                </div>
+              </div>
+              <span className="text-[10px] font-bold px-2.5 py-1 rounded-md bg-[#25D366]/20 text-[#25D366]">Chat ↗</span>
+            </a>
+          </div>
+        </div>
+
+        {/* Heritage Forge Location Card */}
+        <div className="bg-white p-7 rounded-[2rem] border border-neutral-100 shadow-sm space-y-5">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-neutral-100 rounded-xl text-neutral-700">
+              <MapPin className="h-5 w-5" />
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-neutral-900 font-geist">The Historic Wazirabad Forge</h4>
+              <p className="text-xs text-neutral-400">Centuries of bladecraft heritage</p>
+            </div>
+          </div>
+          <p className="text-xs text-neutral-600 leading-relaxed">
+            Near High Class Bakers, G.T. Road, Wazirabad, Punjab, Pakistan.<br />
+            Known globally as the cutlery capital of South Asia.
+          </p>
+          <div className="pt-2 border-t border-neutral-100 flex items-center gap-2 text-xs text-neutral-500">
+            <Mail className="h-4 w-4 text-[#D6AF66]" />
+            <span>Official Inquiries:</span>
+            <a href="mailto:info@wazircutlery.com" className="font-bold text-neutral-900 hover:text-[#D6AF66] transition-colors">
+              info@wazircutlery.com
+            </a>
+          </div>
+        </div>
+
+        {/* Quality Assurance Card */}
+        <div className="p-5 rounded-2xl bg-[#D6AF66]/10 border border-[#D6AF66]/20 flex items-start gap-3">
+          <ShieldCheck className="h-5 w-5 text-[#D6AF66] flex-shrink-0 mt-0.5" />
+          <p className="text-xs text-neutral-800 leading-relaxed">
+            Every custom blade is individually heat-treated, acid-etched, and inspected for Rockwell hardness prior to global shipment.
+          </p>
+        </div>
+      </div>
+
+      {/* Right Column: Contact & Custom Order Form */}
+      <div className="lg:col-span-7 bg-white p-7 sm:p-10 rounded-[2.5rem] border border-neutral-100 shadow-xl space-y-8">
+        <div>
+          <h2 className="text-2xl font-black text-neutral-900 font-geist tracking-tight">Commission a Piece or Inquire</h2>
+          <p className="text-xs text-neutral-400 mt-1">Fill out the details below and our team will get in touch with specification pricing.</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Inquiry Type Radio / Pill Selector */}
+          <div className="space-y-2">
+            <Label className="text-xs font-bold uppercase tracking-wider text-neutral-500 font-geist">Inquiry Type</Label>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {[
+                "Custom Bespoke Commission",
+                "B2B Wholesale / Bulk",
+                "Product Inquiry"
+              ].map((type) => (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => handleInputChange("inquiry_type", type)}
+                  className={`px-3 py-2.5 rounded-xl text-xs font-bold border transition-all text-left ${
+                    formData.inquiry_type === type
+                      ? "bg-neutral-900 border-neutral-900 text-white shadow-sm"
+                      : "bg-neutral-50 border-neutral-200 text-neutral-700 hover:border-neutral-300"
+                  }`}
+                >
+                  {type}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Full Name & Email */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label className="text-xs font-bold uppercase tracking-wider text-neutral-500 font-geist">Full Name *</Label>
+              <Input
+                required
+                value={formData.full_name}
+                onChange={(e) => handleInputChange("full_name", e.target.value)}
+                placeholder="Lord / Lady Artisan"
+                className="h-12 rounded-xl bg-neutral-50/50 border-neutral-200 focus:bg-white"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-xs font-bold uppercase tracking-wider text-neutral-500 font-geist">Email Address *</Label>
+              <Input
+                type="email"
+                required
+                value={formData.email}
+                onChange={(e) => handleInputChange("email", e.target.value)}
+                placeholder="artisan@example.com"
+                className="h-12 rounded-xl bg-neutral-50/50 border-neutral-200 focus:bg-white"
+              />
+            </div>
+          </div>
+
+          {/* Phone & WhatsApp */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label className="text-xs font-bold uppercase tracking-wider text-neutral-500 font-geist">Phone / Mobile</Label>
+              <Input
+                value={formData.phone_number}
+                onChange={(e) => handleInputChange("phone_number", e.target.value)}
+                placeholder="+1 (555) 000-0000"
+                className="h-12 rounded-xl bg-neutral-50/50 border-neutral-200 focus:bg-white"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-xs font-bold uppercase tracking-wider text-neutral-500 font-geist">WhatsApp Number</Label>
+              <Input
+                value={formData.whatsapp_number}
+                onChange={(e) => handleInputChange("whatsapp_number", e.target.value)}
+                placeholder="+1 (555) 000-0000"
+                className="h-12 rounded-xl bg-neutral-50/50 border-neutral-200 focus:bg-white"
+              />
+            </div>
+          </div>
+
+          {/* Company & Country */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="space-y-2 sm:col-span-1">
+              <Label className="text-xs font-bold uppercase tracking-wider text-neutral-500 font-geist">Company (Optional)</Label>
+              <Input
+                value={formData.company_name}
+                onChange={(e) => handleInputChange("company_name", e.target.value)}
+                placeholder="Retail / Business"
+                className="h-12 rounded-xl bg-neutral-50/50 border-neutral-200 focus:bg-white"
+              />
+            </div>
+            <div className="space-y-2 sm:col-span-1">
+              <Label className="text-xs font-bold uppercase tracking-wider text-neutral-500 font-geist">Country</Label>
+              <Input
+                value={formData.country}
+                onChange={(e) => handleInputChange("country", e.target.value)}
+                placeholder="United States, UK, etc."
+                className="h-12 rounded-xl bg-neutral-50/50 border-neutral-200 focus:bg-white"
+              />
+            </div>
+            <div className="space-y-2 sm:col-span-1">
+              <Label className="text-xs font-bold uppercase tracking-wider text-neutral-500 font-geist">Desired Quantity</Label>
+              <Input
+                type="number"
+                min="1"
+                value={formData.product_quantity}
+                onChange={(e) => handleInputChange("product_quantity", e.target.value)}
+                placeholder="e.g., 1 or 50"
+                className="h-12 rounded-xl bg-neutral-50/50 border-neutral-200 focus:bg-white tabular-nums"
+              />
+            </div>
+          </div>
+
+          {/* Detailed Message */}
+          <div className="space-y-2">
+            <Label className="text-xs font-bold uppercase tracking-wider text-neutral-500 font-geist">
+              Masterpiece Specifications / Message *
+            </Label>
+            <Textarea
+              required
+              rows={5}
+              value={formData.message}
+              onChange={(e) => handleInputChange("message", e.target.value)}
+              placeholder="Describe your desired blade steel (Damascus pattern, High Carbon), handle material (Stag Horn, Rosewood), blade length, or wholesale project details..."
+              className="rounded-xl bg-neutral-50/50 border-neutral-200 focus:bg-white text-sm"
+            />
+          </div>
+
+          {/* reCAPTCHA widget if key available */}
+          {siteKey && (
+            <div className="pt-1">
+              <ReCAPTCHA
+                ref={recaptchaRef}
+                sitekey={siteKey}
+                onChange={(token: string | null) => setRecaptchaToken(token)}
+                onExpired={() => setRecaptchaToken(null)}
+              />
+            </div>
+          )}
+
+          {/* Submit Action */}
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full h-13 rounded-2xl bg-[#D6AF66] hover:bg-[#C19A5A] text-neutral-950 font-bold text-sm tracking-wide shadow-xl shadow-[#D6AF66]/20 transition-all active:scale-[0.99] flex items-center justify-center gap-2"
+          >
+            {isSubmitting ? (
+              <span>Dispatching to Forge...</span>
+            ) : (
+              <>
+                <Send className="h-4 w-4" /> Send Inquiry to Master Artisans
+              </>
+            )}
+          </Button>
+        </form>
+      </div>
+    </div>
+  );
 }

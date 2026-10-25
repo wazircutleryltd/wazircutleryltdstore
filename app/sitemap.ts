@@ -4,19 +4,27 @@ import { supabase } from "@/lib/supabase";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://wazircutlery.com";
 
-  // Static routes
-  const routes: MetadataRoute.Sitemap = [
-    "",
-    "/about",
-    "/contact",
-    "/categories",
-    "/cart",
-    "/checkout",
-  ].map((route) => ({
-    url: `${baseUrl}${route}`,
+  // Core static and knowledge routes
+  const staticPaths: { path: string; priority: number; changeFrequency: "daily" | "weekly" | "monthly" }[] = [
+    { path: "", priority: 1.0, changeFrequency: "daily" },
+    { path: "/product", priority: 0.9, changeFrequency: "daily" },
+    { path: "/categories", priority: 0.9, changeFrequency: "weekly" },
+    { path: "/about", priority: 0.8, changeFrequency: "monthly" },
+    { path: "/knife-care", priority: 0.85, changeFrequency: "weekly" }, // Major SEO authority asset
+    { path: "/faq", priority: 0.85, changeFrequency: "weekly" },       // Major AEO question engine asset
+    { path: "/shipping", priority: 0.8, changeFrequency: "monthly" },
+    { path: "/returns", priority: 0.8, changeFrequency: "monthly" },
+    { path: "/contact", priority: 0.8, changeFrequency: "monthly" },
+    { path: "/track-order", priority: 0.7, changeFrequency: "monthly" },
+    { path: "/terms", priority: 0.5, changeFrequency: "monthly" },
+    { path: "/privacy", priority: 0.5, changeFrequency: "monthly" },
+  ];
+
+  const routes: MetadataRoute.Sitemap = staticPaths.map((item) => ({
+    url: `${baseUrl}${item.path}`,
     lastModified: new Date(),
-    changeFrequency: "daily" as const,
-    priority: route === "" ? 1 : 0.8,
+    changeFrequency: item.changeFrequency,
+    priority: item.priority,
   }));
 
   try {
@@ -30,7 +38,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${baseUrl}/product/${product.slug}`,
       lastModified: new Date(product.updated_at || new Date()),
       changeFrequency: "weekly" as const,
-      priority: 0.7,
+      priority: 0.8,
     }));
 
     return [...routes, ...productRoutes];

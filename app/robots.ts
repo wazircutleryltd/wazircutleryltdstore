@@ -9,8 +9,20 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/admin', '/api', '/login', '/checkout'],
       },
       {
-        // Specifically allow AI bots to crawl for Generative Search Experience (GEO)
-        userAgent: ['GPTBot', 'ChatGPT-User', 'Google-Extended', 'Claude-Web', 'CCBot', 'PerplexityBot'],
+        // Specifically welcome modern AI search & generative citation engines (AEO / LLMO / GEO)
+        userAgent: [
+          'GPTBot',
+          'ChatGPT-User',
+          'OAI-SearchBot',
+          'ClaudeBot',
+          'Claude-Web',
+          'PerplexityBot',
+          'Google-Extended',
+          'Applebot-Extended',
+          'CCBot',
+          'cohere-ai',
+          'Diffbot'
+        ],
         allow: '/',
         disallow: ['/admin', '/api', '/login'],
       }
