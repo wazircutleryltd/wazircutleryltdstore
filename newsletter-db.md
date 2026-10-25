@@ -41,4 +41,4 @@ USING (auth.role() = 'authenticated');
 ```
 
 ### Verification
-Once run, navigate to the **Newsletter** section in your Stag-Horn Admin Dashboard. The "Table not found" error should be resolved, and you will see your list of subscribers.
+Once run, navigate to the **Newsletter** section in your Wazir Cutlery Admin Dashboard. The "Table not found" error should be resolved, and you will see your list of subscribers.

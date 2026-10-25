@@ -57,11 +57,18 @@ export default function ContactPage() {
       name: 'Wazir Cutlery',
       url: 'https://wazircutlery.com',
       logo: 'https://wazircutlery.com/logo.svg',
-      contactPoint: {
-        '@type': 'ContactPoint',
-        telephone: '+923126209302',
-        contactType: 'customer service',
-      },
+      contactPoint: [
+        {
+          '@type': 'ContactPoint',
+          telephone: '+923160764052',
+          contactType: 'international client relations',
+        },
+        {
+          '@type': 'ContactPoint',
+          telephone: '+923126209302',
+          contactType: 'customer service',
+        },
+      ],
     },
   };
 

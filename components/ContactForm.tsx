@@ -104,7 +104,7 @@ export default function ContactForm() {
         </div>
         <div className="pt-4 flex flex-col sm:flex-row gap-4 justify-center">
           <a
-            href="https://wa.me/+923080601995"
+            href="https://wa.me/923160764052"
             target="_blank"
             rel="noopener noreferrer"
             className="px-6 py-3 rounded-xl bg-[#25D366] hover:bg-[#1EBE5D] text-neutral-950 font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-lg active:scale-95"
@@ -141,6 +141,28 @@ export default function ContactForm() {
           </div>
 
           <div className="space-y-3.5">
+            <a
+              href="https://wa.me/923160764052"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-4 bg-neutral-900/80 hover:bg-neutral-800 border border-[#D6AF66]/30 hover:border-[#D6AF66] rounded-2xl flex items-center justify-between group transition-all"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-[#25D366]/20 text-[#25D366] flex items-center justify-center">
+                  <Phone className="h-4 w-4" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-white group-hover:text-[#D6AF66] transition-colors">Tayyab Mughal</div>
+                  <div className="text-[10px] text-[#D6AF66] font-medium">International Client Relations Manager</div>
+                  <div className="text-[11px] text-neutral-400 font-mono">+92 316 0764052</div>
+                </div>
+              </div>
+              <span className="text-[10px] font-bold px-2.5 py-1 rounded-md bg-[#25D366]/20 text-[#25D366] inline-flex items-center gap-0.5">
+                <span>Chat</span>
+                <FiArrowUpRight className="h-3 w-3" />
+              </span>
+            </a>
+
             <a
               href="https://wa.me/+923080601995"
               target="_blank"

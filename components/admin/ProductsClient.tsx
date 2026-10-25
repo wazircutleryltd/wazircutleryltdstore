@@ -53,7 +53,7 @@ export default function ProductsClient() {
   };
 
   const handleCloneProduct = (product: Product) => {
-    const baseSku = product.sku ? product.sku.replace(/-COPY\d+$/, "") : "STAG";
+    const baseSku = product.sku ? product.sku.replace(/-COPY\d+$/, "") : "WC";
     const rand = Math.floor(1000 + Math.random() * 9000);
     const clonedProduct: Product = {
       ...product,

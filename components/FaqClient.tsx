@@ -178,7 +178,7 @@ export default function FaqClient() {
             </p>
             <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center">
               <a
-                href="https://wa.me/+923080601995"
+                href="https://wa.me/923160764052"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-6 py-3 rounded-xl bg-[#25D366] hover:bg-[#1EBE5D] text-neutral-950 font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-md active:scale-95"

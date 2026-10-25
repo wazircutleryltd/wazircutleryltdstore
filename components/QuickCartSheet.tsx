@@ -96,7 +96,7 @@ export default function QuickCartSheet({ open, onOpenChange }: QuickCartSheetPro
                 Your cart is empty
               </h3>
               <p className="text-sm text-neutral-500 mb-6 max-w-xs font-[family-name:var(--font-cabin)]">
-                Explore our handcrafted Damascus blades and stag horn masterworks.
+                Explore our handcrafted Damascus blades and Wazir Cutlery masterworks.
               </p>
               <button
                 onClick={() => {

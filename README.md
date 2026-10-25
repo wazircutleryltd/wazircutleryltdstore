@@ -185,6 +185,7 @@ bun run start
 Forged in the heart of **Wazirabad, Pakistan**—a centuries-old bladesmithing capital renowned throughout South Asia—**Wazir Cutlery Ltd** produces hand-forged 1095 and 15N20 high-carbon pattern-welded Damascus steel knives, ceremonial swords, hunting bowies, and chef cutlery featuring authentic ethically sourced stag horn antler handles.
 
 - **Primary Forge Contacts**:
+  - Tayyab Mughal (International Client Relations Manager): `+92 316 0764052` (WhatsApp: https://wa.me/923160764052)
   - Hassan Mughal: `+92 308 0601995` (WhatsApp)
   - Qamar Shahzad: `+92 312 6209302` (WhatsApp)
   - Official Inquiries: `info@wazircutlery.com`

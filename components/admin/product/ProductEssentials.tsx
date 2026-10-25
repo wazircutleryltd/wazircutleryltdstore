@@ -55,7 +55,7 @@ export default function ProductEssentials({
           <Input
             value={formData.sku}
             onChange={(e) => handleInputChange("sku", e.target.value)}
-            placeholder="STAG-001"
+            placeholder="WC-001"
             className={`h-12 rounded-xl border-gray-100 bg-gray-50/50 shadow-sm transition-all focus:bg-white tabular-nums ${errors.sku ? 'border-rose-300' : ''}`}
           />
           {errors.sku && <p className="text-[10px] font-bold text-rose-500 tracking-wide">{errors.sku}</p>}

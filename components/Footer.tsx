@@ -20,7 +20,7 @@ const Footer = () => {
               </div>
             </Link>
             <p className="text-xs text-[#A0A0A0] leading-relaxed max-w-xs font-geist">
-              Master artisans of Wazirabad, forging pattern-welded Damascus steel and authentic stag horn antler cutlery for discerning collectors worldwide.
+              Master artisans of Wazirabad, forging pattern-welded Damascus steel and handcrafted Wazir Cutlery for discerning collectors worldwide.
             </p>
           </div>
 
@@ -66,6 +66,12 @@ const Footer = () => {
             <div>
               <h3 className="footer-heading font-bold text-sm tracking-widest uppercase mb-5 text-white">Artisan Hotline</h3>
               <div className="space-y-3 text-xs mb-6">
+                <div>
+                  <p className="text-[#808080] text-[11px] mb-0.5">Tayyab Mughal (International Relations):</p>
+                  <Link href="https://wa.me/923160764052" target="_blank" className="text-[#C0C0C0] hover:text-[#D6AF66] font-mono transition-colors font-medium">
+                    +92 316 0764052 (WhatsApp)
+                  </Link>
+                </div>
                 <div>
                   <p className="text-[#808080] text-[11px] mb-0.5">Hassan Mughal:</p>
                   <Link href="https://wa.me/+923080601995" target="_blank" className="text-[#C0C0C0] hover:text-[#D6AF66] font-mono transition-colors">

@@ -109,9 +109,9 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
   const updateProductMutation = useUpdateProductMutation();
 
   const generateSku = (name: string): string => {
-    const prefix = name ? name.toUpperCase().replace(/[^A-Z0-9]/g, "").substring(0, 6) : "STAG";
+    const prefix = name ? name.toUpperCase().replace(/[^A-Z0-9]/g, "").substring(0, 6) : "WAZIR";
     const rand = Math.random().toString(36).substring(2, 6).toUpperCase();
-    return `${prefix || "STAG"}-${rand}`;
+    return `${prefix || "WAZIR"}-${rand}`;
   };
 
   const resetForm = () => {
@@ -379,7 +379,7 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
                         <Input
                           value={formData.sku}
                           onChange={(e) => handleInputChange("sku", e.target.value)}
-                          placeholder="STAG-904A"
+                          placeholder="WC-904A"
                           className={`h-12 rounded-xl border-neutral-200 bg-neutral-50/50 shadow-sm transition-all focus:bg-white tabular-nums font-mono ${errors.sku ? "border-rose-400 ring-rose-300/20" : ""}`}
                         />
                         {errors.sku && <p className="text-[10px] font-bold text-rose-500 tracking-wide">{errors.sku}</p>}

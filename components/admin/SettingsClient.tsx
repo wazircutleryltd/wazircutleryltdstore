@@ -13,7 +13,8 @@ import {
   RotateCcw, 
   Building2, 
   Check, 
-  Bot
+  Bot,
+  Phone
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,8 +27,9 @@ import { toast } from "sonner";
 const DEFAULT_SETTINGS = {
   // Store Identity
   storeName: "Wazir Cutlery Ltd",
-  storeTagline: "Master-Forged Damascus Knives & Authentic Stag Horn Cutlery",
+  storeTagline: "Master-Forged Damascus Knives & Premium Wazir Cutlery",
   storeEmail: "info@wazircutlery.com",
+  storeInternationalPhone: "+92 316 0764052",
   storePhone: "+92 308 0601995",
   storeWhatsapp: "+92 312 6209302",
   storeAddress: "Near High Class Bakers, G.T. Road, Wazirabad, Punjab, 52000, Pakistan",
@@ -49,7 +51,7 @@ const DEFAULT_SETTINGS = {
   couriers: "DHL Express, FedEx International Priority, EMS",
 
   // Social & Community
-  whatsappUrl: "https://wa.me/+923080601995",
+  whatsappUrl: "https://wa.me/923160764052",
   instagramUrl: "https://www.instagram.com/wazircutlery",
   youtubeUrl: "https://youtube.com/@wazircutleryltd",
   tiktokUrl: "https://www.tiktok.com/@wazircutlery"
@@ -186,6 +188,24 @@ export default function SettingsClient() {
                 value={settings.storeAddress}
                 onChange={(e) => handleChange("storeAddress", e.target.value)}
                 className="rounded-xl bg-neutral-50/50 border-neutral-200 text-sm"
+              />
+            </div>
+
+            <div className="p-4 bg-neutral-50/80 rounded-2xl border border-[#D6AF66]/30 space-y-2">
+              <div className="flex items-center justify-between">
+                <Label className="text-xs font-bold text-neutral-800 flex items-center gap-2">
+                  <Phone className="h-3.5 w-3.5 text-[#D6AF66]" />
+                  International Client Relations Manager (Tayyab Mughal)
+                </Label>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#D6AF66]/15 text-[#9E7B35]">
+                  Primary International WhatsApp
+                </span>
+              </div>
+              <Input
+                value={settings.storeInternationalPhone || "+92 316 0764052"}
+                onChange={(e) => handleChange("storeInternationalPhone", e.target.value)}
+                className="h-11 rounded-xl bg-white border-neutral-200 font-mono text-xs font-medium"
+                placeholder="+92 316 0764052"
               />
             </div>
 

@@ -89,7 +89,7 @@ export default function Home() {
     "image": "https://wazircutlery.com/og-home.png",
     "@id": "https://wazircutlery.com",
     "url": "https://wazircutlery.com",
-    "telephone": "+923126209302",
+    "telephone": "+923160764052",
     "priceRange": "$$",
     "address": {
       "@type": "PostalAddress",

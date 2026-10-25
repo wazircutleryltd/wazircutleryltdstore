@@ -101,18 +101,27 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       postalCode: '52000',
       addressCountry: 'PK'
     },
-    contactPoint: {
-      '@type': 'ContactPoint',
-      telephone: '+923126209302',
-      contactType: 'customer service',
-      areaServed: 'Worldwide',
-      availableLanguage: ['English', 'Urdu']
-    },
+    contactPoint: [
+      {
+        '@type': 'ContactPoint',
+        telephone: '+923160764052',
+        contactType: 'international client relations',
+        areaServed: 'Worldwide',
+        availableLanguage: ['English', 'Urdu']
+      },
+      {
+        '@type': 'ContactPoint',
+        telephone: '+923126209302',
+        contactType: 'customer service',
+        areaServed: 'Worldwide',
+        availableLanguage: ['English', 'Urdu']
+      }
+    ],
     priceRange: '$$',
     knowsAbout: [
       'Damascus Steel Metallurgy',
       'Pattern Welding',
-      'Stag Horn Cutlery',
+      'Wazir Cutlery',
       'High Carbon 1095 Steel',
       '15N20 Nickel Alloy Steel',
       'Chef Knives',
@@ -120,6 +129,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       'Collector Swords',
       'Rockwell Hardness Vacuum Heat Treatment',
       'Full-Grain Leather Sheath Craftsmanship'
+    ],
+    employee: [
+      {
+        '@type': 'Person',
+        name: 'Tayyab Mughal',
+        jobTitle: 'International Client Relations Manager',
+        sameAs: 'https://wa.me/923160764052'
+      }
     ],
     founder: [
       {
