@@ -10,7 +10,7 @@ import {
   SortingState,
 } from "@tanstack/react-table";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Edit, Trash2, Eye, EyeOff, Star, TrendingUp, Award, ArrowUpDown, ArrowUp, ArrowDown, Copy } from "lucide-react";
+import { Edit, Trash2, Eye, EyeOff, Star, TrendingUp, Award, ArrowUpDown, ArrowUp, ArrowDown, Copy, ExternalLink } from "lucide-react";
 import { LoadingState, ErrorState, NoDataState } from "../../common/StateComponents";
 import type { Product, Category } from "@/types";
 
@@ -255,6 +255,17 @@ export default function ProductTable({
         const p = row.original;
         return (
           <div className="flex justify-end gap-2 pr-8">
+            {p.slug && (
+              <a
+                href={`/product/${p.slug}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2.5 bg-white border border-gray-100 rounded-xl shadow-sm text-gray-400 hover:text-[#D6AF66] hover:border-[#D6AF66]/30 transition-all active:scale-95 inline-flex items-center justify-center"
+                title="View on Live Storefront ↗"
+              >
+                <ExternalLink className="h-4 w-4" />
+              </a>
+            )}
             {onClone && (
               <button 
                 onClick={() => onClone(p)}
