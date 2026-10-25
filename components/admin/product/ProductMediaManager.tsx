@@ -31,9 +31,12 @@ export default function ProductMediaManager({
   const [showUrlInput, setShowUrlInput] = useState(false);
   const [urlInputValue, setUrlInputValue] = useState("");
 
+  const [isUploading, setIsUploading] = useState(false);
+  const [isDragOver, setIsDragOver] = useState(false);
+
   const handleImageValidation = (file: File): string | null => {
     if (!file.type.startsWith('image/')) return "Please select a valid image file";
-    if (file.size > 15 * 1024 * 1024) return "Image size must be less than 15MB";
+    if (file.size > 25 * 1024 * 1024) return "Image size must be less than 25MB";
     return null;
   };
 
@@ -52,51 +55,73 @@ export default function ProductMediaManager({
     reader.readAsDataURL(file);
   };
 
-  const handleGalleryUpload = (files: FileList) => {
-    if (!files || files.length === 0) return;
-    
-    // If single file, allow crop
-    if (files.length === 1) {
-      processImage(files[0], "additional");
-      return;
-    }
-
-    // If multiple files, auto-compress & add directly
-    Array.from(files).forEach((file: File) => {
-      const error = handleImageValidation(file);
-      if (error) return;
-
+  // Canvas WebP optimizer that converts file to optimized WebP Blob
+  const compressToWebpBlob = (file: File, maxDim = 1200, quality = 0.88): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = (e) => {
         const img = new Image();
         img.onload = () => {
           const canvas = document.createElement('canvas');
-          const MAX_SIZE = 1200;
           let w = img.width;
           let h = img.height;
-          if (w > MAX_SIZE || h > MAX_SIZE) {
+          if (w > maxDim || h > maxDim) {
             if (w > h) {
-              h = Math.round((h * MAX_SIZE) / w);
-              w = MAX_SIZE;
+              h = Math.round((h * maxDim) / w);
+              w = maxDim;
             } else {
-              w = Math.round((w * MAX_SIZE) / h);
-              h = MAX_SIZE;
+              w = Math.round((w * maxDim) / h);
+              h = maxDim;
             }
           }
           canvas.width = w;
           canvas.height = h;
           const ctx = canvas.getContext('2d');
           ctx?.drawImage(img, 0, 0, w, h);
-          const compressed = canvas.toDataURL('image/jpeg', 0.85);
-          onAdditionalImagesChange((prev: string[]) => [...(prev || []), compressed]);
+          canvas.toBlob(
+            (blob) => {
+              if (blob) resolve(blob);
+              else reject(new Error("Canvas export failed"));
+            },
+            'image/webp',
+            quality
+          );
         };
+        img.onerror = reject;
         img.src = (e.target?.result as string) || '';
       };
+      reader.onerror = reject;
       reader.readAsDataURL(file);
     });
   };
 
+  const handleGalleryUpload = async (files: FileList | File[]) => {
+    const fileArray = Array.from(files).filter(f => !handleImageValidation(f));
+    if (fileArray.length === 0) return;
+
+    // Single file allows manual cropping
+    if (fileArray.length === 1 && files instanceof FileList) {
+      processImage(fileArray[0], "additional");
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const uploadPromises = fileArray.map(async (file) => {
+        const webpBlob = await compressToWebpBlob(file);
+        return uploadImage(webpBlob, "products");
+      });
+      const uploadedUrls = await Promise.all(uploadPromises);
+      onAdditionalImagesChange((prev: string[]) => [...(prev || []), ...uploadedUrls]);
+    } catch (err) {
+      console.error("Failed to batch upload gallery images:", err);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   const onCropComplete = async (croppedBlob: Blob) => {
+    setIsUploading(true);
     try {
       const imageUrl = await uploadImage(croppedBlob, "products");
       if (croppingType === "main") {
@@ -107,9 +132,20 @@ export default function ProductMediaManager({
     } catch (err) {
       console.error("Failed to process cropped image:", err);
     } finally {
+      setIsUploading(false);
       setCroppingImage(null);
       setCroppingType("");
     }
+  };
+
+  const handleMakeCover = (imageUrl: string, index: number) => {
+    const oldMain = mainImagePreview;
+    onMainImageChange(imageUrl);
+    const updatedGallery = additionalImages.filter((_, i) => i !== index);
+    if (oldMain) {
+      updatedGallery.push(oldMain);
+    }
+    onAdditionalImagesChange(updatedGallery);
   };
 
   const handleApplyUrl = () => {
@@ -162,14 +198,14 @@ export default function ProductMediaManager({
               <img
                 src={mainImagePreview}
                 alt="Main product"
-                className="w-full h-64 object-cover"
+                className="w-full h-64 object-contain bg-neutral-50/80 p-2"
               />
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
                 <Button
                   type="button"
                   size="sm"
                   onClick={() => mainImageInputRef.current?.click()}
-                  className="bg-white/20 backdrop-blur-md text-white hover:bg-white/30 border-white/30"
+                  className="bg-white/20 backdrop-blur-md text-white hover:bg-white/30 border-white/30 cursor-pointer text-xs"
                 >
                   Change File
                 </Button>
@@ -178,7 +214,7 @@ export default function ProductMediaManager({
                   variant="destructive"
                   size="sm"
                   onClick={() => onMainImageChange("")}
-                  className="bg-rose-500/80 backdrop-blur-md hover:bg-rose-600"
+                  className="bg-rose-500/80 backdrop-blur-md hover:bg-rose-600 cursor-pointer"
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
@@ -186,15 +222,24 @@ export default function ProductMediaManager({
             </div>
           ) : (
             <div
-              className={`border-2 border-dashed rounded-2xl p-10 text-center transition-all duration-300 cursor-pointer flex flex-col items-center justify-center 
-                ${errors?.mainImage ? 'border-rose-300 bg-rose-50/30' : 'border-gray-200 hover:border-[#D6AF66] hover:bg-gold-50/10'}`}
+              className={`border-2 border-dashed rounded-2xl p-8 text-center transition-all duration-300 cursor-pointer flex flex-col items-center justify-center relative 
+                ${isDragOver ? 'border-[#D6AF66] bg-[#D6AF66]/10 scale-[1.01]' : errors?.mainImage ? 'border-rose-300 bg-rose-50/30' : 'border-gray-200 hover:border-[#D6AF66] hover:bg-amber-50/20'}`}
               onClick={() => mainImageInputRef.current?.click()}
+              onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
+              onDragLeave={() => setIsDragOver(false)}
+              onDrop={(e) => {
+                e.preventDefault();
+                setIsDragOver(false);
+                if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                  processImage(e.dataTransfer.files[0], "main");
+                }
+              }}
             >
-              <div className="p-4 bg-gray-50 rounded-2xl mb-4 group-hover:bg-[#D6AF66]/10 transition-colors">
-                <Upload className="h-10 w-10 text-[#2C2C2C] opacity-40" />
+              <div className="p-3.5 bg-neutral-50 rounded-2xl mb-3 group-hover:bg-[#D6AF66]/10 transition-colors">
+                <Upload className="h-8 w-8 text-[#2C2C2C] opacity-40" />
               </div>
-              <p className="text-sm font-bold text-[#2C2C2C] font-geist">Upload Principal Image</p>
-              <p className="text-xs text-gray-400 mt-1 italic">PNG, JPG, WebP up to 15MB (Auto-compressed & Cropped)</p>
+              <p className="text-sm font-bold text-[#2C2C2C] font-geist">Drag & Drop or Click to Upload Cover</p>
+              <p className="text-xs text-gray-400 mt-1">PNG, JPG, WebP up to 25MB (Auto-compressed to WebP)</p>
             </div>
           )}
           <input
@@ -219,34 +264,63 @@ export default function ProductMediaManager({
 
       {/* Gallery Section */}
       <div>
-        <Label className="text-sm font-semibold text-[#2C2C2C] mb-2 block font-geist uppercase tracking-wider">
-          Gallery Collection
-        </Label>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-1">
+        <div className="flex items-center justify-between mb-2">
+          <Label className="text-sm font-semibold text-[#2C2C2C] block font-geist uppercase tracking-wider">
+            Gallery Collection ({additionalImages?.length || 0})
+          </Label>
+          {isUploading && (
+            <span className="text-xs font-bold text-[#D6AF66] animate-pulse">
+              ⚡ Optimizing & uploading...
+            </span>
+          )}
+        </div>
+
+        <div 
+          className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-1"
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={(e) => {
+            e.preventDefault();
+            if (e.dataTransfer.files) {
+              handleGalleryUpload(e.dataTransfer.files);
+            }
+          }}
+        >
           {(additionalImages || []).map((image, index) => (
-            <div key={index} className="relative group aspect-square rounded-xl overflow-hidden border border-gray-100 shadow-sm">
+            <div key={index} className="relative group aspect-square rounded-xl overflow-hidden border border-gray-100 shadow-sm bg-neutral-50">
               <img
                 src={image}
                 alt={`Gallery ${index}`}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain p-1"
               />
-              <button
-                type="button"
-                onClick={() => onAdditionalImagesChange(additionalImages.filter((_, i) => i !== index))}
-                className="absolute top-2 right-2 bg-rose-500 text-white p-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
-              >
-                <X className="h-4 w-4" />
-              </button>
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5">
+                <button
+                  type="button"
+                  title="Make this the Cover image"
+                  onClick={() => handleMakeCover(image, index)}
+                  className="bg-white/90 text-neutral-900 p-1.5 rounded-lg hover:bg-white text-[10px] font-bold shadow-sm cursor-pointer"
+                >
+                  Set Cover
+                </button>
+                <button
+                  type="button"
+                  title="Remove image"
+                  onClick={() => onAdditionalImagesChange(additionalImages.filter((_, i) => i !== index))}
+                  className="bg-rose-500 text-white p-1.5 rounded-lg hover:bg-rose-600 shadow-sm cursor-pointer"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
             </div>
           ))}
-          {(additionalImages || []).length < 8 && (
+
+          {(additionalImages || []).length < 10 && (
             <button
               type="button"
               onClick={() => additionalImagesInputRef.current?.click()}
-              className="aspect-square border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center hover:border-[#D6AF66] hover:bg-gold-50/10 transition-all text-gray-400 hover:text-[#D6AF66]"
+              className="aspect-square border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center hover:border-[#D6AF66] hover:bg-amber-50/10 transition-all text-gray-400 hover:text-[#D6AF66] cursor-pointer p-2"
             >
-              <Plus className="h-8 w-8 mb-1" />
-              <span className="text-[10px] font-bold uppercase tracking-tighter">Add Photo</span>
+              <Plus className="h-6 w-6 mb-1" />
+              <span className="text-[10px] font-bold uppercase tracking-wider text-center">Batch Add Photos</span>
             </button>
           )}
         </div>
@@ -263,8 +337,8 @@ export default function ProductMediaManager({
           }}
           className="hidden"
         />
-        <p className="mt-3 text-[10px] text-gray-400 italic">
-          Tip: Select single or multiple shots. We&apos;ll automatically optimize and downscale them (&lt;300KB each).
+        <p className="mt-2.5 text-[11px] text-gray-400">
+          💡 Drag & drop multiple photos directly here. They are automatically compressed to WebP and uploaded to the CDN.
         </p>
       </div>
 

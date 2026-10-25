@@ -26,11 +26,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <AdminAuthProvider>
       <AdminRouteProtection>
-        <div className={`flex h-screen bg-gray-100 ${outfit.variable} font-sans`}>
+        <div className={`flex h-screen bg-[#0C0D0E] ${outfit.variable} font-sans`}>
           <AdminSidebar />
-          <div className="flex-1 flex flex-col overflow-hidden">
+          <div className="flex-1 flex flex-col overflow-hidden bg-[#F7F7F4]">
             <AdminHeader />
-            <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6">
+            <main className="flex-1 overflow-x-hidden overflow-y-auto p-6 md:p-8">
               {children}
             </main>
           </div>

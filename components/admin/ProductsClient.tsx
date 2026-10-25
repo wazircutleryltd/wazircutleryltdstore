@@ -52,6 +52,32 @@ export default function ProductsClient() {
     setIsModalOpen(true);
   };
 
+  const handleCloneProduct = (product: Product) => {
+    const baseSku = product.sku ? product.sku.replace(/-COPY\d+$/, "") : "STAG";
+    const rand = Math.floor(1000 + Math.random() * 9000);
+    const clonedProduct: Product = {
+      ...product,
+      id: "", // clear id so it registers as a new masterpiece
+      name: `${product.name} (Copy)`,
+      sku: `${baseSku}-COPY${rand}`,
+    };
+    setEditingProduct(clonedProduct);
+    setIsModalOpen(true);
+    toast.info(`Cloned template for "${product.name}". Adjust attributes and save.`);
+  };
+
+  const handleQuickUpdate = async (id: string, updates: Partial<Product>) => {
+    try {
+      await updateProductMutation.mutateAsync({
+        id,
+        updates
+      });
+      toast.success("Artifact updated instantly");
+    } catch (error) {
+      handleAppError(error, "Quick Update");
+    }
+  };
+
   const handleDeleteProduct = async (productId: string) => {
     if (confirm("Permanently archive this masterpiece from the forge?")) {
       try {
@@ -103,8 +129,10 @@ export default function ProductsClient() {
         isLoading={productsLoading}
         error={productsError}
         onEdit={handleEditProduct}
+        onClone={handleCloneProduct}
         onDelete={handleDeleteProduct}
         onToggleActive={toggleActive}
+        onQuickUpdate={handleQuickUpdate}
         categories={categories}
       />
 

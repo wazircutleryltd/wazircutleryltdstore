@@ -10,7 +10,7 @@ import {
   SortingState,
 } from "@tanstack/react-table";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Edit, Trash2, Eye, EyeOff, Star, TrendingUp, Award, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { Edit, Trash2, Eye, EyeOff, Star, TrendingUp, Award, ArrowUpDown, ArrowUp, ArrowDown, Copy } from "lucide-react";
 import { LoadingState, ErrorState, NoDataState } from "../../common/StateComponents";
 import type { Product, Category } from "@/types";
 
@@ -19,8 +19,10 @@ interface ProductTableProps {
   isLoading?: boolean;
   error?: any;
   onEdit: (product: Product) => void;
+  onClone?: (product: Product) => void;
   onDelete: (id: string) => void;
   onToggleActive: (product: Product) => void;
+  onQuickUpdate?: (id: string, updates: Partial<Product>) => Promise<void>;
   categories?: Category[];
 }
 
@@ -29,16 +31,40 @@ export default function ProductTable({
   isLoading, 
   error, 
   onEdit, 
+  onClone,
   onDelete, 
   onToggleActive, 
+  onQuickUpdate,
   categories 
 }: ProductTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [editingCell, setEditingCell] = useState<{ id: string; field: "price" | "stock"; value: string } | null>(null);
 
   const getCategoryName = useCallback(
     (id?: string | null) => categories?.find(c => c.id === id)?.name || "—",
     [categories]
   );
+
+  const commitCellEdit = useCallback(async () => {
+    if (!editingCell || !onQuickUpdate) {
+      setEditingCell(null);
+      return;
+    }
+    const { id, field, value } = editingCell;
+    setEditingCell(null);
+
+    if (field === "price") {
+      const num = parseFloat(value);
+      if (!isNaN(num) && num >= 0) {
+        await onQuickUpdate(id, { price: num });
+      }
+    } else if (field === "stock") {
+      const num = parseInt(value, 10);
+      if (!isNaN(num) && num >= 0) {
+        await onQuickUpdate(id, { stock_quantity: num });
+      }
+    }
+  }, [editingCell, onQuickUpdate]);
 
   const columns = useMemo<ColumnDef<Product>[]>(() => [
     {
@@ -109,11 +135,40 @@ export default function ProductTable({
           )}
         </button>
       ),
-      cell: ({ row }) => (
-        <div className="font-bold text-[#2C2C2C] tabular-nums">
-          ${(Number(row.original.price) || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-        </div>
-      ),
+      cell: ({ row }) => {
+        const product = row.original;
+        const isEditing = editingCell?.id === product.id && editingCell.field === "price";
+        if (isEditing) {
+          return (
+            <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+              <span className="text-xs font-bold text-gray-400">$</span>
+              <input
+                type="number"
+                step="0.01"
+                autoFocus
+                value={editingCell.value}
+                onChange={(e) => setEditingCell({ ...editingCell, value: e.target.value })}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") commitCellEdit();
+                  if (e.key === "Escape") setEditingCell(null);
+                }}
+                onBlur={commitCellEdit}
+                className="w-24 h-8 px-2 text-sm font-bold bg-white border border-[#D6AF66] rounded-lg shadow-sm outline-none focus:ring-2 focus:ring-[#D6AF66]/20 tabular-nums"
+              />
+            </div>
+          );
+        }
+        return (
+          <div 
+            onClick={() => onQuickUpdate && setEditingCell({ id: product.id, field: "price", value: String(product.price || 0) })}
+            className={`font-bold text-[#2C2C2C] tabular-nums flex items-center gap-1.5 group/price ${onQuickUpdate ? "cursor-pointer hover:text-[#D6AF66] transition-colors" : ""}`}
+            title={onQuickUpdate ? "Click to quick edit price" : undefined}
+          >
+            <span>${(Number(product.price) || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            {onQuickUpdate && <span className="text-[10px] text-gray-300 opacity-0 group-hover/price:opacity-100 transition-opacity">✎</span>}
+          </div>
+        );
+      },
     },
     {
       id: "stock",
@@ -134,15 +189,40 @@ export default function ProductTable({
         </button>
       ),
       cell: ({ row }) => {
-        const stock = Number(row.original.stock_quantity) || 0;
+        const product = row.original;
+        const stock = Number(product.stock_quantity) || 0;
+        const isEditing = editingCell?.id === product.id && editingCell.field === "stock";
+        if (isEditing) {
+          return (
+            <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+              <input
+                type="number"
+                autoFocus
+                value={editingCell.value}
+                onChange={(e) => setEditingCell({ ...editingCell, value: e.target.value })}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") commitCellEdit();
+                  if (e.key === "Escape") setEditingCell(null);
+                }}
+                onBlur={commitCellEdit}
+                className="w-20 h-8 px-2 text-sm font-bold bg-white border border-[#D6AF66] rounded-lg shadow-sm outline-none focus:ring-2 focus:ring-[#D6AF66]/20 tabular-nums"
+              />
+            </div>
+          );
+        }
         return (
-          <div className="flex items-center gap-2">
+          <div 
+            onClick={() => onQuickUpdate && setEditingCell({ id: product.id, field: "stock", value: String(stock) })}
+            className={`flex items-center gap-2 group/stock ${onQuickUpdate ? "cursor-pointer hover:text-[#D6AF66] transition-colors" : ""}`}
+            title={onQuickUpdate ? "Click to quick edit stock" : undefined}
+          >
             <span className={`font-bold tabular-nums ${stock < 10 ? "text-rose-500" : "text-gray-600"}`}>
               {stock}
             </span>
             {stock < 10 && (
               <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
             )}
+            {onQuickUpdate && <span className="text-[10px] text-gray-300 opacity-0 group-hover/stock:opacity-100 transition-opacity">✎</span>}
           </div>
         );
       },
@@ -175,6 +255,15 @@ export default function ProductTable({
         const p = row.original;
         return (
           <div className="flex justify-end gap-2 pr-8">
+            {onClone && (
+              <button 
+                onClick={() => onClone(p)}
+                className="p-2.5 bg-white border border-gray-100 rounded-xl shadow-sm text-gray-400 hover:text-[#D6AF66] hover:border-[#D6AF66]/30 transition-all active:scale-95"
+                title="Clone / Duplicate Piece"
+              >
+                <Copy className="h-4 w-4" />
+              </button>
+            )}
             <button 
               onClick={() => onEdit(p)}
               className="p-2.5 bg-white border border-gray-100 rounded-xl shadow-sm text-gray-400 hover:text-[#D6AF66] hover:border-[#D6AF66]/30 transition-all active:scale-95"
@@ -193,7 +282,7 @@ export default function ProductTable({
         );
       },
     },
-  ], [onEdit, onDelete, onToggleActive, getCategoryName]);
+  ], [onEdit, onClone, onDelete, onToggleActive, onQuickUpdate, getCategoryName, editingCell, commitCellEdit]);
 
   const data = useMemo(() => products || [], [products]);
 

@@ -34,53 +34,62 @@ export default function AdminSidebar() {
 
   return (
     <div className="hidden md:flex md:w-64 md:flex-col">
-      <div className="flex flex-col flex-grow pt-5 bg-white overflow-y-auto border-r border-gray-200">
-        <div className="flex items-center flex-shrink-0 px-4 mb-8">
-          <Link href="/" className="flex items-center">
+      <div className="flex flex-col flex-grow pt-5 bg-[#0C0D0E] text-white overflow-y-auto border-r border-neutral-800/80">
+        {/* Brand Header */}
+        <div className="flex items-center justify-between px-5 mb-8">
+          <Link href="/admin" className="flex items-center gap-2.5">
             <img
-              className="h-8 w-auto"
+              className="h-8 w-auto brightness-0 invert"
               src="/logo.svg"
               alt="Wazir Cutlery"
             />
-            <span className="ml-2 text-xl font-bold text-gray-900">Admin</span>
+            <div className="flex flex-col">
+              <span className="text-base font-bold text-white font-[family-name:var(--font-outfit)] tracking-tight">Wazir Cutlery</span>
+              <span className="text-[10px] font-semibold tracking-widest uppercase text-[#D6AF66]">Artisan Portal</span>
+            </div>
           </Link>
         </div>
         
+        {/* Navigation Items */}
         <div className="flex-grow flex flex-col">
-          <nav className="flex-1 px-2 pb-4 space-y-1">
+          <nav className="flex-1 px-3 pb-4 space-y-1.5">
             {navigation.map((item) => {
               const isActive = pathname === item.href;
               return (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors ${
+                  className={`group relative flex items-center px-3 py-2.5 text-xs font-semibold rounded-xl transition-all duration-200 ${
                     isActive
-                      ? 'bg-[#F27F0C] text-white'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                      ? 'bg-[#D6AF66] text-neutral-950 shadow-md shadow-[#D6AF66]/20 font-bold'
+                      : 'text-neutral-400 hover:text-white hover:bg-white/5'
                   }`}
                 >
                   <item.icon
-                    className={`mr-3 flex-shrink-0 h-5 w-5 ${
-                      isActive ? 'text-white' : 'text-gray-400 group-hover:text-gray-500'
+                    className={`mr-3 flex-shrink-0 h-4 w-4 transition-transform group-hover:scale-110 ${
+                      isActive ? 'text-neutral-950 stroke-[2.5]' : 'text-neutral-500 group-hover:text-neutral-200'
                     }`}
                     aria-hidden="true"
                   />
-                  {item.name}
+                  <span>{item.name}</span>
                 </Link>
               );
             })}
           </nav>
           
-          <div className="flex-shrink-0 flex border-t border-gray-200 p-4">
+          {/* Footer Back to Storefront Link */}
+          <div className="flex-shrink-0 flex border-t border-neutral-800/80 p-4">
             <Link
               href="/"
-              className="flex-shrink-0 w-full group block text-sm font-medium text-gray-600 hover:text-gray-900"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-shrink-0 w-full group flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-neutral-400 hover:text-white hover:bg-white/5 border border-white/5 transition-all"
             >
               <div className="flex items-center">
-                <Home className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500" />
-                Back to Store
+                <Home className="mr-2.5 h-4 w-4 text-neutral-500 group-hover:text-[#D6AF66] transition-colors" />
+                <span>Live Storefront</span>
               </div>
+              <span className="text-[10px] text-neutral-500 group-hover:text-[#D6AF66] font-mono">↗</span>
             </Link>
           </div>
         </div>
