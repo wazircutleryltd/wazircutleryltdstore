@@ -75,6 +75,16 @@
 
 ---
 
+## 🧪 Phase 6: Comprehensive Playwright E2E Testing
+
+- [x] **Suite 1: Storefront Discovery & Browsing** (`ST-01` to `ST-04`): Verified `/`, `/categories`, `/product`, and `/product/[slug]` with 0 hydration errors.
+- [x] **Suite 2: Zustand Cart & Checkout Pipeline** (`CT-01` to `CT-04`): Verified Add to Cart, cart recalculations, checkout form submission, COD order placement (`201 Created`), and `/thank-you` order confirmation.
+- [x] **Suite 3: Admin Authentication & Security** (`AD-01` to `AD-03`): Verified `/admin` route guard redirect to `/login`, admin login mutation, and `/admin/login-history` audit logs.
+- [x] **Suite 4: TanStack Table Admin Backoffice** (`TB-01` to `TB-06`): Verified Products, Orders, Categories, Customers, Newsletter, and Contact Submissions tables, sorting, filters, and modals.
+- [x] **E2E Test Report**: Documented in [e2e_test_report.md](file:///Users/mac/.gemini/antigravity-ide/brain/4acb82e4-c068-4f91-853e-4d883f2c1752/e2e_test_report.md).
+
+---
+
 ## 🏆 Completed Milestones Summary
 
 - [x] **100% Pure TypeScript Conversion**: All `.js` / `.jsx` application files converted to strict TypeScript (`allowJs: false`, 0 TS errors).
@@ -86,3 +96,5 @@
 - [x] **TanStack Table v8 Admin Unification**: Orders, Products, Categories, Customers, and Newsletter all powered by `@tanstack/react-table`.
 - [x] **Zero ESLint Warnings**: 0 errors and 0 warnings on `bun x eslint .`.
 - [x] **Next.js 16 Modernization**: Clean migration to `proxy.ts`, 0 deprecation warnings.
+- [x] **100% End-to-End Test Suite Passed**: 17/17 browser scenarios verified with Playwright MCP.
+
