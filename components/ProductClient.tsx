@@ -3,7 +3,11 @@ import Image from 'next/image';
 import React from "react";
 import ConditionalLayout from "@/components/ConditionalLayout";
 import ProductCard from "@/components/ProductCard";
-import { useActiveProducts, useProductsByCategory, useCategoriesWithProductCounts } from "@/lib/hooks";
+import { 
+    useActiveProductsQuery, 
+    useProductsByCategoryQuery, 
+    useCategoriesWithProductCountsQuery 
+} from "@/lib/query-hooks";
 import { useSearchParams, useRouter } from 'next/navigation';
 import Newsletter from "@/components/Newsletter";
 import RelatedProducts from "@/components/RelatedProducts";
@@ -28,7 +32,7 @@ const ProductContent = () => {
     const type = searchParams.get('type');
     const pageSize = 15;
 
-    const { data: categories } = useCategoriesWithProductCounts();
+    const { data: categories } = useCategoriesWithProductCountsQuery();
 
     // If we have a category slug but no categoryId, find it from categories
     if (!categoryId && categorySlug && categories) {
@@ -41,8 +45,8 @@ const ProductContent = () => {
     const buttonRef = React.useRef<HTMLButtonElement>(null);
     const menuRef = React.useRef<HTMLDivElement>(null);
 
-    const { data: allProducts, isLoading: isLoadingAll, error: errorAll } = useActiveProducts();
-    const { data: productsByCategory, isLoading: isLoadingCategory, error: errorCategory } = useProductsByCategory(categoryId || '');
+    const { data: allProducts, isLoading: isLoadingAll, error: errorAll } = useActiveProductsQuery();
+    const { data: productsByCategory, isLoading: isLoadingCategory, error: errorCategory } = useProductsByCategoryQuery(categoryId || '');
 
     const isLoading = categoryId ? isLoadingCategory : isLoadingAll;
     const error = categoryId ? errorCategory : errorAll;

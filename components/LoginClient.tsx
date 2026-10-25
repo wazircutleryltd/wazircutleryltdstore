@@ -2,8 +2,9 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { useVerifyAdminLogin } from '@/lib/hooks';
+import { useAdminLoginMutation } from '@/lib/query-hooks';
 import { setAdminSession, getClientIP, getUserAgent } from '@/lib/utils';
 import ConditionalLayout from '@/components/ConditionalLayout';
 
@@ -16,13 +17,14 @@ export default function LoginClient() {
 }
 
 function LoginContent() {
+    const router = useRouter();
     const [formData, setFormData] = useState({
         email: '',
         password: ''
     });
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const { verifyAdminLogin, isLoading: isVerifyingAdmin } = useVerifyAdminLogin();
+    const adminLoginMutation = useAdminLoginMutation();
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -40,12 +42,12 @@ function LoginContent() {
             const ipAddress = await getClientIP();
             const userAgent = getUserAgent();
 
-            const result = await verifyAdminLogin(
-                formData.email,
-                formData.password,
+            const result = await adminLoginMutation.mutateAsync({
+                username: formData.email,
+                password: formData.password,
                 ipAddress,
-                userAgent
-            );
+                userAgent,
+            });
 
             if (result?.success) {
                 const sessionData = {
@@ -56,7 +58,7 @@ function LoginContent() {
                 };
                 setAdminSession(sessionData);
                 toast.success('Admin login successful!');
-                window.location.href = '/admin';
+                router.push('/admin');
             } else {
                 toast.error(result?.message || 'Admin login failed');
             }

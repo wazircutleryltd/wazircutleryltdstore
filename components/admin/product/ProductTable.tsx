@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useCallback } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -35,7 +35,10 @@ export default function ProductTable({
 }: ProductTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
 
-  const getCategoryName = (id?: string | null) => categories?.find(c => c.id === id)?.name || "—";
+  const getCategoryName = useCallback(
+    (id?: string | null) => categories?.find(c => c.id === id)?.name || "—",
+    [categories]
+  );
 
   const columns = useMemo<ColumnDef<Product>[]>(() => [
     {
@@ -190,7 +193,7 @@ export default function ProductTable({
         );
       },
     },
-  ], [categories, onEdit, onDelete, onToggleActive]);
+  ], [onEdit, onDelete, onToggleActive, getCategoryName]);
 
   const data = useMemo(() => products || [], [products]);
 

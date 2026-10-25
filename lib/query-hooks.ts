@@ -3,7 +3,15 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from './supabase';
 import { slugify } from './utils';
-import type { Product, Category, Order, DashboardSummary } from '@/types';
+import type { 
+  Product, 
+  Category, 
+  Order, 
+  DashboardSummary, 
+  Customer, 
+  ContactSubmission, 
+  NewsletterSubscriber 
+} from '@/types';
 
 // ==========================================
 // Query Keys Factory
@@ -34,6 +42,17 @@ export const queryKeys = {
   },
   newsletter: {
     subscribers: ['newsletter', 'subscribers'],
+  },
+  users: {
+    all: ['users'],
+    list: (page: number, pageSize: number, search?: string) => ['users', 'list', page, pageSize, search],
+  },
+  contactSubmissions: {
+    all: ['contact_submissions'],
+    list: (status?: string) => ['contact_submissions', 'list', status],
+  },
+  admin: {
+    loginHistory: (username?: string, limit?: number) => ['admin', 'loginHistory', username, limit],
   },
 };
 
@@ -553,3 +572,268 @@ export function useDashboardStatsQuery() {
     staleTime: 1000 * 60 * 2, // 2 minutes
   });
 }
+
+// ==========================================
+// Category With Product Counts Query
+// ==========================================
+
+export type CategoryWithProductCount = Category & {
+  product_count: number;
+};
+
+export function useCategoriesWithProductCountsQuery() {
+  return useQuery<CategoryWithProductCount[]>({
+    queryKey: ['categories', 'with-counts'],
+    queryFn: async () => {
+      const { data: categories, error: categoriesError } = await supabase
+        .from('categories')
+        .select('*')
+        .eq('is_active', true)
+        .order('sort_order', { ascending: true });
+
+      if (categoriesError) throw categoriesError;
+
+      const categoriesWithCounts = await Promise.all(
+        (categories || []).map(async (category) => {
+          const { count, error: countError } = await supabase
+            .from('products')
+            .select('*', { count: 'exact', head: true })
+            .eq('category_id', category.id)
+            .eq('is_active', true);
+
+          if (countError) throw countError;
+
+          return {
+            ...category,
+            product_count: count || 0,
+          };
+        })
+      );
+
+      return categoriesWithCounts as CategoryWithProductCount[];
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+}
+
+// ==========================================
+// Customer / User Queries
+// ==========================================
+
+export function useAllUsersQuery(page = 1, pageSize = 10, searchTerm = '') {
+  return useQuery<{ users: Customer[]; totalCount: number; totalPages: number }>({
+    queryKey: queryKeys.users.list(page, pageSize, searchTerm),
+    queryFn: async () => {
+      let query = supabase
+        .from('users')
+        .select('*', { count: 'exact' });
+
+      if (searchTerm.trim()) {
+        const term = searchTerm.trim();
+        query = query.or(`email.ilike.%${term}%,first_name.ilike.%${term}%,last_name.ilike.%${term}%`);
+      }
+
+      const from = (page - 1) * pageSize;
+      const to = from + pageSize - 1;
+
+      const { data, error, count } = await query
+        .order('created_at', { ascending: false })
+        .range(from, to);
+
+      if (error) throw error;
+
+      return {
+        users: (data || []) as Customer[],
+        totalCount: count || 0,
+        totalPages: Math.ceil((count || 0) / pageSize),
+      };
+    },
+  });
+}
+
+// ==========================================
+// Newsletter Subscribers Queries & Mutations
+// ==========================================
+
+export function useNewsletterSubscribersQuery() {
+  return useQuery<NewsletterSubscriber[]>({
+    queryKey: queryKeys.newsletter.subscribers,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('newsletter_subscribers')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return (data || []) as NewsletterSubscriber[];
+    },
+  });
+}
+
+export function useDeleteNewsletterSubscriberMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (subscriberId: string) => {
+      const { error } = await supabase
+        .from('newsletter_subscribers')
+        .delete()
+        .eq('id', subscriberId);
+
+      if (error) throw error;
+      return subscriberId;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.newsletter.subscribers });
+    },
+  });
+}
+
+// ==========================================
+// Contact Submissions Queries & Mutations
+// ==========================================
+
+export function useContactSubmissionsQuery(statusFilter = 'all') {
+  return useQuery<ContactSubmission[]>({
+    queryKey: queryKeys.contactSubmissions.list(statusFilter),
+    queryFn: async () => {
+      let query = supabase
+        .from('contact_submissions')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (statusFilter && statusFilter !== 'all') {
+        query = query.eq('status', statusFilter);
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+      return (data || []) as ContactSubmission[];
+    },
+  });
+}
+
+export function useUpdateContactSubmissionStatusMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ submissionId, status }: { submissionId: string; status: string }) => {
+      const { data, error } = await supabase
+        .from('contact_submissions')
+        .update({
+          status,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', submissionId)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data as ContactSubmission;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.contactSubmissions.all });
+    },
+  });
+}
+
+// ==========================================
+// Order Creation Mutation
+// ==========================================
+
+export function useCreateOrderMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (orderData: Partial<Order> | Record<string, any>) => {
+      const { data, error } = await supabase
+        .from('orders')
+        .insert([{
+          ...orderData,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        }])
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data as Order;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.orders.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.dashboard.stats });
+    },
+  });
+}
+
+// ==========================================
+// Admin Auth & Login History Queries & Mutations
+// ==========================================
+
+export function useAdminLoginMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      username,
+      password,
+      ipAddress,
+      userAgent,
+    }: {
+      username: string;
+      password: string;
+      ipAddress: string;
+      userAgent: string;
+    }) => {
+      const ADMIN_USERNAME = process.env.NEXT_PUBLIC_ADMIN_USERNAME || 'wazir@gmail.com';
+      const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || 'wazir@123';
+
+      const isValid = username === ADMIN_USERNAME && password === ADMIN_PASSWORD;
+
+      const { error: insertError } = await supabase
+        .from('admin_login_history')
+        .insert({
+          username,
+          login_time: new Date().toISOString(),
+          ip_address: ipAddress,
+          user_agent: userAgent,
+          success: isValid,
+          failure_reason: isValid ? null : 'Invalid credentials',
+        });
+
+      if (insertError) {
+        console.warn('Could not record login attempt to admin_login_history:', insertError);
+      }
+
+      return {
+        success: isValid,
+        message: isValid ? 'Login successful' : 'Invalid username or password',
+      };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'loginHistory'] });
+    },
+  });
+}
+
+export function useAdminLoginHistoryQuery(username?: string, limit = 50) {
+  return useQuery<any[]>({
+    queryKey: queryKeys.admin.loginHistory(username, limit),
+    queryFn: async () => {
+      let query = supabase
+        .from('admin_login_history')
+        .select('*')
+        .order('login_time', { ascending: false })
+        .limit(limit);
+
+      if (username) {
+        query = query.eq('username', username);
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+      return data || [];
+    },
+  });
+}
+

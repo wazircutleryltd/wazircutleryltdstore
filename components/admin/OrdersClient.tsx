@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import {
   useReactTable,
   getCoreRowModel,
@@ -32,7 +32,7 @@ const OrdersClient = () => {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [showModal, setShowModal] = useState<boolean>(false);
 
-  const handleUpdateStatus = async (orderId: string, newStatus: string) => {
+  const handleUpdateStatus = useCallback(async (orderId: string, newStatus: string) => {
     try {
       await updateStatusMutation.mutateAsync({ orderId, status: newStatus });
       toast.success(`Order status updated to ${newStatus}`);
@@ -40,7 +40,7 @@ const OrdersClient = () => {
       console.error('Failed to update order status:', err);
       toast.error('Failed to update status. Please try again.');
     }
-  };
+  }, [updateStatusMutation]);
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -226,7 +226,7 @@ const OrdersClient = () => {
         },
       },
     ],
-    [updateStatusMutation.isPending]
+    [updateStatusMutation.isPending, handleUpdateStatus]
   );
 
   const table = useReactTable({

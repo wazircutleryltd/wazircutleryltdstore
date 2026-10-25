@@ -6,6 +6,7 @@ import { Button } from "../../ui/button";
 import { Upload, X, Trash2, Plus } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
 import ImageCropper from "../ImageCropper";
+import { uploadImage } from "@/lib/storage";
 
 interface ProductMediaManagerProps {
   mainImagePreview: string;
@@ -95,19 +96,20 @@ export default function ProductMediaManager({
     });
   };
 
-  const onCropComplete = (croppedBlob: Blob) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const base64data = (reader.result as string) || '';
+  const onCropComplete = async (croppedBlob: Blob) => {
+    try {
+      const imageUrl = await uploadImage(croppedBlob, "products");
       if (croppingType === "main") {
-        onMainImageChange(base64data);
+        onMainImageChange(imageUrl);
       } else {
-        onAdditionalImagesChange([...(additionalImages || []), base64data]);
+        onAdditionalImagesChange([...(additionalImages || []), imageUrl]);
       }
+    } catch (err) {
+      console.error("Failed to process cropped image:", err);
+    } finally {
       setCroppingImage(null);
       setCroppingType("");
-    };
-    reader.readAsDataURL(croppedBlob);
+    }
   };
 
   const handleApplyUrl = () => {

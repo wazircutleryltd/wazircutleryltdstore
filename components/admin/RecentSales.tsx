@@ -1,12 +1,13 @@
 "use client";
 
 import { Avatar, AvatarFallback } from "../ui/avatar";
-import { useAllOrders } from "@/lib/supabase-hooks";
+import { useAllOrdersQuery } from "@/lib/query-hooks";
 import { Loader2 } from "lucide-react";
 import type { Order } from "@/types";
 
 export default function RecentSales() {
-  const { data: orders, isLoading } = useAllOrders(1, 5);
+  const { data, isLoading } = useAllOrdersQuery(1, 5);
+  const orders = data?.orders || [];
 
   if (isLoading) {
     return (

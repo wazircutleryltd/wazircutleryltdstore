@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useCreateCategory, useUpdateCategory } from "../../lib/hooks";
+import { useCreateCategoryMutation, useUpdateCategoryMutation } from "@/lib/query-hooks";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -11,6 +11,7 @@ import { X, Upload, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import ImageCropper from "./ImageCropper";
+import { uploadImage } from "@/lib/storage";
 import type { Category } from "@/types";
 
 interface CategoryModalProps {
@@ -35,8 +36,8 @@ export default function CategoryModal({ isOpen, onClose, category }: CategoryMod
   const [errors, setErrors] = useState<Record<string, string>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { createCategory } = useCreateCategory();
-  const { updateCategory } = useUpdateCategory();
+  const createCategoryMutation = useCreateCategoryMutation();
+  const updateCategoryMutation = useUpdateCategoryMutation();
 
   useEffect(() => {
     if (category) {
@@ -119,13 +120,15 @@ export default function CategoryModal({ isOpen, onClose, category }: CategoryMod
     }
   };
 
-  const onCropComplete = (croppedBlob: Blob) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImagePreview((reader.result as string) || "");
+  const onCropComplete = async (croppedBlob: Blob) => {
+    try {
+      const imageUrl = await uploadImage(croppedBlob, "categories");
+      setImagePreview(imageUrl);
+    } catch (err) {
+      console.error("Failed to upload cropped category image:", err);
+    } finally {
       setCroppingImage(null);
-    };
-    reader.readAsDataURL(croppedBlob);
+    }
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
@@ -199,17 +202,20 @@ export default function CategoryModal({ isOpen, onClose, category }: CategoryMod
       const imageUrl = imagePreview || formData.imageUrl;
 
       if (category) {
-        await updateCategory(category.id, {
-          name: formData.name,
-          description: formData.description,
-          slug: formData.slug,
-          image_url: imageUrl,
-          is_active: formData.isActive,
-          sort_order: formData.sortOrder,
+        await updateCategoryMutation.mutateAsync({
+          id: category.id,
+          updates: {
+            name: formData.name,
+            description: formData.description,
+            slug: formData.slug,
+            image_url: imageUrl,
+            is_active: formData.isActive,
+            sort_order: formData.sortOrder,
+          },
         });
         toast.success('Category updated successfully!');
       } else {
-        await createCategory({
+        await createCategoryMutation.mutateAsync({
           name: formData.name,
           description: formData.description,
           slug: formData.slug,

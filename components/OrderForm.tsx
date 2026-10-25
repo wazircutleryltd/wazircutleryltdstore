@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { useCreateOrder } from '../lib/hooks';
+import { useCreateOrderMutation } from '@/lib/query-hooks';
 import { sendOrderNotification } from '../lib/email-service';
 import { useUser } from '@clerk/nextjs';
 import type { Product, Order } from '@/types';
@@ -30,7 +30,7 @@ export default function OrderForm({
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitStatus, setSubmitStatus] = useState<string | null>(null);
     
-    const { createOrder } = useCreateOrder();
+    const createOrderMutation = useCreateOrderMutation();
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -84,7 +84,7 @@ export default function OrderForm({
                 estimated_delivery: '2-3 working days'
             };
 
-            const result = await createOrder(orderData);
+            const result = await createOrderMutation.mutateAsync(orderData);
             
             // Send email notification
             await sendOrderNotification(result);

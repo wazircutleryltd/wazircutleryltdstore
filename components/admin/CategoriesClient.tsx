@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import Image from "next/image";
 import {
   useReactTable,
@@ -45,7 +45,7 @@ export default function CategoriesClient() {
     setIsModalOpen(true);
   };
 
-  const handleDeleteCategory = async (categoryId: string) => {
+  const handleDeleteCategory = useCallback(async (categoryId: string) => {
     if (confirm("Are you sure you want to delete this category?")) {
       try {
         await deleteMutation.mutateAsync(categoryId);
@@ -55,7 +55,7 @@ export default function CategoriesClient() {
         toast.error("Failed to delete category. Please try again.");
       }
     }
-  };
+  }, [deleteMutation]);
 
   const handleModalClose = () => {
     setIsModalOpen(false);
@@ -234,7 +234,7 @@ export default function CategoriesClient() {
         },
       },
     ],
-    [deleteMutation.isPending]
+    [deleteMutation.isPending, handleDeleteCategory]
   );
 
   const table = useReactTable({

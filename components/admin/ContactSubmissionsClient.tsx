@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Eye, Mail, Clock, CheckCircle, XCircle } from 'lucide-react';
-import { useAllContactSubmissions, useUpdateContactSubmissionStatus } from '../../lib/supabase-hooks';
+import { useContactSubmissionsQuery, useUpdateContactSubmissionStatusMutation } from '@/lib/query-hooks';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LoadingState, ErrorState, NoDataState } from '../common/StateComponents';
 
@@ -21,27 +21,19 @@ interface ContactSubmissionItem {
 }
 
 const ContactSubmissionsClient = () => {
-    const { data: submissions, isLoading: loading, error } = useAllContactSubmissions();
-    const [localSubmissions, setLocalSubmissions] = useState<ContactSubmissionItem[]>([]);
+    const { data: submissions = [], isLoading: loading, error } = useContactSubmissionsQuery();
+    const updateStatusMutation = useUpdateContactSubmissionStatusMutation();
     const [selectedSubmission, setSelectedSubmission] = useState<ContactSubmissionItem | null>(null);
     const [showModal, setShowModal] = useState<boolean>(false);
-    const { updateContactSubmissionStatus } = useUpdateContactSubmissionStatus();
-
-    useEffect(() => {
-        if (submissions) {
-            const sortedSubmissions = [...submissions].sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-            setLocalSubmissions(sortedSubmissions);
-        }
-    }, [submissions]);
 
     const handleUpdateStatus = async (submissionId: string, newStatus: string) => {
-        const updatedSubmission = await updateContactSubmissionStatus(submissionId, newStatus);
-        if (updatedSubmission) {
-            setLocalSubmissions(prevSubmissions =>
-                prevSubmissions.map(submission =>
-                    submission.id === submissionId ? { ...submission, status: newStatus } : submission
-                )
-            );
+        try {
+            await updateStatusMutation.mutateAsync({ submissionId, status: newStatus });
+            if (selectedSubmission && selectedSubmission.id === submissionId) {
+                setSelectedSubmission(prev => prev ? { ...prev, status: newStatus } : null);
+            }
+        } catch (err) {
+            console.error('Failed to update submission status:', err);
         }
     };
 
@@ -96,11 +88,11 @@ const ContactSubmissionsClient = () => {
             <div className="flex justify-between items-center">
                 <h2 className="text-2xl font-bold text-gray-900">Contact Submissions</h2>
                 <div className="text-sm text-gray-500">
-                    Total Submissions: {localSubmissions.length}
+                    Total Submissions: {submissions.length}
                 </div>
             </div>
 
-            {localSubmissions.length === 0 ? (
+            {submissions.length === 0 ? (
                 <NoDataState 
                     message="No submissions yet" 
                     description="User inquiries will appear here once customers contact you." 
@@ -109,7 +101,7 @@ const ContactSubmissionsClient = () => {
             ) : (
                 <div className="bg-white shadow overflow-hidden sm:rounded-md">
                     <ul className="divide-y divide-gray-200">
-                        {localSubmissions.map((submission) => (
+                        {submissions.map((submission) => (
                             <li key={submission.id} className="px-6 py-4 hover:bg-gray-50">
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center space-x-4">

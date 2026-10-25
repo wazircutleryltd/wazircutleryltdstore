@@ -1,13 +1,13 @@
 'use client';
 
-import { useGetAdminLoginHistoryByUsername } from '@/lib/hooks';
+import { useAdminLoginHistoryQuery } from '@/lib/query-hooks';
 import { useAdminAuth } from '@/components/AdminAuthProvider';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
 export default function LoginHistoryClient() {
   const { adminSession } = useAdminAuth();
-  const { data: loginHistory, isLoading, error } = useGetAdminLoginHistoryByUsername(
+  const { data: loginHistory, isLoading, error } = useAdminLoginHistoryQuery(
     adminSession?.username || 'waziradmin', 
     50
   );

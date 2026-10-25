@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from 'next/link';
 import Newsletter from "@/components/Newsletter";
-import { useCategoriesWithProductCounts } from "../lib/supabase-hooks";
+import { useCategoriesWithProductCountsQuery } from "@/lib/query-hooks";
 import { useRouter, useSearchParams } from 'next/navigation';
 import { LoadingState, ErrorState, NoDataState } from "./common/StateComponents";
 
@@ -29,7 +29,7 @@ const CategoriesClient = () => {
         };
     }, []);
 
-    const { data: categories, isLoading, error } = useCategoriesWithProductCounts();
+    const { data: categories, isLoading, error } = useCategoriesWithProductCountsQuery();
     const router = useRouter();
     const searchParams = useSearchParams();
     const pageParam = parseInt(searchParams.get('page') || '1', 10);

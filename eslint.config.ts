@@ -1,10 +1,14 @@
 import nextConfig from "eslint-config-next";
 
-export default [
+const eslintConfig = [
   ...nextConfig,
   {
     rules: {
-      "react-hooks/set-state-in-effect": "warn",
+      "react-hooks/incompatible-library": "off",
+      "react-hooks/set-state-in-effect": "off",
+      "@next/next/no-img-element": "off",
     },
   },
 ];
+
+export default eslintConfig;

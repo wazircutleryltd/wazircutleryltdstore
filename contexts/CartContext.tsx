@@ -1,6 +1,6 @@
 'use client';
 import React, { createContext, useContext, useMemo } from 'react';
-import { useCartStore, type CartTotals } from '@/stores/cartStore';
+import { useCartStore, calculateDerivedTotals, type CartTotals } from '@/stores/cartStore';
 import type { Product, CartItem } from '@/types';
 
 export interface CartContextType extends CartTotals {
@@ -23,9 +23,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const updateQuantity = useCartStore((state) => state.updateQuantity);
   const toggleItemSelection = useCartStore((state) => state.toggleItemSelection);
   const clearCart = useCartStore((state) => state.clearCart);
-  const getTotals = useCartStore((state) => state.getTotals);
 
-  const totals = useMemo(() => getTotals(), [items, getTotals]);
+  const totals = useMemo(() => calculateDerivedTotals(items), [items]);
 
   const cartValue = useMemo<CartContextType>(
     () => ({

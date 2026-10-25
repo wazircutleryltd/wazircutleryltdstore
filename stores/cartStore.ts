@@ -24,7 +24,7 @@ export interface CartState {
   getTotals: () => CartTotals;
 }
 
-const calculateDerivedTotals = (items: CartItem[]): CartTotals => {
+export const calculateDerivedTotals = (items: CartItem[]): CartTotals => {
   const selectedItems = items.filter((item) => item.selected);
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const selectedItemsCount = selectedItems.reduce((sum, item) => sum + item.quantity, 0);
