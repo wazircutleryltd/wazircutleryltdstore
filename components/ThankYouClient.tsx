@@ -21,18 +21,18 @@ const ThankYouContent = () => {
     useEffect(() => {
         const storedOrderData = sessionStorage.getItem('order-confirmation');
         if (storedOrderData) {
-            setOrderData(JSON.parse(storedOrderData));
-            clearCart();
-            sessionStorage.removeItem('checkout-data');
+            try {
+                setOrderData(JSON.parse(storedOrderData));
+                clearCart();
+                sessionStorage.removeItem('checkout-data');
+            } catch (e) {
+                console.error('Failed to parse order confirmation:', e);
+                router.push('/');
+            }
         } else {
             router.push('/');
         }
-
-        return () => {
-            sessionStorage.removeItem('order-confirmation');
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [router, clearCart]);
 
     if (!orderData) {
         return (

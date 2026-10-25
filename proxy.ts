@@ -1,26 +1,18 @@
-import { NextResponse, type NextRequest } from 'next/server';
+import { type NextRequest } from 'next/server';
+import { clerkMiddleware } from '@clerk/nextjs/server';
 
-export function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  
-  // Check if the request is for an admin page
-  if (pathname.startsWith('/admin')) {
-    // For admin pages, client-side guards handle admin sessions
-    return NextResponse.next();
-  }
-  
-  return NextResponse.next();
+const clerkHandler = clerkMiddleware();
+
+export function proxy(request: NextRequest, event: any) {
+  return clerkHandler(request, event);
 }
 
 export const config = {
   matcher: [
     /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
+     * Match all request paths except for Next internals and static assets
      */
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    '/(api|trpc)(.*)',
   ],
 };

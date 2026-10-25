@@ -17,19 +17,16 @@ import Script from "next/script";
 const outfit = Outfit({
   variable: "--font-outfit",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
 });
 
 const cabin = Cabin({
   variable: "--font-cabin",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
 });
 
 const openSans = Open_Sans({
   variable: "--font-open-sans",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {

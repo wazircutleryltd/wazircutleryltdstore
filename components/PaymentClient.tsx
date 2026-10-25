@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import ConditionalLayout from '@/components/ConditionalLayout';
 import PaymentForm from '@/components/PaymentForm';
@@ -18,13 +18,14 @@ const PaymentContent = () => {
     const router = useRouter();
     const { selectedItems, selectedItemsCount, clearCart } = useCart();
     const [checkoutData, setCheckoutData] = useState<any>(null);
+    const isCompletedRef = useRef(false);
 
     useEffect(() => {
         // Get checkout data from sessionStorage
         const storedData = sessionStorage.getItem('checkout-data');
         if (storedData) {
             setCheckoutData(JSON.parse(storedData));
-        } else {
+        } else if (!isCompletedRef.current) {
             // Redirect to cart if no checkout data
             router.push('/cart');
         }
@@ -32,7 +33,7 @@ const PaymentContent = () => {
 
     useEffect(() => {
         // Redirect if no items selected
-        if (selectedItemsCount === 0) {
+        if (selectedItemsCount === 0 && !isCompletedRef.current) {
             router.push('/cart');
         }
     }, [selectedItemsCount, router]);
@@ -125,6 +126,9 @@ const PaymentContent = () => {
                 console.error('Error sending order emails:', emailError);
                 // Don't block the order process if emails fail
             }
+
+            // Mark order as completed before clearing cart and redirecting
+            isCompletedRef.current = true;
 
             // Clear cart
             clearCart();

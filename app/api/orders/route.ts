@@ -3,21 +3,26 @@ import { supabase } from '@/lib/supabase';
 import { auth } from "@clerk/nextjs/server";
 
 async function getAuthenticatedUser() {
-  const { userId: clerkId } = await auth();
-  if (!clerkId) return null;
+  try {
+    const { userId: clerkId } = await auth();
+    if (!clerkId) return null;
 
-  const { data: user, error } = await supabase
-    .from('users')
-    .select('id, is_admin')
-    .eq('clerk_id', clerkId)
-    .single();
+    const { data: user, error } = await supabase
+      .from('users')
+      .select('id, is_admin')
+      .eq('clerk_id', clerkId)
+      .single();
 
-  if (error || !user) {
-    console.error('Error identifying user:', error);
+    if (error || !user) {
+      console.error('Error identifying user:', error);
+      return null;
+    }
+
+    return user;
+  } catch {
+    // Graceful fallback for unauthenticated guest checkout
     return null;
   }
-
-  return user;
 }
 
 export async function GET() {
