@@ -1,6 +1,11 @@
 import type { MetadataRoute } from 'next';
 import { supabase } from '@/lib/supabase';
 import { DEFAULT_STORE_SETTINGS } from '@/stores/settingsStore';
+import fs from 'fs';
+import path from 'path';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function robots(): Promise<MetadataRoute.Robots> {
   let settings = DEFAULT_STORE_SETTINGS;
@@ -15,9 +20,23 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
     if (data?.value) {
       const val = typeof data.value === 'string' ? JSON.parse(data.value) : data.value;
       settings = { ...DEFAULT_STORE_SETTINGS, ...val };
+    } else {
+      const localPath = path.join(process.cwd(), 'data', 'store_settings.json');
+      if (fs.existsSync(localPath)) {
+        const content = fs.readFileSync(localPath, 'utf-8');
+        settings = { ...DEFAULT_STORE_SETTINGS, ...JSON.parse(content) };
+      }
     }
   } catch (err) {
-    console.warn('robots.ts: could not fetch store_settings, using defaults:', err);
+    try {
+      const localPath = path.join(process.cwd(), 'data', 'store_settings.json');
+      if (fs.existsSync(localPath)) {
+        const content = fs.readFileSync(localPath, 'utf-8');
+        settings = { ...DEFAULT_STORE_SETTINGS, ...JSON.parse(content) };
+      }
+    } catch {
+      // use default
+    }
   }
 
   const allowedBots: string[] = [];
