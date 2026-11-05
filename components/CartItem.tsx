@@ -1,6 +1,7 @@
 'use client';
 import Image from 'next/image';
 import { useCart } from '../contexts/CartContext';
+import { useCurrencyStore } from '@/stores/currencyStore';
 import type { CartItem as CartItemType } from '../types';
 
 interface CartItemProps {
@@ -9,6 +10,7 @@ interface CartItemProps {
 
 const CartItem = ({ item }: CartItemProps) => {
   const { updateQuantity, removeFromCart, toggleItemSelection } = useCart();
+  const { formatPrice } = useCurrencyStore();
   const { product, quantity, selected } = item;
 
   const handleQuantityChange = (change: number) => {
@@ -61,7 +63,7 @@ const CartItem = ({ item }: CartItemProps) => {
                 {product.name}
               </h3>
               <div className="text-xl md:text-2xl font-bold text-[#D6AF66]">
-                ${(product.price || 0).toFixed(2)}
+                {formatPrice(product.price)}
               </div>
             </div>
 
@@ -105,7 +107,7 @@ const CartItem = ({ item }: CartItemProps) => {
               <div className="flex flex-col items-end">
                   <div className="text-xs text-gray-400 font-medium">Subtotal</div>
                   <div className="text-lg font-bold text-gray-900">
-                    ${subtotal.toFixed(2)}
+                    {formatPrice(subtotal)}
                   </div>
               </div>
 

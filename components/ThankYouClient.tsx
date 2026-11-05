@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import ConditionalLayout from '@/components/ConditionalLayout';
 import { useCart } from '@/contexts/CartContext';
+import { useCurrencyStore } from '@/stores/currencyStore';
 import confetti from 'canvas-confetti';
 
 const ThankYouClient = () => {
@@ -17,6 +18,7 @@ const ThankYouClient = () => {
 const ThankYouContent = () => {
     const router = useRouter();
     const { clearCart } = useCart();
+    const { formatPrice } = useCurrencyStore();
     const [orderData, setOrderData] = useState<any>(null);
 
     useEffect(() => {
@@ -157,8 +159,8 @@ const ThankYouContent = () => {
                                 </div>
                                 
                                 <div className="text-right">
-                                    <p className="font-semibold text-black">${(item.total).toFixed(2)}</p>
-                                    <p className="text-sm text-gray-600">${item.price.toFixed(2)} each</p>
+                                    <p className="font-semibold text-black">{formatPrice(item.total)}</p>
+                                    <p className="text-sm text-gray-600">{formatPrice(item.price)} each</p>
                                 </div>
                             </div>
                         ))}
@@ -172,12 +174,12 @@ const ThankYouContent = () => {
                     <div className="space-y-4">
                         <div className="flex justify-between items-center">
                             <span className="text-gray-600">Subtotal:</span>
-                            <span className="font-medium">${orderData.subtotal.toFixed(2)}</span>
+                            <span className="font-medium">{formatPrice(orderData.subtotal)}</span>
                         </div>
                         
                         <div className="flex justify-between items-center">
                             <span className="text-gray-600">Tax (10%):</span>
-                            <span className="font-medium">${orderData.tax.toFixed(2)}</span>
+                            <span className="font-medium">{formatPrice(orderData.tax)}</span>
                         </div>
                         
                         <div className="flex justify-between items-center">
@@ -186,7 +188,7 @@ const ThankYouContent = () => {
                                 {orderData.shipping_cost === 0 ? (
                                     <span className="text-green-600">FREE</span>
                                 ) : (
-                                    `$${orderData.shipping_cost.toFixed(2)}`
+                                    formatPrice(orderData.shipping_cost)
                                 )}
                             </span>
                         </div>
@@ -195,7 +197,7 @@ const ThankYouContent = () => {
                         
                         <div className="flex justify-between items-center text-lg font-bold">
                             <span className="text-black">Total:</span>
-                            <span className="text-main-primary-buttons">${orderData.total.toFixed(2)}</span>
+                            <span className="text-main-primary-buttons">{formatPrice(orderData.total)}</span>
                         </div>
                     </div>
                 </div>

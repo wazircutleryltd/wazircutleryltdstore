@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useCart } from '../contexts/CartContext';
 import QuickCartSheet from './QuickCartSheet';
+import CurrencySwitcher from './CurrencySwitcher';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
 import { Menu, ShoppingBag } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -83,7 +84,10 @@ export default function Navbar({ isAdminLoggedIn }: { isAdminLoggedIn?: boolean 
                         </nav>
 
                         {/* Right Side Icons */}
-                        <div className="flex items-center space-x-3">
+                        <div className="flex items-center space-x-2 sm:space-x-3">
+                            {/* Currency Switcher (USD / PKR) */}
+                            <CurrencySwitcher variant="compact" />
+
                             {/* Shopping Cart Button triggers QuickCartSheet */}
                             <motion.button
                                 whileTap={{ scale: 0.94 }}
@@ -146,7 +150,8 @@ export default function Navbar({ isAdminLoggedIn }: { isAdminLoggedIn?: boolean 
                                         </nav>
                                     </div>
 
-                                    <div className="pt-6 border-t border-neutral-200">
+                                    <div className="pt-6 border-t border-neutral-200 space-y-4">
+                                        <CurrencySwitcher variant="full" />
                                         <Link
                                             href="/cart"
                                             onClick={() => setIsMenuOpen(false)}

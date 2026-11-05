@@ -14,7 +14,10 @@ import {
   Building2, 
   Check, 
   Bot,
-  Phone
+  Phone,
+  Coins,
+  RefreshCw,
+  ArrowRightLeft
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,9 +26,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
+import { useCurrencyStore } from "@/stores/currencyStore";
 
 const DEFAULT_SETTINGS = {
-  // Store Identity
+  // Store Identity & Currency
   storeName: "Wazir Cutlery Ltd",
   storeTagline: "Master-Forged Damascus Knives & Premium Wazir Cutlery",
   storeEmail: "info@wazircutlery.com",
@@ -34,6 +38,8 @@ const DEFAULT_SETTINGS = {
   storeWhatsapp: "+92 312 6209302",
   storeAddress: "Near High Class Bakers, G.T. Road, Wazirabad, Punjab, 52000, Pakistan",
   currency: "USD ($)",
+  usdToPkrRate: 280.0,
+  enableCurrencySwitcher: true,
   
   // AI & SEO Configuration
   brandSummary: "Wazir Cutlery Ltd is an artisanal cutlery forge based in Wazirabad, Pakistan—the centuries-old cutlery capital of South Asia. Specializing in high-carbon 1095 and 15N20 pattern-welded Damascus steel blades, authentic stag horn antler handles, and custom collector swords.",
@@ -60,8 +66,10 @@ const DEFAULT_SETTINGS = {
 export default function SettingsClient() {
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const [isSaving, setIsSaving] = useState(false);
+  const [isFetchingLiveRate, setIsFetchingLiveRate] = useState(false);
 
   useEffect(() => {
+    // 1. Load from localStorage if present
     try {
       const saved = localStorage.getItem("wazir_store_settings");
       if (saved) {
@@ -70,23 +78,75 @@ export default function SettingsClient() {
     } catch (e) {
       console.warn("Could not load stored settings:", e);
     }
+
+    // 2. Fetch authoritative database settings from /api/settings
+    fetch('/api/settings')
+      .then(res => res.json())
+      .then(data => {
+        if (data?.settings?.usd_to_pkr_rate) {
+          setSettings(prev => ({
+            ...prev,
+            usdToPkrRate: Number(data.settings.usd_to_pkr_rate) || prev.usdToPkrRate
+          }));
+        }
+      })
+      .catch(err => console.warn('Could not load api settings:', err));
   }, []);
 
   const handleChange = (field: string, value: any) => {
     setSettings(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSave = () => {
+  const handleFetchLiveRate = async () => {
+    setIsFetchingLiveRate(true);
+    try {
+      const res = await fetch("https://api.exchangerate-api.com/v4/latest/USD");
+      if (!res.ok) throw new Error("Forex service unavailable");
+      const data = await res.json();
+      const livePkr = Number(data?.rates?.PKR);
+
+      if (livePkr && livePkr > 0) {
+        const roundedRate = parseFloat(livePkr.toFixed(2));
+        handleChange("usdToPkrRate", roundedRate);
+        toast.success(`Live interbank rate fetched: 1 USD = ${roundedRate} PKR. Adjust if needed and click Save.`);
+      } else {
+        toast.warning("Could not determine PKR rate from forex provider.");
+      }
+    } catch (err: any) {
+      console.warn("Live rate fetch failed:", err);
+      toast.error("Could not reach live forex service. You can set the rate manually.");
+    } finally {
+      setIsFetchingLiveRate(false);
+    }
+  };
+
+  const handleSave = async () => {
     setIsSaving(true);
     try {
+      // 1. Persist to localStorage
       localStorage.setItem("wazir_store_settings", JSON.stringify(settings));
+
+      // 2. Persist to database via /api/settings
+      const rateNum = Number(settings.usdToPkrRate) || 280.0;
+      await fetch('/api/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          usd_to_pkr_rate: rateNum,
+          default_currency: 'USD'
+        })
+      });
+
+      // 3. Update global currency store in memory
+      useCurrencyStore.getState().setUsdToPkrRate(rateNum);
+
       setTimeout(() => {
         setIsSaving(false);
-        toast.success("Store & AI SEO Settings Saved Successfully");
-      }, 400);
+        toast.success("Store, Currency & AI SEO Settings Saved Successfully");
+      }, 300);
     } catch (e) {
       setIsSaving(false);
-      toast.error("Failed to save settings to storage.");
+      toast.error("Failed to save settings.");
     }
   };
 
@@ -163,12 +223,119 @@ export default function SettingsClient() {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-xs font-bold text-neutral-700">Operating Currency</Label>
+                <Label className="text-xs font-bold text-neutral-700">Operating Base Currency</Label>
                 <Input
                   value={settings.currency}
                   onChange={(e) => handleChange("currency", e.target.value)}
                   className="h-11 rounded-xl bg-neutral-50/50 border-neutral-200 font-bold"
+                  placeholder="USD ($)"
                 />
+              </div>
+            </div>
+
+            {/* Currency & USD to PKR Conversion Engine */}
+            <div className="p-5 sm:p-6 bg-gradient-to-br from-neutral-50 via-white to-amber-50/30 rounded-2xl border border-[#D6AF66]/35 shadow-xs space-y-5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-neutral-200/70">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 bg-[#D6AF66]/15 rounded-xl text-[#9E7B35]">
+                    <Coins className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-neutral-900 font-geist flex items-center gap-2">
+                      Multi-Currency & Conversion Engine
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#D6AF66]/20 text-[#8C6D23] font-bold">
+                        Live Storefront Sync
+                      </span>
+                    </h4>
+                    <p className="text-xs text-neutral-500 mt-0.5">
+                      Base catalog prices are in USD ($). Pakistani patrons can view, cart, and place COD orders in PKR (Rs.) using this conversion rate.
+                    </p>
+                  </div>
+                </div>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleFetchLiveRate}
+                  disabled={isFetchingLiveRate}
+                  className="h-9 px-3.5 rounded-xl border-[#D6AF66]/40 hover:bg-[#D6AF66]/10 text-xs font-bold text-neutral-800 transition-all flex items-center gap-1.5 self-start sm:self-auto cursor-pointer"
+                >
+                  <RefreshCw className={`h-3.5 w-3.5 text-[#9E7B35] ${isFetchingLiveRate ? "animate-spin" : ""}`} />
+                  {isFetchingLiveRate ? "Fetching..." : "Fetch Live Market Rate"}
+                </Button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div className="space-y-2">
+                  <Label className="text-xs font-bold text-neutral-800 flex items-center justify-between">
+                    <span>USD to PKR Conversion Rate</span>
+                    <span className="text-[11px] font-mono text-[#9E7B35] font-semibold">
+                      1 USD = {Number(settings.usdToPkrRate || 280).toFixed(2)} PKR
+                    </span>
+                  </Label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <ArrowRightLeft className="h-4 w-4 text-neutral-400" />
+                    </div>
+                    <Input
+                      type="number"
+                      step="0.5"
+                      min="1"
+                      value={settings.usdToPkrRate ?? 280}
+                      onChange={(e) => handleChange("usdToPkrRate", parseFloat(e.target.value) || 0)}
+                      className="pl-9 h-11 rounded-xl bg-white border-neutral-300 font-mono text-sm font-bold text-neutral-900 focus:border-[#D6AF66]"
+                      placeholder="e.g. 280"
+                    />
+                  </div>
+                  <p className="text-[11px] text-neutral-500">
+                    Change this anytime. All storefront products, cart items, and order calculations will immediately recompute.
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-xs font-bold text-neutral-800">
+                    Storefront Currency Switcher
+                  </Label>
+                  <div className="flex items-center justify-between h-11 px-4 bg-white rounded-xl border border-neutral-200">
+                    <span className="text-xs font-medium text-neutral-700">
+                      Enable USD ($) / PKR (Rs.) Navbar Toggle
+                    </span>
+                    <Switch
+                      checked={settings.enableCurrencySwitcher !== false}
+                      onCheckedChange={(checked) => handleChange("enableCurrencySwitcher", checked)}
+                    />
+                  </div>
+                  <p className="text-[11px] text-neutral-500">
+                    Allows visitors on desktop and mobile to seamlessly switch their view between USD and PKR.
+                  </p>
+                </div>
+              </div>
+
+              {/* Live Conversion Preview Card */}
+              <div className="bg-white/90 rounded-xl p-4 border border-neutral-200/80">
+                <div className="text-[11px] font-bold uppercase tracking-wider text-neutral-400 mb-2.5 font-geist">
+                  Live Price Conversion Preview
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="p-3 bg-neutral-50 rounded-lg border border-neutral-200/60">
+                    <div className="text-xs text-neutral-500">Utility Knife ($50.00)</div>
+                    <div className="text-sm font-bold text-neutral-900 mt-1 font-mono">
+                      Rs. {Math.round(50 * (Number(settings.usdToPkrRate) || 280)).toLocaleString("en-PK")}
+                    </div>
+                  </div>
+                  <div className="p-3 bg-neutral-50 rounded-lg border border-neutral-200/60">
+                    <div className="text-xs text-neutral-500">Damascus Chef Knife ($120.00)</div>
+                    <div className="text-sm font-bold text-[#8C6D23] mt-1 font-mono">
+                      Rs. {Math.round(120 * (Number(settings.usdToPkrRate) || 280)).toLocaleString("en-PK")}
+                    </div>
+                  </div>
+                  <div className="p-3 bg-neutral-50 rounded-lg border border-neutral-200/60">
+                    <div className="text-xs text-neutral-500">Collector Broadsword ($280.00)</div>
+                    <div className="text-sm font-bold text-neutral-900 mt-1 font-mono">
+                      Rs. {Math.round(280 * (Number(settings.usdToPkrRate) || 280)).toLocaleString("en-PK")}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 

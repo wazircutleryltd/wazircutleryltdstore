@@ -1,8 +1,10 @@
 'use client';
 import { useCart } from '../contexts/CartContext';
+import { useCurrencyStore } from '@/stores/currencyStore';
 import { FaGift } from 'react-icons/fa6';
 
 const OrderSummary = () => {
+  const { formatPrice } = useCurrencyStore();
   const { 
     subtotal, 
     tax, 
@@ -19,12 +21,12 @@ const OrderSummary = () => {
       <div className="space-y-4 mb-6">
         <div className="flex justify-between items-center">
           <span className="text-gray-600">Items ({selectedItemsCount})</span>
-          <span className="font-medium">${subtotal.toFixed(2)}</span>
+          <span className="font-medium">{formatPrice(subtotal)}</span>
         </div>
         
         <div className="flex justify-between items-center">
           <span className="text-gray-600">Tax (10%)</span>
-          <span className="font-medium">${tax.toFixed(2)}</span>
+          <span className="font-medium">{formatPrice(tax)}</span>
         </div>
         
         <div className="flex justify-between items-center">
@@ -33,7 +35,7 @@ const OrderSummary = () => {
             {deliveryFee === 0 ? (
               <span className="text-green-600">FREE</span>
             ) : (
-              `$${deliveryFee.toFixed(2)}`
+              formatPrice(deliveryFee)
             )}
           </span>
         </div>
@@ -46,7 +48,7 @@ const OrderSummary = () => {
         ) : (
           subtotal > 0 && (
             <div className="text-sm text-[#D6AF66] bg-amber-50 p-3 rounded-lg border border-amber-100 italic font-medium">
-              Add worth <span className="font-bold underline">${(200 - subtotal).toFixed(2)}</span> more to get <span className="font-bold text-[#2C2C2C]">FREE</span> delivery!
+              Add worth <span className="font-bold underline">{formatPrice(Math.max(0, 200 - subtotal))}</span> more to get <span className="font-bold text-[#2C2C2C]">FREE</span> delivery!
             </div>
           )
         )}
@@ -55,7 +57,7 @@ const OrderSummary = () => {
         
         <div className="flex justify-between items-center text-lg font-bold">
           <span className="text-black">Total</span>
-          <span className="text-main-primary-buttons">${total.toFixed(2)}</span>
+          <span className="text-main-primary-buttons">{formatPrice(total)}</span>
         </div>
       </div>
       

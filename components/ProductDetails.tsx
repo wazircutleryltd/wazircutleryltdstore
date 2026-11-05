@@ -1,8 +1,10 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
 import { useCart } from '../contexts/CartContext';
+import { useCurrencyStore } from '@/stores/currencyStore';
 import { toast } from 'sonner';
 import { 
     FaStar, 
@@ -20,6 +22,7 @@ import { HiSparkles } from 'react-icons/hi2';
 const ProductDetails = ({ product }: { product: any }) => {
     const { name, short_description, description, price, main_image, images, category, tags, delivery_date, rating } = product;
     const { addToCart } = useCart();
+    const { formatPrice } = useCurrencyStore();
 
     const [activeImage, setActiveImage] = useState(main_image);
     const [quantity, setQuantity] = useState(1);
@@ -98,9 +101,9 @@ const ProductDetails = ({ product }: { product: any }) => {
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
             {/* Breadcrumbs */}
             <div className="flex items-center space-x-2 text-xs text-neutral-500 mb-6">
-                <a href="/" className="hover:text-neutral-900 transition-colors">Home</a>
+                <Link href="/" className="hover:text-neutral-900 transition-colors">Home</Link>
                 <span>/</span>
-                <a href="/product" className="hover:text-neutral-900 transition-colors">Shop</a>
+                <Link href="/product" className="hover:text-neutral-900 transition-colors">Shop</Link>
                 <span>/</span>
                 <span className="text-neutral-900 font-medium capitalize truncate max-w-[280px] sm:max-w-md">{name}</span>
             </div>
@@ -175,7 +178,7 @@ const ProductDetails = ({ product }: { product: any }) => {
                     {/* Price */}
                     <div className="flex items-baseline gap-3 mb-4">
                         <span className="text-3xl font-bold text-neutral-900 font-[family-name:var(--font-outfit)]">
-                            ${price}
+                            {formatPrice(price)}
                         </span>
                     </div>
 
@@ -207,7 +210,7 @@ const ProductDetails = ({ product }: { product: any }) => {
                             >
                                 <span>Add To Cart</span>
                                 <span>•</span>
-                                <span>${(Number(price) * quantity).toFixed(2)}</span>
+                                <span>{formatPrice(Number(price) * quantity)}</span>
                             </button>
                         </div>
 
