@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { 
   useCategoriesQuery, 
   useCreateProductMutation, 
   useUpdateProductMutation 
 } from "../../lib/hooks";
+import { useCurrencyStore } from "@/stores/currencyStore";
 import { Button } from "../ui/button";
 import { 
   X, 
@@ -107,6 +108,7 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
   const { data: categories } = useCategoriesQuery();
   const createProductMutation = useCreateProductMutation();
   const updateProductMutation = useUpdateProductMutation();
+  const { usdToPkrRate } = useCurrencyStore();
 
   const generateSku = (name: string): string => {
     const prefix = name ? name.toUpperCase().replace(/[^A-Z0-9]/g, "").substring(0, 6) : "WAZIR";
@@ -114,7 +116,7 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
     return `${prefix || "WAZIR"}-${rand}`;
   };
 
-  const resetForm = () => {
+  const resetForm = useCallback(() => {
     setFormData({
       name: "", 
       description: "", 
@@ -137,7 +139,7 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
     setAdditionalImages([]);
     setErrors({});
     setActiveTab("identity");
-  };
+  }, []);
 
   useEffect(() => {
     if (product && isOpen) {
@@ -166,7 +168,7 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
     }
     setErrors({});
     setActiveTab("identity");
-  }, [product, isOpen]);
+  }, [product, isOpen, resetForm]);
 
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => {
@@ -410,7 +412,14 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
                       <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400 font-geist">Commercial Values</h4>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label className="text-xs font-bold text-neutral-700">List Price (USD) *</Label>
+                          <div className="flex items-center justify-between">
+                            <Label className="text-xs font-bold text-neutral-700">List Price (USD) *</Label>
+                            {Number(formData.price) > 0 && (
+                              <span className="text-[11px] font-mono text-[#8C6D23] font-semibold">
+                                ≈ Rs. {Math.round(Number(formData.price) * (usdToPkrRate || 280)).toLocaleString('en-PK')} PKR
+                              </span>
+                            )}
+                          </div>
                           <div className="relative">
                             <DollarSign className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
                             <Input

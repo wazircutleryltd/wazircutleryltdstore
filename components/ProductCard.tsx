@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCart } from '../contexts/CartContext';
+import { useCurrencyStore } from '@/stores/currencyStore';
 import { toast } from 'sonner';
 import { Badge } from './ui/badge';
 import { Star, ShoppingBag, Eye } from 'lucide-react';
@@ -16,6 +17,7 @@ interface ProductCardProps {
 
 const ProductCard = ({ product, showAddToCart = true }: ProductCardProps) => {
     const { addToCart } = useCart();
+    const { formatPrice } = useCurrencyStore();
     const router = useRouter();
 
     const handleAddToCart = (e: React.MouseEvent) => {
@@ -23,7 +25,7 @@ const ProductCard = ({ product, showAddToCart = true }: ProductCardProps) => {
         e.stopPropagation();
         addToCart(product, 1);
         toast.success(`${product.name} added to cart!`, {
-            description: `$${Number(product.price).toFixed(2)} — In Stock & Ready to Ship`,
+            description: `${formatPrice(product.price)} — In Stock & Ready to Ship`,
             action: {
                 label: "View Cart",
                 onClick: () => router.push('/cart'),
@@ -105,11 +107,11 @@ const ProductCard = ({ product, showAddToCart = true }: ProductCardProps) => {
                 {/* Price Display */}
                 <div className="flex items-baseline gap-1.5 mb-2 mt-auto">
                     <span className="text-base sm:text-lg font-bold text-neutral-900 font-[family-name:var(--font-outfit)]">
-                        ${Number(product.price).toFixed(2)}
+                        {formatPrice(product.price)}
                     </span>
                     {product.compare_price && Number(product.compare_price) > Number(product.price) && (
                         <span className="text-[11px] text-neutral-400 line-through font-mono">
-                            ${Number(product.compare_price).toFixed(2)}
+                            {formatPrice(product.compare_price)}
                         </span>
                     )}
                 </div>

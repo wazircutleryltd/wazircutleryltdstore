@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import type { Product, CartItem } from '@/types';
+import { useSettingsStore } from './settingsStore';
 
 export interface CartTotals {
   selectedItems: CartItem[];
@@ -21,10 +22,18 @@ export interface CartState {
   updateQuantity: (itemId: string, quantity: number) => void;
   toggleItemSelection: (itemId: string) => void;
   clearCart: () => void;
-  getTotals: () => CartTotals;
+  getTotals: (freeShippingThreshold?: number, standardShippingFee?: number) => CartTotals;
 }
 
-export const calculateDerivedTotals = (items: CartItem[]): CartTotals => {
+export const calculateDerivedTotals = (
+  items: CartItem[],
+  customFreeThreshold?: number,
+  customStandardFee?: number
+): CartTotals => {
+  const settings = typeof window !== 'undefined' ? useSettingsStore.getState?.()?.settings : null;
+  const threshold = customFreeThreshold ?? settings?.freeShippingThreshold ?? 150;
+  const standardFee = customStandardFee ?? settings?.standardShippingFee ?? 19.99;
+
   const selectedItems = items.filter((item) => item.selected);
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const selectedItemsCount = selectedItems.reduce((sum, item) => sum + item.quantity, 0);
@@ -35,10 +44,10 @@ export const calculateDerivedTotals = (items: CartItem[]): CartTotals => {
   );
   const subtotal = parseFloat(rawSubtotal.toFixed(2));
   const tax = parseFloat((subtotal * 0.1).toFixed(2));
-  const deliveryFee = subtotal > 200 || subtotal === 0 ? 0 : 15;
+  const deliveryFee = subtotal >= threshold || subtotal === 0 ? 0 : standardFee;
   const total = parseFloat((subtotal + tax + deliveryFee).toFixed(2));
   const remainingForFreeDelivery =
-    subtotal > 0 && subtotal < 200 ? parseFloat((200 - subtotal).toFixed(2)) : 0;
+    subtotal > 0 && subtotal < threshold ? parseFloat((threshold - subtotal).toFixed(2)) : 0;
 
   return {
     selectedItems,
@@ -117,7 +126,8 @@ export const useCartStore = create<CartState>()(
         set({ items: [] });
       },
 
-      getTotals: () => calculateDerivedTotals(get().items),
+      getTotals: (freeShippingThreshold, standardShippingFee) =>
+        calculateDerivedTotals(get().items, freeShippingThreshold, standardShippingFee),
     }),
     {
       name: 'wazir-cutlery-cart',

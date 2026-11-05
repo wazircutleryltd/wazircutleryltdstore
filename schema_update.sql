@@ -45,7 +45,36 @@ CREATE POLICY IF NOT EXISTS "Allow Updates"
 ON storage.objects FOR UPDATE 
 USING ( bucket_id = 'products' );
 
+-- 5. Allow Deletes
 CREATE POLICY IF NOT EXISTS "Allow Deletes" 
 ON storage.objects FOR DELETE 
 USING ( bucket_id = 'products' );
+
+-- ==========================================
+-- Store Settings Table (USD to PKR Exchange Rate & Global Configuration)
+-- ==========================================
+CREATE TABLE IF NOT EXISTS store_settings (
+    key TEXT PRIMARY KEY,
+    value JSONB NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Enable RLS
+ALTER TABLE store_settings ENABLE ROW LEVEL SECURITY;
+
+-- Allow public read access to settings
+CREATE POLICY IF NOT EXISTS "Allow public read access to store_settings"
+ON store_settings FOR SELECT
+USING (true);
+
+-- Allow authenticated and anon insert/update
+CREATE POLICY IF NOT EXISTS "Allow write access to store_settings"
+ON store_settings FOR ALL
+USING (true);
+
+-- Insert default USD to PKR rate (280 PKR per 1 USD)
+INSERT INTO store_settings (key, value)
+VALUES ('currency', '{"usd_to_pkr_rate": 280.0, "default_currency": "USD"}'::jsonb)
+ON CONFLICT (key) DO NOTHING;
+
 

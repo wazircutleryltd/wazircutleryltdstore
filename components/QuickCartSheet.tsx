@@ -12,6 +12,8 @@ import {
   SheetFooter,
 } from "@/components/ui/sheet";
 import { useCart } from "@/contexts/CartContext";
+import { useCurrencyStore } from "@/stores/currencyStore";
+import { useSettingsStore } from "@/stores/settingsStore";
 import { Trash2, ShoppingBag, ArrowRight, Plus, Minus } from "lucide-react";
 import { FaGift } from "react-icons/fa6";
 import { motion, AnimatePresence } from "framer-motion";
@@ -23,6 +25,7 @@ interface QuickCartSheetProps {
 
 export default function QuickCartSheet({ open, onOpenChange }: QuickCartSheetProps) {
   const router = useRouter();
+  const { formatPrice } = useCurrencyStore();
   const {
     items,
     totalItems,
@@ -33,7 +36,8 @@ export default function QuickCartSheet({ open, onOpenChange }: QuickCartSheetPro
     removeFromCart,
   } = useCart();
 
-  const freeDeliveryThreshold = 200;
+  const freeShippingThreshold = useSettingsStore((state) => state.settings.freeShippingThreshold) || 150;
+  const freeDeliveryThreshold = freeShippingThreshold;
   const freeDeliveryProgress = Math.min(100, (subtotal / freeDeliveryThreshold) * 100);
   const remainingForFreeDelivery = Math.max(0, freeDeliveryThreshold - subtotal);
 
@@ -64,7 +68,7 @@ export default function QuickCartSheet({ open, onOpenChange }: QuickCartSheetPro
             <div className="flex justify-between text-xs font-medium text-neutral-600 mb-1 font-[family-name:var(--font-cabin)]">
               {remainingForFreeDelivery > 0 ? (
                 <span>
-                  Add <span className="text-[#8C6D23] font-bold">${remainingForFreeDelivery.toFixed(2)}</span> more for <span className="font-semibold text-neutral-900">FREE delivery</span>
+                  Add <span className="text-[#8C6D23] font-bold">{formatPrice(remainingForFreeDelivery)}</span> more for <span className="font-semibold text-neutral-900">FREE delivery</span>
                 </span>
               ) : (
                 <span className="text-emerald-700 font-semibold inline-flex items-center gap-1.5">
@@ -152,7 +156,7 @@ export default function QuickCartSheet({ open, onOpenChange }: QuickCartSheetPro
                         </button>
                       </div>
                       <p className="text-xs text-neutral-500 font-mono mt-0.5">
-                        ${Number(item.product.price).toFixed(2)} each
+                        {formatPrice(item.product.price)} each
                       </p>
                     </div>
 
@@ -179,7 +183,7 @@ export default function QuickCartSheet({ open, onOpenChange }: QuickCartSheetPro
                       </div>
 
                       <span className="text-sm font-bold text-neutral-900 font-[family-name:var(--font-outfit)]">
-                        ${(Number(item.product.price) * item.quantity).toFixed(2)}
+                        {formatPrice(Number(item.product.price) * item.quantity)}
                       </span>
                     </div>
                   </div>
@@ -195,15 +199,15 @@ export default function QuickCartSheet({ open, onOpenChange }: QuickCartSheetPro
             <div className="space-y-1.5 w-full text-sm font-[family-name:var(--font-cabin)]">
               <div className="flex justify-between text-neutral-600">
                 <span>Subtotal</span>
-                <span className="font-medium text-neutral-900">${subtotal.toFixed(2)}</span>
+                <span className="font-medium text-neutral-900">{formatPrice(subtotal)}</span>
               </div>
               <div className="flex justify-between text-neutral-600">
                 <span>Estimated Delivery</span>
-                <span>{deliveryFee === 0 ? <span className="text-emerald-600 font-semibold">FREE</span> : `$${deliveryFee.toFixed(2)}`}</span>
+                <span>{deliveryFee === 0 ? <span className="text-emerald-600 font-semibold">FREE</span> : formatPrice(deliveryFee)}</span>
               </div>
               <div className="flex justify-between text-base font-bold text-neutral-900 pt-2 border-t border-neutral-100 font-[family-name:var(--font-outfit)]">
                 <span>Total</span>
-                <span className="text-[#8C6D23]">${total.toFixed(2)}</span>
+                <span className="text-[#8C6D23]">{formatPrice(total)}</span>
               </div>
             </div>
 

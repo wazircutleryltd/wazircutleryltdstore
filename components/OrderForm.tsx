@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useCreateOrderMutation } from '@/lib/query-hooks';
+import { useCurrencyStore } from '@/stores/currencyStore';
 import { sendOrderNotification } from '../lib/email-service';
 import { useUser } from '@clerk/nextjs';
 import type { Product, Order } from '@/types';
@@ -15,6 +16,7 @@ export default function OrderForm({
     onOrderSuccess 
 }: OrderFormProps) {
     const { user } = useUser();
+    const { formatPrice } = useCurrencyStore();
     const [formData, setFormData] = useState({
         fullName: user?.fullName || '',
         email: user?.primaryEmailAddress?.emailAddress || '',
@@ -285,19 +287,19 @@ export default function OrderForm({
                     <div className="space-y-1">
                         <div className="flex justify-between">
                             <span>Subtotal:</span>
-                            <span>${(product.price * formData.quantity).toFixed(2)}</span>
+                            <span>{formatPrice(product.price * formData.quantity)}</span>
                         </div>
                         <div className="flex justify-between">
                             <span>Shipping:</span>
-                            <span>$10.00</span>
+                            <span>{formatPrice(10)}</span>
                         </div>
                         <div className="flex justify-between">
                             <span>Tax (10%):</span>
-                            <span>${(product.price * formData.quantity * 0.1).toFixed(2)}</span>
+                            <span>{formatPrice(product.price * formData.quantity * 0.1)}</span>
                         </div>
                         <div className="flex justify-between font-bold text-lg border-t pt-2">
                             <span>Total:</span>
-                            <span>${(product.price * formData.quantity * 1.1 + 10).toFixed(2)}</span>
+                            <span>{formatPrice(product.price * formData.quantity * 1.1 + 10)}</span>
                         </div>
                     </div>
                 </div>

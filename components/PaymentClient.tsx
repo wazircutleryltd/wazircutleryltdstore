@@ -5,6 +5,7 @@ import ConditionalLayout from '@/components/ConditionalLayout';
 import PaymentForm from '@/components/PaymentForm';
 import OrderSummary from '@/components/OrderSummary';
 import { useCart } from '@/contexts/CartContext';
+import { useCurrencyStore } from '@/stores/currencyStore';
 
 const PaymentClient = () => {
     return (
@@ -17,6 +18,7 @@ const PaymentClient = () => {
 const PaymentContent = () => {
     const router = useRouter();
     const { selectedItems, selectedItemsCount, clearCart } = useCart();
+    const { currency, usdToPkrRate } = useCurrencyStore();
     const [checkoutData, setCheckoutData] = useState<any>(null);
     const isCompletedRef = useRef(false);
 
@@ -71,6 +73,8 @@ const PaymentContent = () => {
                 shipping_cost: selectedItems.reduce((sum: number, item: any) => sum + (item.product.price * item.quantity), 0) > 200 ? 0 : 15,
                 tax: selectedItems.reduce((sum: number, item: any) => sum + (item.product.price * item.quantity), 0) * 0.1,
                 total: selectedItems.reduce((sum: number, item: any) => sum + (item.product.price * item.quantity), 0) * 1.1 + (selectedItems.reduce((sum: number, item: any) => sum + (item.product.price * item.quantity), 0) > 200 ? 0 : 15),
+                currency: currency,
+                exchange_rate: usdToPkrRate,
                 shipping_address: {
                     full_name: checkoutData.customerInfo.fullName,
                     email: checkoutData.customerInfo.email,

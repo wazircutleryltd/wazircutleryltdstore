@@ -183,6 +183,27 @@ gantt
 
 ---
 
+### ✅ Phase 15: Dynamic Multi-Currency Engine (USD ⇄ PKR) & Admin Forex Control
+- [x] **Settings Control ([`components/admin/SettingsClient.tsx`](file:///Users/mac/Desktop/stag-horn/components/admin/SettingsClient.tsx))**:
+  - Added **USD to PKR Conversion Rate** input in Admin Settings with instant real-time synchronization.
+  - Added **"Fetch Live Market Rate"** button querying interbank rates from open forex API.
+  - Added **Live Price Conversion Preview** card calculating sample knife & sword prices ($50, $120, $280).
+- [x] **Backend & API ([`app/api/settings/route.ts`](file:///Users/mac/Desktop/stag-horn/app/api/settings/route.ts))**:
+  - Provisioned `/api/settings` GET & POST handlers with Supabase `store_settings` upsert and resilient fallback defaults.
+  - Documented SQL migration in [`schema_update.sql`](file:///Users/mac/Desktop/stag-horn/schema_update.sql).
+- [x] **Zustand Currency Store ([`stores/currencyStore.ts`](file:///Users/mac/Desktop/stag-horn/stores/currencyStore.ts))**:
+  - Created persistent currency store with `currency: 'USD' | 'PKR'`, `usdToPkrRate`, `convertPrice()`, and `formatPrice()`.
+  - Added `CurrencyProvider.tsx` in [`app/layout.tsx`](file:///Users/mac/Desktop/stag-horn/app/layout.tsx) for automatic boot hydration.
+- [x] **Storefront Switcher ([`components/CurrencySwitcher.tsx`](file:///Users/mac/Desktop/stag-horn/components/CurrencySwitcher.tsx))**:
+  - Integrated luxury segmented `[ USD $ | PKR ₨ ]` pill switch into Desktop Navbar and Mobile Drawer with toast feedback.
+- [x] **Storewide Price Integration**:
+  - Integrated dynamic formatting into `ProductCard.tsx`, `ProductDetails.tsx`, `CartItem.tsx`, `QuickCartSheet.tsx`, `OrderSummary.tsx`, `PaymentClient.tsx`, `OrderForm.tsx`, and `ThankYouClient.tsx`.
+  - Added live PKR conversion indicator inside Admin `ProductTable.tsx` and `ProductModal.tsx`.
+- [x] **Zero Errors Verification**:
+  - Passed `bun run lint` (0 errors, 0 warnings), `bun x tsc --noEmit` (0 errors), and `bun run build` (36/36 routes generated).
+
+---
+
 ## 🔮 Future Enhancements & Recommendations
 
 - [ ] **Live Payment Gateway (Stripe / PayPal)**:

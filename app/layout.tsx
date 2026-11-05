@@ -5,6 +5,7 @@ import "./globals.css";
 import SupabaseClientProvider from "../components/SupabaseClientProvider";
 import ClerkProviderWrapper from "../components/ClerkProviderWrapper";
 import { CartProvider } from "@/contexts/CartContext";
+import CurrencyProvider from "../components/CurrencyProvider";
 import { Toaster } from "sonner";
 import GoogleReCaptchaV3Provider from "../components/GoogleReCaptchaV3Provider";
 import ConditionalWhatsAppIcon from "../components/ConditionalWhatsAppIcon";
@@ -200,9 +201,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <SupabaseClientProvider>
               <QueryProvider>
                 <CartProvider>
-                  {children}
-                  <Toaster richColors closeButton position="top-right" />
-                  <ConditionalWhatsAppIcon />
+                  <CurrencyProvider>
+                    {children}
+                    <Toaster richColors closeButton position="top-right" />
+                    <ConditionalWhatsAppIcon />
+                  </CurrencyProvider>
                 </CartProvider>
               </QueryProvider>
             </SupabaseClientProvider>
