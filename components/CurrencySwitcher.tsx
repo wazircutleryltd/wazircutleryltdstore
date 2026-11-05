@@ -124,3 +124,4 @@ export default function CurrencySwitcher({ className = '', variant = 'compact' }
     </div>
   );
 }
+

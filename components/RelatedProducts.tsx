@@ -3,11 +3,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 import { useCart } from '../contexts/CartContext';
+import { useCurrencyStore } from '@/stores/currencyStore';
 import { toast } from 'sonner';
 import { FaStar } from 'react-icons/fa6';
 
 const RelatedProducts = ({ products = [] }: { products?: any[] }) => {
     const { addToCart } = useCart();
+    const { formatPrice } = useCurrencyStore();
 
     if (!products || products.length === 0) {
         return null;
@@ -78,9 +80,9 @@ const RelatedProducts = ({ products = [] }: { products?: any[] }) => {
                             </div>
 
                             <div className="flex flex-wrap items-center gap-1.5 md:gap-2 mb-2 md:mb-3">
-                                <span className="outfit-font text-[#D6AF66] font-bold text-base md:text-lg">${product.price}</span>
+                                <span className="outfit-font text-[#D6AF66] font-bold text-base md:text-lg">{formatPrice(product.price)}</span>
                                 {product.compare_price && (
-                                    <span className="outfit-font text-gray-400 line-through text-xs md:text-sm">${product.compare_price}</span>
+                                    <span className="outfit-font text-gray-400 line-through text-xs md:text-sm">{formatPrice(product.compare_price)}</span>
                                 )}
                             </div>
 

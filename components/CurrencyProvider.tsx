@@ -13,3 +13,4 @@ export default function CurrencyProvider({ children }: { children: React.ReactNo
 
   return <>{children}</>;
 }
+
