@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { useCart } from '../contexts/CartContext';
 import QuickCartSheet from './QuickCartSheet';
 import CurrencySwitcher from './CurrencySwitcher';
+import { useSettingsStore } from '@/stores/settingsStore';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
 import { Menu, ShoppingBag } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -16,6 +17,7 @@ export default function Navbar({ isAdminLoggedIn }: { isAdminLoggedIn?: boolean 
     const [isScrolled, setIsScrolled] = useState(false);
     const pathname = usePathname();
     const { totalItems } = useCart();
+    const enableCurrencySwitcher = useSettingsStore((state) => state.settings.enableCurrencySwitcher);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -86,7 +88,7 @@ export default function Navbar({ isAdminLoggedIn }: { isAdminLoggedIn?: boolean 
                         {/* Right Side Icons */}
                         <div className="flex items-center space-x-2 sm:space-x-3">
                             {/* Currency Switcher (USD / PKR) */}
-                            <CurrencySwitcher variant="compact" />
+                            {enableCurrencySwitcher !== false && <CurrencySwitcher variant="compact" />}
 
                             {/* Shopping Cart Button triggers QuickCartSheet */}
                             <motion.button
@@ -151,7 +153,7 @@ export default function Navbar({ isAdminLoggedIn }: { isAdminLoggedIn?: boolean 
                                     </div>
 
                                     <div className="pt-6 border-t border-neutral-200 space-y-4">
-                                        <CurrencySwitcher variant="full" />
+                                        {enableCurrencySwitcher !== false && <CurrencySwitcher variant="full" />}
                                         <Link
                                             href="/cart"
                                             onClick={() => setIsMenuOpen(false)}

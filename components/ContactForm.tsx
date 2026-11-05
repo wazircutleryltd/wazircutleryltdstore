@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useSettingsStore } from "@/stores/settingsStore";
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
@@ -31,6 +32,8 @@ export default function ContactForm() {
   const recaptchaRef = useRef<any>(null);
 
   const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "";
+  const settings = useSettingsStore((state) => state.settings);
+  const cleanPhone = (phone: string) => (phone || '').replace(/[^0-9]/g, '');
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -142,7 +145,7 @@ export default function ContactForm() {
 
           <div className="space-y-3.5">
             <a
-              href="https://wa.me/923160764052"
+              href={settings.whatsappUrl || `https://wa.me/${cleanPhone(settings.storeInternationalPhone)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="p-4 bg-neutral-900/80 hover:bg-neutral-800 border border-[#D6AF66]/30 hover:border-[#D6AF66] rounded-2xl flex items-center justify-between group transition-all"
@@ -154,7 +157,7 @@ export default function ContactForm() {
                 <div>
                   <div className="text-xs font-bold text-white group-hover:text-[#D6AF66] transition-colors">Tayyab Mughal</div>
                   <div className="text-[10px] text-[#D6AF66] font-medium">International Client Relations Manager</div>
-                  <div className="text-[11px] text-neutral-400 font-mono">+92 316 0764052</div>
+                  <div className="text-[11px] text-neutral-400 font-mono">{settings.storeInternationalPhone || "+92 316 0764052"}</div>
                 </div>
               </div>
               <span className="text-[10px] font-bold px-2.5 py-1 rounded-md bg-[#25D366]/20 text-[#25D366] inline-flex items-center gap-0.5">
@@ -164,7 +167,7 @@ export default function ContactForm() {
             </a>
 
             <a
-              href="https://wa.me/+923080601995"
+              href={`https://wa.me/${cleanPhone(settings.storePhone)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="p-4 bg-neutral-900/80 hover:bg-neutral-800 border border-neutral-800/80 rounded-2xl flex items-center justify-between group transition-all"
@@ -175,7 +178,7 @@ export default function ContactForm() {
                 </div>
                 <div>
                   <div className="text-xs font-bold text-white group-hover:text-[#D6AF66] transition-colors">Hassan Mughal</div>
-                  <div className="text-[11px] text-neutral-400 font-mono">+92 308 0601995</div>
+                  <div className="text-[11px] text-neutral-400 font-mono">{settings.storePhone || "+92 308 0601995"}</div>
                 </div>
               </div>
               <span className="text-[10px] font-bold px-2.5 py-1 rounded-md bg-[#25D366]/20 text-[#25D366] inline-flex items-center gap-0.5">
@@ -185,7 +188,7 @@ export default function ContactForm() {
             </a>
 
             <a
-              href="https://wa.me/+923126209302"
+              href={`https://wa.me/${cleanPhone(settings.storeWhatsapp)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="p-4 bg-neutral-900/80 hover:bg-neutral-800 border border-neutral-800/80 rounded-2xl flex items-center justify-between group transition-all"
@@ -196,7 +199,7 @@ export default function ContactForm() {
                 </div>
                 <div>
                   <div className="text-xs font-bold text-white group-hover:text-[#D6AF66] transition-colors">Qamar Shahzad</div>
-                  <div className="text-[11px] text-neutral-400 font-mono">+92 312 6209302</div>
+                  <div className="text-[11px] text-neutral-400 font-mono">{settings.storeWhatsapp || "+92 312 6209302"}</div>
                 </div>
               </div>
               <span className="text-[10px] font-bold px-2.5 py-1 rounded-md bg-[#25D366]/20 text-[#25D366] inline-flex items-center gap-0.5">
@@ -219,14 +222,14 @@ export default function ContactForm() {
             </div>
           </div>
           <p className="text-xs text-neutral-600 leading-relaxed">
-            Near High Class Bakers, G.T. Road, Wazirabad, Punjab, Pakistan.<br />
+            {settings.storeAddress || "Near High Class Bakers, G.T. Road, Wazirabad, Punjab, Pakistan."}<br />
             Known globally as the cutlery capital of South Asia.
           </p>
           <div className="pt-2 border-t border-neutral-100 flex items-center gap-2 text-xs text-neutral-500">
             <Mail className="h-4 w-4 text-[#D6AF66]" />
             <span>Official Inquiries:</span>
-            <a href="mailto:info@wazircutlery.com" className="font-bold text-neutral-900 hover:text-[#D6AF66] transition-colors">
-              info@wazircutlery.com
+            <a href={`mailto:${settings.storeEmail || "info@wazircutlery.com"}`} className="font-bold text-neutral-900 hover:text-[#D6AF66] transition-colors">
+              {settings.storeEmail || "info@wazircutlery.com"}
             </a>
           </div>
         </div>

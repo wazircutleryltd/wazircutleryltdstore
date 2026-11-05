@@ -2,10 +2,14 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useActiveCategoriesQuery } from "../lib/hooks";
+import { useSettingsStore } from '@/stores/settingsStore';
 
 const Footer = () => {
   const { data: categories } = useActiveCategoriesQuery();
   const topCategories = categories?.slice(0, 5);
+  const settings = useSettingsStore((state) => state.settings);
+
+  const cleanPhone = (phone: string) => (phone || '').replace(/[^0-9]/g, '');
 
   return (
     <footer className="bg-footer py-12 md:py-16 border-t border-neutral-800/80">
@@ -68,20 +72,32 @@ const Footer = () => {
               <div className="space-y-3 text-xs mb-6">
                 <div>
                   <p className="text-[#808080] text-[11px] mb-0.5">Tayyab Mughal (International Relations):</p>
-                  <Link href="https://wa.me/923160764052" target="_blank" className="text-[#C0C0C0] hover:text-[#D6AF66] font-mono transition-colors font-medium">
-                    +92 316 0764052 (WhatsApp)
+                  <Link 
+                    href={settings.whatsappUrl || `https://wa.me/${cleanPhone(settings.storeInternationalPhone)}`} 
+                    target="_blank" 
+                    className="text-[#C0C0C0] hover:text-[#D6AF66] font-mono transition-colors font-medium"
+                  >
+                    {settings.storeInternationalPhone || "+92 316 0764052"} (WhatsApp)
                   </Link>
                 </div>
                 <div>
                   <p className="text-[#808080] text-[11px] mb-0.5">Hassan Mughal:</p>
-                  <Link href="https://wa.me/+923080601995" target="_blank" className="text-[#C0C0C0] hover:text-[#D6AF66] font-mono transition-colors">
-                    +92 308 0601995 (WhatsApp)
+                  <Link 
+                    href={`https://wa.me/${cleanPhone(settings.storePhone)}`} 
+                    target="_blank" 
+                    className="text-[#C0C0C0] hover:text-[#D6AF66] font-mono transition-colors"
+                  >
+                    {settings.storePhone || "+92 308 0601995"} (WhatsApp)
                   </Link>
                 </div>
                 <div>
                   <p className="text-[#808080] text-[11px] mb-0.5">Qamar Shahzad:</p>
-                  <Link href="https://wa.me/+923126209302" target="_blank" className="text-[#C0C0C0] hover:text-[#D6AF66] font-mono transition-colors">
-                    +92 312 6209302 (WhatsApp)
+                  <Link 
+                    href={`https://wa.me/${cleanPhone(settings.storeWhatsapp)}`} 
+                    target="_blank" 
+                    className="text-[#C0C0C0] hover:text-[#D6AF66] font-mono transition-colors"
+                  >
+                    {settings.storeWhatsapp || "+92 312 6209302"} (WhatsApp)
                   </Link>
                 </div>
               </div>
@@ -91,13 +107,13 @@ const Footer = () => {
                 <a href="https://www.facebook.com/share/16z6hKB6KL/" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-xl bg-neutral-900 border border-neutral-800 flex items-center justify-center hover:bg-[#D6AF66] hover:border-[#D6AF66] transition-colors group">
                   <Image src="/facebook-gray.svg" alt="Facebook" width={18} height={18} className="group-hover:brightness-0" />
                 </a>
-                <a href="https://www.instagram.com/wazircutlery?utm_source=qr&igsh=am4yc3Z2ZDV1bTM4" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-xl bg-neutral-900 border border-neutral-800 flex items-center justify-center hover:bg-[#D6AF66] hover:border-[#D6AF66] transition-colors group">
+                <a href={settings.instagramUrl || "https://www.instagram.com/wazircutlery"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-xl bg-neutral-900 border border-neutral-800 flex items-center justify-center hover:bg-[#D6AF66] hover:border-[#D6AF66] transition-colors group">
                   <Image src="/instagram-gray.svg" alt="Instagram" width={18} height={18} className="group-hover:brightness-0" />
                 </a>
-                <a href="https://youtube.com/@wazircutleryltd?si=1_jqdKkNlecHfcFz" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-xl bg-neutral-900 border border-neutral-800 flex items-center justify-center hover:bg-[#D6AF66] hover:border-[#D6AF66] transition-colors group">
+                <a href={settings.youtubeUrl || "https://youtube.com/@wazircutleryltd"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-xl bg-neutral-900 border border-neutral-800 flex items-center justify-center hover:bg-[#D6AF66] hover:border-[#D6AF66] transition-colors group">
                   <Image src="/youtube-gray.svg" alt="YouTube" width={18} height={18} className="group-hover:brightness-0" />
                 </a>
-                <a href="https://www.tiktok.com/@wazircutlery?_t=ZP-8zmHjcDQuLe&_r=1" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-xl bg-neutral-900 border border-neutral-800 flex items-center justify-center hover:bg-[#D6AF66] hover:border-[#D6AF66] transition-colors group">
+                <a href={settings.tiktokUrl || "https://www.tiktok.com/@wazircutlery"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-xl bg-neutral-900 border border-neutral-800 flex items-center justify-center hover:bg-[#D6AF66] hover:border-[#D6AF66] transition-colors group">
                   <Image src="/tiktok-gray.svg" alt="Tik Tok" width={18} height={18} className="group-hover:brightness-0" />
                 </a>
               </div>
@@ -108,14 +124,14 @@ const Footer = () => {
         {/* Forge Address */}
         <div className="pt-8 border-t border-neutral-800/80 mb-6">
           <div className="flex flex-col sm:flex-row items-center justify-center gap-2 text-center text-xs text-[#808080]">
-            <span className="font-semibold text-[#A0A0A0]">Wazir Cutlery Works:</span>
-            <span>Near High Class Bakers, G.T. Road, Wazirabad, Punjab, Pakistan</span>
+            <span className="font-semibold text-[#A0A0A0]">{settings.storeName || "Wazir Cutlery"}:</span>
+            <span>{settings.storeAddress || "Near High Class Bakers, G.T. Road, Wazirabad, Punjab, Pakistan"}</span>
           </div>
         </div>
 
         {/* Copyright */}
         <div className="text-center text-[11px] text-[#606060]">
-          <p>© {new Date().getFullYear()} Wazir Cutlery Ltd. All rights reserved. Handcrafted in the cutlery capital of South Asia.</p>
+          <p>© {new Date().getFullYear()} {settings.storeName || "Wazir Cutlery Ltd"}. All rights reserved. Handcrafted in the cutlery capital of South Asia.</p>
         </div>
       </div>
     </footer>

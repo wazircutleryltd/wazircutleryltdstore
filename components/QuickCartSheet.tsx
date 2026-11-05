@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/sheet";
 import { useCart } from "@/contexts/CartContext";
 import { useCurrencyStore } from "@/stores/currencyStore";
+import { useSettingsStore } from "@/stores/settingsStore";
 import { Trash2, ShoppingBag, ArrowRight, Plus, Minus } from "lucide-react";
 import { FaGift } from "react-icons/fa6";
 import { motion, AnimatePresence } from "framer-motion";
@@ -35,7 +36,8 @@ export default function QuickCartSheet({ open, onOpenChange }: QuickCartSheetPro
     removeFromCart,
   } = useCart();
 
-  const freeDeliveryThreshold = 200;
+  const freeShippingThreshold = useSettingsStore((state) => state.settings.freeShippingThreshold) || 150;
+  const freeDeliveryThreshold = freeShippingThreshold;
   const freeDeliveryProgress = Math.min(100, (subtotal / freeDeliveryThreshold) * 100);
   const remainingForFreeDelivery = Math.max(0, freeDeliveryThreshold - subtotal);
 

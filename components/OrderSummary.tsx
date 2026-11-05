@@ -11,7 +11,7 @@ const OrderSummary = () => {
     deliveryFee, 
     total, 
     selectedItemsCount,
-    selectedItems 
+    remainingForFreeDelivery 
   } = useCart();
 
   return (
@@ -46,9 +46,9 @@ const OrderSummary = () => {
             <span>You&apos;ve qualified for free delivery!</span>
           </div>
         ) : (
-          subtotal > 0 && (
+          subtotal > 0 && remainingForFreeDelivery > 0 && (
             <div className="text-sm text-[#D6AF66] bg-amber-50 p-3 rounded-lg border border-amber-100 italic font-medium">
-              Add worth <span className="font-bold underline">{formatPrice(Math.max(0, 200 - subtotal))}</span> more to get <span className="font-bold text-[#2C2C2C]">FREE</span> delivery!
+              Add worth <span className="font-bold underline">{formatPrice(remainingForFreeDelivery)}</span> more to get <span className="font-bold text-[#2C2C2C]">FREE</span> delivery!
             </div>
           )
         )}

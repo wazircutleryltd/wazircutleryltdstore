@@ -27,41 +27,9 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { useCurrencyStore } from "@/stores/currencyStore";
+import { useSettingsStore, DEFAULT_STORE_SETTINGS, type StoreSettings } from "@/stores/settingsStore";
 
-const DEFAULT_SETTINGS = {
-  // Store Identity & Currency
-  storeName: "Wazir Cutlery Ltd",
-  storeTagline: "Master-Forged Damascus Knives & Premium Wazir Cutlery",
-  storeEmail: "info@wazircutlery.com",
-  storeInternationalPhone: "+92 316 0764052",
-  storePhone: "+92 308 0601995",
-  storeWhatsapp: "+92 312 6209302",
-  storeAddress: "Near High Class Bakers, G.T. Road, Wazirabad, Punjab, 52000, Pakistan",
-  currency: "USD ($)",
-  usdToPkrRate: 280.0,
-  enableCurrencySwitcher: true,
-  
-  // AI & SEO Configuration
-  brandSummary: "Wazir Cutlery Ltd is an artisanal cutlery forge based in Wazirabad, Pakistan—the centuries-old cutlery capital of South Asia. Specializing in high-carbon 1095 and 15N20 pattern-welded Damascus steel blades, authentic stag horn antler handles, and custom collector swords.",
-  metaTitle: "Wazir Cutlery | Handcrafted Damascus Knives & Swords",
-  metaDescription: "Exquisite handcrafted knives, swords, and chef cutlery forged from Damascus steel and stag horn in Wazirabad. Worldwide shipping with artisan guarantee.",
-  allowGptBot: true,
-  allowClaudeBot: true,
-  allowPerplexityBot: true,
-  allowGoogleExtended: true,
-
-  // Logistics & Delivery
-  deliveryTimeline: "Estimated delivery in 2-4 working days",
-  freeShippingThreshold: 150,
-  standardShippingFee: 19.99,
-  couriers: "DHL Express, FedEx International Priority, EMS",
-
-  // Social & Community
-  whatsappUrl: "https://wa.me/923160764052",
-  instagramUrl: "https://www.instagram.com/wazircutlery",
-  youtubeUrl: "https://youtube.com/@wazircutleryltd",
-  tiktokUrl: "https://www.tiktok.com/@wazircutlery"
-};
+const DEFAULT_SETTINGS = DEFAULT_STORE_SETTINGS;
 
 export default function SettingsClient() {
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
@@ -69,28 +37,36 @@ export default function SettingsClient() {
   const [isFetchingLiveRate, setIsFetchingLiveRate] = useState(false);
 
   useEffect(() => {
-    // 1. Load from localStorage if present
-    try {
-      const saved = localStorage.getItem("wazir_store_settings");
-      if (saved) {
-        setSettings({ ...DEFAULT_SETTINGS, ...JSON.parse(saved) });
-      }
-    } catch (e) {
-      console.warn("Could not load stored settings:", e);
+    // 1. First sync with local store
+    const local = useSettingsStore.getState().settings;
+    if (local) {
+      setSettings((prev) => ({ ...prev, ...local }));
     }
 
     // 2. Fetch authoritative database settings from /api/settings
     fetch('/api/settings')
-      .then(res => res.json())
-      .then(data => {
-        if (data?.settings?.usd_to_pkr_rate) {
-          setSettings(prev => ({
-            ...prev,
-            usdToPkrRate: Number(data.settings.usd_to_pkr_rate) || prev.usdToPkrRate
-          }));
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.settings) {
+          const fetched = data.settings;
+          const merged: StoreSettings = {
+            ...DEFAULT_SETTINGS,
+            ...fetched,
+            usdToPkrRate: Number(fetched.usdToPkrRate || fetched.usd_to_pkr_rate || DEFAULT_SETTINGS.usdToPkrRate),
+            freeShippingThreshold: Number(fetched.freeShippingThreshold ?? DEFAULT_SETTINGS.freeShippingThreshold),
+            standardShippingFee: Number(fetched.standardShippingFee ?? DEFAULT_SETTINGS.standardShippingFee),
+            enableCurrencySwitcher: fetched.enableCurrencySwitcher !== false,
+            allowGptBot: fetched.allowGptBot !== false,
+            allowClaudeBot: fetched.allowClaudeBot !== false,
+            allowPerplexityBot: fetched.allowPerplexityBot !== false,
+            allowGoogleExtended: fetched.allowGoogleExtended !== false,
+          };
+          setSettings(merged);
+          useSettingsStore.getState().setSettings(merged);
+          useCurrencyStore.getState().setUsdToPkrRate(merged.usdToPkrRate);
         }
       })
-      .catch(err => console.warn('Could not load api settings:', err));
+      .catch((err) => console.warn('Could not load api settings:', err));
   }, []);
 
   const handleChange = (field: string, value: any) => {
@@ -123,38 +99,62 @@ export default function SettingsClient() {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      // 1. Persist to localStorage
-      localStorage.setItem("wazir_store_settings", JSON.stringify(settings));
+      const payload: StoreSettings = {
+        ...settings,
+        usdToPkrRate: Number(settings.usdToPkrRate) || 280.0,
+        freeShippingThreshold: Number(settings.freeShippingThreshold) || 150,
+        standardShippingFee: Number(settings.standardShippingFee) || 19.99,
+      };
 
-      // 2. Persist to database via /api/settings
-      const rateNum = Number(settings.usdToPkrRate) || 280.0;
-      await fetch('/api/settings', {
+      // 1. Persist entire settings payload to database via /api/settings
+      const res = await fetch('/api/settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          usd_to_pkr_rate: rateNum,
-          default_currency: 'USD'
-        })
+        body: JSON.stringify(payload),
       });
 
-      // 3. Update global currency store in memory
-      useCurrencyStore.getState().setUsdToPkrRate(rateNum);
+      const data = await res.json();
+      const savedSettings: StoreSettings = data?.settings || payload;
+
+      // 2. Update reactive zustand stores
+      useSettingsStore.getState().setSettings(savedSettings);
+      useCurrencyStore.getState().setUsdToPkrRate(savedSettings.usdToPkrRate);
+
+      // 3. Persist to localStorage for offline resilience
+      localStorage.setItem("wazir_store_settings", JSON.stringify(savedSettings));
+      setSettings(savedSettings);
 
       setTimeout(() => {
         setIsSaving(false);
-        toast.success("Store, Currency & AI SEO Settings Saved Successfully");
+        toast.success("Storefront, Logistics, SEO & Currency Settings Saved Successfully");
       }, 300);
     } catch (e) {
+      console.error("Save settings error:", e);
       setIsSaving(false);
-      toast.error("Failed to save settings.");
+      toast.error("Failed to save settings to server.");
     }
   };
 
-  const handleReset = () => {
+  const handleReset = async () => {
     if (confirm("Reset all settings to forge factory defaults?")) {
-      setSettings(DEFAULT_SETTINGS);
-      localStorage.removeItem("wazir_store_settings");
-      toast.info("Settings reset to defaults.");
+      setIsSaving(true);
+      try {
+        await fetch('/api/settings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(DEFAULT_SETTINGS),
+        });
+        setSettings(DEFAULT_SETTINGS);
+        useSettingsStore.getState().setSettings(DEFAULT_SETTINGS);
+        useCurrencyStore.getState().setUsdToPkrRate(DEFAULT_SETTINGS.usdToPkrRate);
+        localStorage.removeItem("wazir_store_settings");
+        toast.info("Settings reset to forge defaults.");
+      } catch (err) {
+        console.error("Reset error:", err);
+        toast.error("Failed to reset settings.");
+      } finally {
+        setIsSaving(false);
+      }
     }
   };
 
