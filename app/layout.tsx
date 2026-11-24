@@ -17,16 +17,19 @@ import Script from "next/script";
 const outfit = Outfit({
   variable: "--font-outfit",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const cabin = Cabin({
   variable: "--font-cabin",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const openSans = Open_Sans({
   variable: "--font-open-sans",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -105,6 +108,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     contactPoint: [
       {
         '@type': 'ContactPoint',
+        telephone: '+923126209302',
+        contactType: 'founder & master artisan direct hotline',
+        areaServed: 'Worldwide',
+        availableLanguage: ['English', 'Urdu']
+      },
+      {
+        '@type': 'ContactPoint',
         telephone: '+923160764052',
         contactType: 'international client relations',
         areaServed: 'Worldwide',
@@ -112,13 +122,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       },
       {
         '@type': 'ContactPoint',
-        telephone: '+923126209302',
+        telephone: '+923080601995',
         contactType: 'customer service',
         areaServed: 'Worldwide',
         availableLanguage: ['English', 'Urdu']
       }
     ],
-    priceRange: '$$',
+    priceRange: 'PKR',
     knowsAbout: [
       'Damascus Steel Metallurgy',
       'Pattern Welding',
@@ -142,15 +152,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     founder: [
       {
         '@type': 'Person',
-        name: 'Hassan Mughal',
-        jobTitle: 'Founder',
-        sameAs: 'https://wa.me/+923080601995'
+        name: 'Qamar Mughal',
+        jobTitle: 'Founder & Master Bladesmith',
+        sameAs: 'https://wa.me/+923126209302'
       },
       {
         '@type': 'Person',
-        name: 'Qamar Shahzad',
+        name: 'Hassan Mughal',
         jobTitle: 'Founder',
-        sameAs: 'https://wa.me/+923126209302'
+        sameAs: 'https://wa.me/+923080601995'
       },
     ],
     sameAs: [
@@ -170,6 +180,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
           />
           <meta name="apple-mobile-web-app-capable" content="yes" />
+          <meta name="mobile-web-app-capable" content="yes" />
           <meta name="apple-mobile-web-app-status-bar-style" content="black" />
           <meta name="msapplication-TileColor" content="#111827" />
           {/* Google Tag Manager */}

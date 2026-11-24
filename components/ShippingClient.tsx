@@ -38,7 +38,7 @@ export default function ShippingClient() {
               </div>
               <h3 className="font-bold text-neutral-900 font-geist">Complimentary Shipping</h3>
               <p className="text-xs text-neutral-500 leading-relaxed">
-                Free priority worldwide express delivery on all orders over $150 USD.
+                Free priority express delivery on all orders over Rs. 15,000.
               </p>
             </div>
 

@@ -123,6 +123,7 @@ const AboutContent = () => {
                         src="/forging-work.jpg"
                         alt="Artisan Forging High Carbon Steel Blade at Wazir Cutlery Workshop"
                         fill
+                        sizes="(max-width: 1024px) 100vw, 50vw"
                         style={{ objectFit: 'cover' }}
                         className="rounded-3xl"
                         priority

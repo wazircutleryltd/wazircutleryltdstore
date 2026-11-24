@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { Label } from "../../ui/label";
 import { Button } from "../../ui/button";
-import { Upload, X, Trash2, Plus } from "lucide-react";
+import { Upload, X, Trash2, Plus, Crop } from "lucide-react";
 import { FaBolt, FaLightbulb } from "react-icons/fa6";
 import { AnimatePresence } from "framer-motion";
 import ImageCropper from "../ImageCropper";
@@ -127,6 +127,15 @@ export default function ProductMediaManager({
       const imageUrl = await uploadImage(croppedBlob, "products");
       if (croppingType === "main") {
         onMainImageChange(imageUrl);
+      } else if (croppingType.startsWith("gallery-")) {
+        const idx = parseInt(croppingType.replace("gallery-", ""), 10);
+        const updated = [...(additionalImages || [])];
+        if (!isNaN(idx) && updated[idx] !== undefined) {
+          updated[idx] = imageUrl;
+          onAdditionalImagesChange(updated);
+        } else {
+          onAdditionalImagesChange([...updated, imageUrl]);
+        }
       } else {
         onAdditionalImagesChange([...(additionalImages || []), imageUrl]);
       }
@@ -201,7 +210,19 @@ export default function ProductMediaManager({
                 alt="Main product"
                 className="w-full h-64 object-contain bg-neutral-50/80 p-2"
               />
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() => {
+                    setCroppingImage(mainImagePreview);
+                    setCroppingType("main");
+                  }}
+                  className="bg-[#D6AF66] text-[#0A0A0A] hover:bg-[#C5A055] font-bold cursor-pointer text-xs flex items-center gap-1 shadow-sm"
+                >
+                  <Crop className="h-3.5 w-3.5" />
+                  Crop & Frame
+                </Button>
                 <Button
                   type="button"
                   size="sm"
@@ -295,6 +316,17 @@ export default function ProductMediaManager({
                 className="w-full h-full object-contain p-1"
               />
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5">
+                <button
+                  type="button"
+                  title="Crop & Frame this image"
+                  onClick={() => {
+                    setCroppingImage(image);
+                    setCroppingType(`gallery-${index}`);
+                  }}
+                  className="bg-[#D6AF66] text-[#0A0A0A] p-1.5 rounded-lg hover:bg-[#C5A055] shadow-sm cursor-pointer"
+                >
+                  <Crop className="h-3.5 w-3.5" />
+                </button>
                 <button
                   type="button"
                   title="Make this the Cover image"

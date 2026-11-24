@@ -144,11 +144,41 @@ export default function ContactForm() {
           </div>
 
           <div className="space-y-3.5">
+            {/* Qamar Mughal - Primary at top */}
+            <a
+              href={`https://wa.me/${cleanPhone(settings.storeWhatsapp || "+92 312 6209302")}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-4 bg-neutral-900/90 hover:bg-neutral-800 border-2 border-[#D6AF66]/60 hover:border-[#D6AF66] rounded-2xl flex items-center justify-between group transition-all shadow-md"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-[#25D366]/20 text-[#25D366] flex items-center justify-center">
+                  <Phone className="h-4 w-4" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-white group-hover:text-[#D6AF66] transition-colors flex items-center gap-2">
+                    <span>Qamar Mughal</span>
+                    <span className="text-[10px] bg-[#D6AF66]/20 text-[#D6AF66] px-1.5 py-0.2 rounded font-semibold uppercase">Founder</span>
+                  </div>
+                  <div className="text-[10px] text-[#D6AF66] font-medium">Master Bladesmith &amp; Custom Orders</div>
+                  <div className="text-[11px] text-white font-mono font-semibold">{settings.storeWhatsapp || "+92 312 6209302"}</div>
+                </div>
+              </div>
+              <div className="flex flex-col items-end gap-1">
+                <span className="text-[10px] font-bold px-2.5 py-1 rounded-md bg-[#25D366]/20 text-[#25D366] inline-flex items-center gap-0.5">
+                  <span>WhatsApp</span>
+                  <FiArrowUpRight className="h-3 w-3" />
+                </span>
+                <span className="text-[10px] text-neutral-400 font-mono">WhatsApp &amp; Phone</span>
+              </div>
+            </a>
+
+            {/* Tayyab Mughal */}
             <a
               href={settings.whatsappUrl || `https://wa.me/${cleanPhone(settings.storeInternationalPhone)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-4 bg-neutral-900/80 hover:bg-neutral-800 border border-[#D6AF66]/30 hover:border-[#D6AF66] rounded-2xl flex items-center justify-between group transition-all"
+              className="p-4 bg-neutral-900/80 hover:bg-neutral-800 border border-neutral-800/80 hover:border-neutral-700 rounded-2xl flex items-center justify-between group transition-all"
             >
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-[#25D366]/20 text-[#25D366] flex items-center justify-center">
@@ -166,11 +196,12 @@ export default function ContactForm() {
               </span>
             </a>
 
+            {/* Hassan Mughal */}
             <a
               href={`https://wa.me/${cleanPhone(settings.storePhone)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-4 bg-neutral-900/80 hover:bg-neutral-800 border border-neutral-800/80 rounded-2xl flex items-center justify-between group transition-all"
+              className="p-4 bg-neutral-900/80 hover:bg-neutral-800 border border-neutral-800/80 hover:border-neutral-700 rounded-2xl flex items-center justify-between group transition-all"
             >
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-[#25D366]/20 text-[#25D366] flex items-center justify-center">
@@ -179,27 +210,6 @@ export default function ContactForm() {
                 <div>
                   <div className="text-xs font-bold text-white group-hover:text-[#D6AF66] transition-colors">Hassan Mughal</div>
                   <div className="text-[11px] text-neutral-400 font-mono">{settings.storePhone || "+92 308 0601995"}</div>
-                </div>
-              </div>
-              <span className="text-[10px] font-bold px-2.5 py-1 rounded-md bg-[#25D366]/20 text-[#25D366] inline-flex items-center gap-0.5">
-                <span>Chat</span>
-                <FiArrowUpRight className="h-3 w-3" />
-              </span>
-            </a>
-
-            <a
-              href={`https://wa.me/${cleanPhone(settings.storeWhatsapp)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-4 bg-neutral-900/80 hover:bg-neutral-800 border border-neutral-800/80 rounded-2xl flex items-center justify-between group transition-all"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#25D366]/20 text-[#25D366] flex items-center justify-center">
-                  <Phone className="h-4 w-4" />
-                </div>
-                <div>
-                  <div className="text-xs font-bold text-white group-hover:text-[#D6AF66] transition-colors">Qamar Shahzad</div>
-                  <div className="text-[11px] text-neutral-400 font-mono">{settings.storeWhatsapp || "+92 312 6209302"}</div>
                 </div>
               </div>
               <span className="text-[10px] font-bold px-2.5 py-1 rounded-md bg-[#25D366]/20 text-[#25D366] inline-flex items-center gap-0.5">

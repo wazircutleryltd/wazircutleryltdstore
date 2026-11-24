@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
-export type Currency = 'USD' | 'PKR';
+export type Currency = 'PKR';
 
 export interface CurrencyState {
   currency: Currency;
@@ -11,9 +11,9 @@ export interface CurrencyState {
   setCurrency: (currency: Currency) => void;
   setUsdToPkrRate: (rate: number) => void;
   fetchRate: (force?: boolean) => Promise<number>;
-  convertPrice: (amountInUSD: number | string | undefined | null) => number;
+  convertPrice: (amountInPKR: number | string | undefined | null) => number;
   formatPrice: (
-    amountInUSD: number | string | undefined | null,
+    amountInPKR: number | string | undefined | null,
     options?: { showCode?: boolean }
   ) => string;
   getSymbol: () => string;
@@ -25,13 +25,14 @@ const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes cache
 export const useCurrencyStore = create<CurrencyState>()(
   persist(
     (set, get) => ({
-      currency: 'USD',
+      currency: 'PKR',
       usdToPkrRate: DEFAULT_USD_TO_PKR_RATE,
       isLoading: false,
       lastFetched: null,
 
-      setCurrency: (currency: Currency) => {
-        set({ currency });
+      setCurrency: (_currency: Currency) => {
+        // Locked to PKR
+        set({ currency: 'PKR' });
       },
 
       setUsdToPkrRate: (usdToPkrRate: number) => {
@@ -71,40 +72,23 @@ export const useCurrencyStore = create<CurrencyState>()(
         return get().usdToPkrRate;
       },
 
-      convertPrice: (amountInUSD) => {
-        const val = parseFloat(String(amountInUSD || 0)) || 0;
-        const { currency, usdToPkrRate } = get();
-
-        if (currency === 'PKR') {
-          // Round to integer for clean rupee pricing
-          return Math.round(val * usdToPkrRate);
-        }
-
-        return parseFloat(val.toFixed(2));
+      convertPrice: (amountInPKR) => {
+        const val = parseFloat(String(amountInPKR || 0)) || 0;
+        return Math.round(val);
       },
 
-      formatPrice: (amountInUSD, options) => {
-        const val = parseFloat(String(amountInUSD || 0)) || 0;
-        const { currency, usdToPkrRate } = get();
-
-        if (currency === 'PKR') {
-          const pkrVal = Math.round(val * usdToPkrRate);
-          const formatted = pkrVal.toLocaleString('en-PK');
-          if (options?.showCode) {
-            return `PKR ${formatted}`;
-          }
-          return `Rs. ${formatted}`;
-        }
-
-        const usdFormatted = val.toFixed(2);
+      formatPrice: (amountInPKR, options) => {
+        const val = parseFloat(String(amountInPKR || 0)) || 0;
+        const pkrVal = Math.round(val);
+        const formatted = pkrVal.toLocaleString('en-PK');
         if (options?.showCode) {
-          return `$${usdFormatted} USD`;
+          return `PKR ${formatted}`;
         }
-        return `$${usdFormatted}`;
+        return `Rs. ${formatted}`;
       },
 
       getSymbol: () => {
-        return get().currency === 'PKR' ? 'Rs.' : '$';
+        return 'Rs.';
       },
     }),
     {

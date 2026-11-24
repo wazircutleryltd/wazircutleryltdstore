@@ -144,7 +144,7 @@ export default function CustomersClient() {
         ),
         cell: ({ row }) => (
           <span className="font-bold text-emerald-600 font-mono">
-            ${(row.original.total_spent || 0).toFixed(2)}
+            Rs. {Math.round(Number(row.original.total_spent || 0)).toLocaleString('en-PK')}
           </span>
         ),
       },

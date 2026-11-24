@@ -31,8 +31,8 @@ export const calculateDerivedTotals = (
   customStandardFee?: number
 ): CartTotals => {
   const settings = typeof window !== 'undefined' ? useSettingsStore.getState?.()?.settings : null;
-  const threshold = customFreeThreshold ?? settings?.freeShippingThreshold ?? 150;
-  const standardFee = customStandardFee ?? settings?.standardShippingFee ?? 19.99;
+  const threshold = customFreeThreshold ?? settings?.freeShippingThreshold ?? 15000;
+  const standardFee = customStandardFee ?? settings?.standardShippingFee ?? 1000;
 
   const selectedItems = items.filter((item) => item.selected);
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);

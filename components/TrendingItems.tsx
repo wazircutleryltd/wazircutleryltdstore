@@ -4,9 +4,14 @@ import Link from 'next/link';
 import ProductCard from './ProductCard';
 import ProductSkeleton from './ProductSkeleton';
 import { ErrorState, NoDataState } from './common/StateComponents';
+import type { Product } from '@/types';
 
-const TrendingItems = () => {
-    const { data: products, isLoading, error } = useTrendingProductsQuery(5);
+interface TrendingItemsProps {
+    initialProducts?: Product[];
+}
+
+const TrendingItems = ({ initialProducts }: TrendingItemsProps) => {
+    const { data: products, isLoading, error } = useTrendingProductsQuery(5, initialProducts);
     const displayProducts = useMemo(() => {
         if (!products) return [];
         return products.slice(0, 5);

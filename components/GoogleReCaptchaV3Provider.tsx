@@ -12,7 +12,14 @@ export default function GoogleReCaptchaV3Provider({ children }: { children: Reac
   }
 
   return (
-    <Provider reCaptchaKey={recaptchaV3SiteKey}>
+    <Provider 
+      reCaptchaKey={recaptchaV3SiteKey}
+      scriptProps={{
+        async: true,
+        defer: true,
+        appendTo: 'body'
+      }}
+    >
       {children}
     </Provider>
   );

@@ -1,6 +1,10 @@
 import React from "react";
 import type { Metadata } from "next";
 import HomeClient from "@/components/HomeClient";
+import { supabase, PRODUCT_CARD_SELECT } from "@/lib/supabase";
+
+// Incremental Static Regeneration (ISR): serve cached HTML in milliseconds, revalidating in background
+export const revalidate = 120;
 
 export const metadata: Metadata = {
   title: "Wazir Cutlery - Premium Handcrafted Knives & Swords",
@@ -44,7 +48,65 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Home() {
+export default async function Home() {
+  // Fetch initial home data on server in parallel to eliminate client waterfalls and skeletons
+  const [
+    { data: categories },
+    { data: trending },
+    { data: featured },
+    { data: swords },
+    { data: knives },
+    { data: forYou },
+  ] = await Promise.all([
+    supabase
+      .from('categories')
+      .select('*')
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true }),
+    supabase
+      .from('products')
+      .select(PRODUCT_CARD_SELECT)
+      .eq('is_active', true)
+      .or('is_trending.eq.true,is_top_rated.eq.true')
+      .order('created_at', { ascending: false })
+      .limit(5),
+    supabase
+      .from('products')
+      .select(PRODUCT_CARD_SELECT)
+      .eq('is_featured', true)
+      .order('created_at', { ascending: false })
+      .limit(5),
+    supabase
+      .from('products')
+      .select(`${PRODUCT_CARD_SELECT}, categories!inner(slug)`)
+      .eq('categories.slug', 'swords')
+      .eq('is_active', true)
+      .order('created_at', { ascending: false })
+      .limit(5),
+    supabase
+      .from('products')
+      .select(`${PRODUCT_CARD_SELECT}, categories!inner(slug)`)
+      .eq('categories.slug', 'knives')
+      .eq('is_active', true)
+      .order('created_at', { ascending: false })
+      .limit(5),
+    supabase
+      .from('products')
+      .select(PRODUCT_CARD_SELECT)
+      .eq('is_active', true)
+      .order('created_at', { ascending: false })
+      .limit(5),
+  ]);
+
+  const initialData = {
+    categories: (categories || []) as any,
+    trending: (trending || []) as any,
+    featured: (featured || []) as any,
+    swords: (swords || []) as any,
+    knives: (knives || []) as any,
+    forYou: (forYou || []) as any,
+  };
+
   const websiteJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
@@ -90,7 +152,7 @@ export default function Home() {
     "@id": "https://wazircutlery.com",
     "url": "https://wazircutlery.com",
     "telephone": "+923160764052",
-    "priceRange": "$$",
+    "priceRange": "PKR",
     "address": {
       "@type": "PostalAddress",
       "streetAddress": "G.T. Road",
@@ -128,7 +190,7 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
       />
-      <HomeClient />
+      <HomeClient initialData={initialData} />
     </>
   );
 }

@@ -42,7 +42,7 @@ const TestimonialCard = ({ testimonial, isFeatured }: TestimonialCardProps) => {
         <article className={articleClass}>
             <div className={barClass}></div>
             <div className="w-16 h-16 lg:w-20 lg:h-20 relative flex-shrink-0">
-                <Image src={testimonial.image} alt={testimonial.name} fill className="rounded-full object-cover" priority />
+                <Image src={testimonial.image} alt={testimonial.name} fill sizes="80px" className="rounded-full object-cover" />
             </div>
             <div className="flex flex-col gap-2 flex-grow relative">
                 <div className="absolute right-0 -top-1">

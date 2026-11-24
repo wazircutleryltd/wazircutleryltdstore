@@ -6,9 +6,14 @@ import { useFeaturedProductsQuery } from '@/lib/hooks';
 import ProductCard from './ProductCard';
 import ProductSkeleton from './ProductSkeleton';
 import { ErrorState, NoDataState } from './common/StateComponents';
+import type { Product } from '@/types';
 
-const FeaturedItems = () => {
-    const { data: products, isLoading, error } = useFeaturedProductsQuery(5);
+interface FeaturedItemsProps {
+    initialProducts?: Product[];
+}
+
+const FeaturedItems = ({ initialProducts }: FeaturedItemsProps) => {
+    const { data: products, isLoading, error } = useFeaturedProductsQuery(5, initialProducts);
     const displayProducts = useMemo(() => {
         if (!products) return [];
         return products.slice(0, 5);

@@ -33,7 +33,7 @@ export default function Overview({ data }: OverviewProps) {
           fontSize={12}
           tickLine={false}
           axisLine={false}
-          tickFormatter={(value) => `$${value}`}
+          tickFormatter={(value) => `Rs. ${value}`}
           className="font-geist tabular-nums"
         />
         <Tooltip 
@@ -47,7 +47,7 @@ export default function Overview({ data }: OverviewProps) {
                       {label} Revenue
                     </span>
                     <span className="text-lg font-bold text-[#2C2C2C] font-geist tabular-nums">
-                      ${Number(payload[0].value).toLocaleString()}
+                      Rs. {Number(payload[0].value).toLocaleString()}
                     </span>
                   </div>
                 </div>

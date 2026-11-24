@@ -4,9 +4,14 @@ import Link from 'next/link';
 import { useRandomProductsQuery } from '@/lib/hooks';
 import ProductCard from './ProductCard';
 import { ErrorState, NoDataState } from './common/StateComponents';
+import type { Product } from '@/types';
 
-const ForYouItems = () => {
-    const { data: products, isLoading, error } = useRandomProductsQuery(5);
+interface ForYouItemsProps {
+    initialProducts?: Product[];
+}
+
+const ForYouItems = ({ initialProducts }: ForYouItemsProps) => {
+    const { data: products, isLoading, error } = useRandomProductsQuery(5, initialProducts);
 
     if (isLoading) {
         return (

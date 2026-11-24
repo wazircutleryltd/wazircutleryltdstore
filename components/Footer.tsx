@@ -69,7 +69,29 @@ const Footer = () => {
             {/* Direct Artisan Contact & Socials */}
             <div>
               <h3 className="footer-heading font-bold text-sm tracking-widest uppercase mb-5 text-white">Artisan Hotline</h3>
-              <div className="space-y-3 text-xs mb-6">
+              <div className="space-y-3.5 text-xs mb-6">
+                <div className="p-2.5 rounded-xl bg-neutral-900 border border-[#D6AF66]/30">
+                  <p className="text-[#D6AF66] text-[11px] font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#25D366] animate-pulse" />
+                    <span>Qamar Mughal (Founder &amp; Master Crafter):</span>
+                  </p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Link 
+                      href={`https://wa.me/${cleanPhone(settings.storeWhatsapp || "+92 312 6209302")}`} 
+                      target="_blank" 
+                      className="text-white hover:text-[#25D366] font-mono transition-colors font-semibold"
+                    >
+                      {settings.storeWhatsapp || "+92 312 6209302"} (WhatsApp)
+                    </Link>
+                    <span className="text-neutral-600">•</span>
+                    <a 
+                      href={`tel:${cleanPhone(settings.storeWhatsapp || "+92 312 6209302")}`}
+                      className="text-[#D6AF66] hover:underline font-mono font-medium"
+                    >
+                      Call Phone
+                    </a>
+                  </div>
+                </div>
                 <div>
                   <p className="text-[#808080] text-[11px] mb-0.5">Tayyab Mughal (International Relations):</p>
                   <Link 
@@ -88,16 +110,6 @@ const Footer = () => {
                     className="text-[#C0C0C0] hover:text-[#D6AF66] font-mono transition-colors"
                   >
                     {settings.storePhone || "+92 308 0601995"} (WhatsApp)
-                  </Link>
-                </div>
-                <div>
-                  <p className="text-[#808080] text-[11px] mb-0.5">Qamar Shahzad:</p>
-                  <Link 
-                    href={`https://wa.me/${cleanPhone(settings.storeWhatsapp)}`} 
-                    target="_blank" 
-                    className="text-[#C0C0C0] hover:text-[#D6AF66] font-mono transition-colors"
-                  >
-                    {settings.storeWhatsapp || "+92 312 6209302"} (WhatsApp)
                   </Link>
                 </div>
               </div>

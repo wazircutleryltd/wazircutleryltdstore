@@ -13,7 +13,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Edit, Trash2, Eye, EyeOff, Star, TrendingUp, Award, ArrowUpDown, ArrowUp, ArrowDown, Copy, ExternalLink } from "lucide-react";
 import { FaPen } from "react-icons/fa6";
 import { LoadingState, ErrorState, NoDataState } from "../../common/StateComponents";
-import { useCurrencyStore } from "@/stores/currencyStore";
 import type { Product, Category } from "@/types";
 
 interface ProductTableProps {
@@ -39,7 +38,6 @@ export default function ProductTable({
   onQuickUpdate,
   categories 
 }: ProductTableProps) {
-  const { usdToPkrRate } = useCurrencyStore();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [editingCell, setEditingCell] = useState<{ id: string; field: "price" | "stock"; value: string } | null>(null);
 
@@ -128,7 +126,7 @@ export default function ProductTable({
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="flex items-center gap-1.5 font-black uppercase text-[10px] tracking-widest text-gray-400 hover:text-[#2C2C2C] transition-colors"
         >
-          Value
+          Price (PKR)
           {column.getIsSorted() === "asc" ? (
             <ArrowUp className="h-3 w-3 text-[#D6AF66]" />
           ) : column.getIsSorted() === "desc" ? (
@@ -144,10 +142,10 @@ export default function ProductTable({
         if (isEditing) {
           return (
             <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-              <span className="text-xs font-bold text-gray-400">$</span>
+              <span className="text-xs font-bold text-gray-400">Rs.</span>
               <input
                 type="number"
-                step="0.01"
+                step="1"
                 autoFocus
                 value={editingCell.value}
                 onChange={(e) => setEditingCell({ ...editingCell, value: e.target.value })}
@@ -165,15 +163,12 @@ export default function ProductTable({
           <div 
             onClick={() => onQuickUpdate && setEditingCell({ id: product.id, field: "price", value: String(product.price || 0) })}
             className={`font-bold text-[#2C2C2C] tabular-nums flex flex-col group/price ${onQuickUpdate ? "cursor-pointer hover:text-[#D6AF66] transition-colors" : ""}`}
-            title={onQuickUpdate ? "Click to quick edit USD price" : undefined}
+            title={onQuickUpdate ? "Click to quick edit price (PKR)" : undefined}
           >
             <div className="flex items-center gap-1.5">
-              <span>${(Number(product.price) || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              <span>Rs. {Math.round(Number(product.price) || 0).toLocaleString('en-PK')}</span>
               {onQuickUpdate && <FaPen className="h-2.5 w-2.5 text-gray-300 opacity-0 group-hover/price:opacity-100 transition-opacity" />}
             </div>
-            <span className="text-[10px] font-normal text-neutral-400 font-mono">
-              ≈ Rs. {Math.round((Number(product.price) || 0) * (usdToPkrRate || 280)).toLocaleString('en-PK')}
-            </span>
           </div>
         );
       },
@@ -301,7 +296,7 @@ export default function ProductTable({
         );
       },
     },
-  ], [onEdit, onClone, onDelete, onToggleActive, onQuickUpdate, getCategoryName, editingCell, commitCellEdit, usdToPkrRate]);
+  ], [onEdit, onClone, onDelete, onToggleActive, onQuickUpdate, getCategoryName, editingCell, commitCellEdit]);
 
   const data = useMemo(() => products || [], [products]);
 

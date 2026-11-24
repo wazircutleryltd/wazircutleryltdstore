@@ -47,9 +47,9 @@ export const DEFAULT_STORE_SETTINGS: StoreSettings = {
   storePhone: "+92 308 0601995",
   storeWhatsapp: "+92 312 6209302",
   storeAddress: "Near High Class Bakers, G.T. Road, Wazirabad, Punjab, 52000, Pakistan",
-  currency: "USD ($)",
+  currency: "PKR (Rs.)",
   usdToPkrRate: 280.0,
-  enableCurrencySwitcher: true,
+  enableCurrencySwitcher: false,
 
   // AI & SEO Configuration
   brandSummary: "Wazir Cutlery Ltd is an artisanal cutlery forge based in Wazirabad, Pakistan—the centuries-old cutlery capital of South Asia. Specializing in high-carbon 1095 and 15N20 pattern-welded Damascus steel blades, authentic stag horn antler handles, and custom collector swords.",
@@ -62,8 +62,8 @@ export const DEFAULT_STORE_SETTINGS: StoreSettings = {
 
   // Logistics & Delivery
   deliveryTimeline: "Estimated delivery in 2-4 working days",
-  freeShippingThreshold: 150,
-  standardShippingFee: 19.99,
+  freeShippingThreshold: 15000,
+  standardShippingFee: 1000,
   couriers: "DHL Express, FedEx International Priority, EMS",
 
   // Social & Community

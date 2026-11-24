@@ -4,11 +4,11 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useCart } from '../contexts/CartContext';
-import QuickCartSheet from './QuickCartSheet';
-import CurrencySwitcher from './CurrencySwitcher';
 import { useSettingsStore } from '@/stores/settingsStore';
+import QuickCartSheet from './QuickCartSheet';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
-import { Menu, ShoppingBag } from 'lucide-react';
+import { Menu, ShoppingBag, Phone } from 'lucide-react';
+import { FaWhatsapp, FaPhone } from 'react-icons/fa6';
 import { motion } from 'framer-motion';
 
 export default function Navbar({ isAdminLoggedIn }: { isAdminLoggedIn?: boolean } = {}) {
@@ -17,7 +17,10 @@ export default function Navbar({ isAdminLoggedIn }: { isAdminLoggedIn?: boolean 
     const [isScrolled, setIsScrolled] = useState(false);
     const pathname = usePathname();
     const { totalItems } = useCart();
-    const enableCurrencySwitcher = useSettingsStore((state) => state.settings.enableCurrencySwitcher);
+    const settings = useSettingsStore((state) => state.settings);
+
+    const qamarPhone = settings.storeWhatsapp || "+92 312 6209302";
+    const cleanQamarPhone = qamarPhone.replace(/[^0-9]/g, '');
 
     useEffect(() => {
         const handleScroll = () => {
@@ -37,6 +40,45 @@ export default function Navbar({ isAdminLoggedIn }: { isAdminLoggedIn?: boolean 
 
     return (
         <>
+            {/* Top Bar with Qamar Mughal WhatsApp & Phone */}
+            <div className="bg-[#111827] text-white text-xs border-b border-neutral-800 relative z-50">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center justify-between gap-2">
+                    {/* Left: Artisan branding */}
+                    <div className="flex items-center gap-2 min-w-0">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#25D366] animate-pulse flex-shrink-0" />
+                        <span className="text-[#D6AF66] font-bold tracking-wide truncate">Qamar Mughal:</span>
+                        <span className="hidden md:inline text-neutral-300 truncate">Master Bladesmith &amp; Founder</span>
+                    </div>
+
+                    {/* Right: Direct WhatsApp & Phone Links */}
+                    <div className="flex items-center gap-3 sm:gap-5 font-mono text-[11px] sm:text-xs flex-shrink-0">
+                        <a 
+                            href={`https://wa.me/${cleanQamarPhone}?text=Hello%20Qamar%20Mughal,%20I%20am%20interested%20in%20Wazir%20Cutlery%20blades`}
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 text-neutral-100 hover:text-[#25D366] transition-colors"
+                            aria-label="Chat with Qamar Mughal on WhatsApp"
+                        >
+                            <FaWhatsapp className="h-3.5 w-3.5 text-[#25D366]" />
+                            <span className="hidden sm:inline font-sans text-neutral-400">WhatsApp:</span>
+                            <span className="font-semibold">{qamarPhone}</span>
+                        </a>
+
+                        <span className="text-neutral-700 hidden sm:inline">•</span>
+
+                        <a 
+                            href={`tel:${cleanQamarPhone}`}
+                            className="inline-flex items-center gap-1.5 text-neutral-100 hover:text-[#D6AF66] transition-colors"
+                            aria-label="Call Qamar Mughal"
+                        >
+                            <Phone className="h-3 w-3 text-[#D6AF66]" />
+                            <span className="hidden sm:inline font-sans text-neutral-400">Call:</span>
+                            <span className="font-semibold">{qamarPhone}</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
             <header className={`sticky top-0 z-40 transition-all duration-300 ${
                 isScrolled 
                     ? 'bg-[#F9F9F6]/95 backdrop-blur-md shadow-sm border-b border-[#D6AF66]/25' 
@@ -87,9 +129,6 @@ export default function Navbar({ isAdminLoggedIn }: { isAdminLoggedIn?: boolean 
 
                         {/* Right Side Icons */}
                         <div className="flex items-center space-x-2 sm:space-x-3">
-                            {/* Currency Switcher (USD / PKR) */}
-                            {enableCurrencySwitcher !== false && <CurrencySwitcher variant="compact" />}
-
                             {/* Shopping Cart Button triggers QuickCartSheet */}
                             <motion.button
                                 whileTap={{ scale: 0.94 }}
@@ -131,6 +170,33 @@ export default function Navbar({ isAdminLoggedIn }: { isAdminLoggedIn?: boolean 
                                                 <Image src="/logo.svg" alt="Logo" width={80} height={48} className="h-10 w-auto" />
                                             </SheetTitle>
                                         </SheetHeader>
+
+                                        {/* Mobile Direct Artisan Contact Block */}
+                                        <div className="mb-4 p-3 rounded-xl bg-neutral-900 text-white border border-[#D6AF66]/30">
+                                            <div className="text-[11px] font-bold text-[#D6AF66] uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                                                <span className="w-1.5 h-1.5 rounded-full bg-[#25D366] animate-pulse" />
+                                                <span>Qamar Mughal • Direct Forge</span>
+                                            </div>
+                                            <div className="space-y-1.5 text-xs font-mono">
+                                                <a 
+                                                    href={`https://wa.me/${cleanQamarPhone}?text=Hello%20Qamar%20Mughal,%20I%20am%20interested%20in%20Wazir%20Cutlery%20blades`}
+                                                    target="_blank" 
+                                                    rel="noopener noreferrer"
+                                                    className="flex items-center justify-between text-neutral-200 hover:text-[#25D366] py-1 transition-colors"
+                                                >
+                                                    <span className="font-sans text-neutral-400">WhatsApp:</span>
+                                                    <span className="font-semibold text-white">{qamarPhone}</span>
+                                                </a>
+                                                <a 
+                                                    href={`tel:${cleanQamarPhone}`}
+                                                    className="flex items-center justify-between text-neutral-200 hover:text-[#D6AF66] py-1 border-t border-neutral-800 transition-colors"
+                                                >
+                                                    <span className="font-sans text-neutral-400">Call Phone:</span>
+                                                    <span className="font-semibold text-white">{qamarPhone}</span>
+                                                </a>
+                                            </div>
+                                        </div>
+
                                         <nav className="flex flex-col space-y-2">
                                             {navLinks.map((link) => {
                                                 const isActive = pathname === link.href;
@@ -153,7 +219,6 @@ export default function Navbar({ isAdminLoggedIn }: { isAdminLoggedIn?: boolean 
                                     </div>
 
                                     <div className="pt-6 border-t border-neutral-200 space-y-4">
-                                        {enableCurrencySwitcher !== false && <CurrencySwitcher variant="full" />}
                                         <Link
                                             href="/cart"
                                             onClick={() => setIsMenuOpen(false)}

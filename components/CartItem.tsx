@@ -51,8 +51,9 @@ const CartItem = ({ item }: CartItemProps) => {
               src={product.main_image || '/product.jpg'}
               alt={product.name} 
               className="object-cover w-full h-full transform hover:scale-105 transition-transform duration-500" 
-              width={200} 
-              height={200} 
+              width={128} 
+              height={128} 
+              sizes="128px"
             />
           </div>
 

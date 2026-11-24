@@ -100,7 +100,7 @@ export const sendOrderNotification = async (orderData: Order): Promise<SendEmail
         <p><strong>Order ID:</strong> ${orderData.order_number}</p>
         <p><strong>Order Date:</strong> ${new Date(orderData.created_at).toLocaleDateString()}</p>
         <p><strong>Payment Method:</strong> ${orderData.payment_method === 'cod' ? 'Cash on Delivery' : 'Credit/Debit Card'}</p>
-        <p><strong>Total Amount:</strong> $${orderData.total.toFixed(2)}</p>
+        <p><strong>Total Amount:</strong> Rs. ${Math.round(orderData.total).toLocaleString('en-PK')}</p>
       </div>
 
       <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
@@ -121,17 +121,17 @@ export const sendOrderNotification = async (orderData: Order): Promise<SendEmail
         ${orderData.items.map(item => `
           <div style="border-bottom: 1px solid #ddd; padding: 10px 0;">
             <p><strong>${item.product_name}</strong></p>
-            <p>Quantity: ${item.quantity} | Price: $${item.price.toFixed(2)} | Total: $${item.total.toFixed(2)}</p>
+            <p>Quantity: ${item.quantity} | Price: Rs. ${Math.round(item.price).toLocaleString('en-PK')} | Total: Rs. ${Math.round(item.total).toLocaleString('en-PK')}</p>
           </div>
         `).join('')}
       </div>
 
       <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
         <h2 style="color: #333; margin-top: 0;">Order Summary</h2>
-        <p>Subtotal: $${orderData.subtotal.toFixed(2)}</p>
-        <p>Tax (10%): $${orderData.tax.toFixed(2)}</p>
-        <p>Shipping: ${orderData.shipping_cost === 0 ? 'FREE' : `$${orderData.shipping_cost.toFixed(2)}`}</p>
-        <p><strong>Total: $${orderData.total.toFixed(2)}</strong></p>
+        <p>Subtotal: Rs. ${Math.round(orderData.subtotal).toLocaleString('en-PK')}</p>
+        <p>Tax (10%): Rs. ${Math.round(orderData.tax).toLocaleString('en-PK')}</p>
+        <p>Shipping: ${orderData.shipping_cost === 0 ? 'FREE' : `Rs. ${Math.round(orderData.shipping_cost).toLocaleString('en-PK')}`}</p>
+        <p><strong>Total: Rs. ${Math.round(orderData.total).toLocaleString('en-PK')}</strong></p>
       </div>
     </div>
   `;
@@ -165,17 +165,17 @@ export const sendOrderConfirmation = async (orderData: Order): Promise<SendEmail
         ${orderData.items.map(item => `
           <div style="border-bottom: 1px solid #ddd; padding: 10px 0;">
             <p><strong>${item.product_name}</strong></p>
-            <p>Quantity: ${item.quantity} | Price: $${item.price.toFixed(2)} | Total: $${item.total.toFixed(2)}</p>
+            <p>Quantity: ${item.quantity} | Price: Rs. ${Math.round(item.price).toLocaleString('en-PK')} | Total: Rs. ${Math.round(item.total).toLocaleString('en-PK')}</p>
           </div>
         `).join('')}
       </div>
 
       <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
         <h2 style="color: #333; margin-top: 0;">Order Summary</h2>
-        <p>Subtotal: $${orderData.subtotal.toFixed(2)}</p>
-        <p>Tax (10%): $${orderData.tax.toFixed(2)}</p>
-        <p>Shipping: ${orderData.shipping_cost === 0 ? 'FREE' : `$${orderData.shipping_cost.toFixed(2)}`}</p>
-        <p><strong>Total: $${orderData.total.toFixed(2)}</strong></p>
+        <p>Subtotal: Rs. ${Math.round(orderData.subtotal).toLocaleString('en-PK')}</p>
+        <p>Tax (10%): Rs. ${Math.round(orderData.tax).toLocaleString('en-PK')}</p>
+        <p>Shipping: ${orderData.shipping_cost === 0 ? 'FREE' : `Rs. ${Math.round(orderData.shipping_cost).toLocaleString('en-PK')}`}</p>
+        <p><strong>Total: Rs. ${Math.round(orderData.total).toLocaleString('en-PK')}</strong></p>
       </div>
 
       <div style="background-color: #e8f4fd; padding: 20px; border-radius: 8px; margin: 20px 0;">

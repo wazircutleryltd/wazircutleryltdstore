@@ -36,7 +36,7 @@
 
 ### 🛍️ Storefront & Collector Experience
 - **Luxury Damascus Visual Identity**: Polished typography (Outfit, Cabin, Open Sans, Geist), subtle metallic borders, and glassmorphism headers.
-- **Dynamic Slide-Over Quick Cart**: Free worldwide shipping progress indicator ($150 threshold), real-time calculations, and 1-click checkout drawer.
+- **Dynamic Slide-Over Quick Cart**: Free shipping progress indicator (Rs. 15,000 threshold), real-time calculations, and 1-click checkout drawer.
 - **One-Click Social Media Sharing**: Instant product sharing across WhatsApp, Facebook, X (Twitter), Pinterest, direct link clipboard copy, and native mobile Web Share sheet (`navigator.share`).
 - **Curated Collections Showcase**: High-aesthetic category browser with dark gradient overlays, hover zoom animations, piece count indicators, and responsive pagination.
 - **Artisanal Damascus Video Showcase**: Interactive multi-chapter video player documenting traditional folding, forging, and vacuum heat treatment in Wazirabad.
@@ -187,7 +187,7 @@ Forged in the heart of **Wazirabad, Pakistan**—a centuries-old bladesmithing c
 - **Primary Forge Contacts**:
   - Tayyab Mughal (International Client Relations Manager): `+92 316 0764052` (WhatsApp: https://wa.me/923160764052)
   - Hassan Mughal: `+92 308 0601995` (WhatsApp)
-  - Qamar Shahzad: `+92 312 6209302` (WhatsApp)
+  - Qamar Mughal: `+92 312 6209302` (WhatsApp & Phone)
   - Official Inquiries: `info@wazircutlery.com`
 - **Physical Address**: Near High Class Bakers, G.T. Road, Wazirabad, Punjab, 52000, Pakistan
 

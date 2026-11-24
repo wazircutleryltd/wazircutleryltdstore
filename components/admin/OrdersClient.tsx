@@ -167,10 +167,7 @@ const OrdersClient = () => {
         ),
         cell: ({ getValue }) => (
           <div className="font-bold text-[#2C2C2C] tabular-nums font-geist">
-            ${parseFloat(String(getValue() || 0)).toLocaleString(undefined, {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}
+            Rs. {Math.round(Number(getValue() || 0)).toLocaleString('en-PK')}
           </div>
         ),
       },
@@ -473,10 +470,10 @@ const OrderDetailsModal = ({ order, onClose }: { order: Order; onClose: () => vo
                   <div>
                     <p className="font-bold text-gray-800">{item.product_name}</p>
                     <p className="text-gray-400">
-                      Qty: {item.quantity} × ${parseFloat(String(item.price || 0)).toFixed(2)}
+                      Qty: {item.quantity} × Rs. {Math.round(Number(item.price || 0)).toLocaleString('en-PK')}
                     </p>
                   </div>
-                  <p className="font-bold text-[#D6AF66]">${parseFloat(String(item.total || 0)).toFixed(2)}</p>
+                  <p className="font-bold text-[#D6AF66]">Rs. {Math.round(Number(item.total || 0)).toLocaleString('en-PK')}</p>
                 </div>
               ))}
             </div>
@@ -490,21 +487,21 @@ const OrderDetailsModal = ({ order, onClose }: { order: Order; onClose: () => vo
             <div className="space-y-1.5 text-xs">
               <div className="flex justify-between text-gray-600">
                 <span>Subtotal:</span>
-                <span className="font-semibold">${parseFloat(String(order.subtotal || 0)).toFixed(2)}</span>
+                <span className="font-semibold">Rs. {Math.round(Number(order.subtotal || 0)).toLocaleString('en-PK')}</span>
               </div>
               <div className="flex justify-between text-gray-600">
                 <span>Tax (10%):</span>
-                <span className="font-semibold">${parseFloat(String(order.tax || 0)).toFixed(2)}</span>
+                <span className="font-semibold">Rs. {Math.round(Number(order.tax || 0)).toLocaleString('en-PK')}</span>
               </div>
               <div className="flex justify-between text-gray-600">
                 <span>Shipping:</span>
                 <span className="font-semibold">
-                  {order.shipping_cost === 0 ? 'FREE' : `$${parseFloat(String(order.shipping_cost || 0)).toFixed(2)}`}
+                  {order.shipping_cost === 0 ? 'FREE' : `Rs. ${Math.round(Number(order.shipping_cost || 0)).toLocaleString('en-PK')}`}
                 </span>
               </div>
               <div className="flex justify-between font-bold text-base text-gray-900 border-t border-gray-200/60 pt-2 mt-1">
                 <span>Total:</span>
-                <span className="text-[#D6AF66]">${parseFloat(String(order.total || 0)).toFixed(2)}</span>
+                <span className="text-[#D6AF66]">Rs. {Math.round(Number(order.total || 0)).toLocaleString('en-PK')}</span>
               </div>
             </div>
           </div>

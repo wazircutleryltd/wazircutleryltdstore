@@ -6,9 +6,14 @@ import { useProductsByCategorySlugQuery } from '@/lib/hooks';
 import ProductCard from './ProductCard';
 import ProductSkeleton from './ProductSkeleton';
 import { ErrorState, NoDataState } from './common/StateComponents';
+import type { Product } from '@/types';
 
-const KnivesItems = () => {
-    const { data: products, isLoading, error } = useProductsByCategorySlugQuery('knives', 5);
+interface KnivesItemsProps {
+    initialProducts?: Product[];
+}
+
+const KnivesItems = ({ initialProducts }: KnivesItemsProps) => {
+    const { data: products, isLoading, error } = useProductsByCategorySlugQuery('knives', 5, initialProducts);
     const displayProducts = useMemo(() => products || [], [products]);
 
     if (isLoading) {

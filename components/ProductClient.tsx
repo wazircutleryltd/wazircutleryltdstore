@@ -16,15 +16,20 @@ import ProductSkeleton from "@/components/ProductSkeleton";
 import { ErrorState, NoDataState } from "@/components/common/StateComponents";
 import type { Product, Category } from "@/types";
 
-const ProductClient = () => {
+interface ProductClientProps {
+    initialProducts?: Product[];
+    initialCategories?: Category[];
+}
+
+const ProductClient = ({ initialProducts, initialCategories }: ProductClientProps) => {
     return (
         <ConditionalLayout>
-            <ProductContent />
+            <ProductContent initialProducts={initialProducts} initialCategories={initialCategories} />
         </ConditionalLayout>
     );
 };
 
-const ProductContent = () => {
+const ProductContent = ({ initialProducts, initialCategories }: ProductClientProps) => {
     const searchParams = useSearchParams();
     const router = useRouter();
     const categorySlug = searchParams.get('category');
@@ -46,7 +51,7 @@ const ProductContent = () => {
     const buttonRef = React.useRef<HTMLButtonElement>(null);
     const menuRef = React.useRef<HTMLDivElement>(null);
 
-    const { data: allProducts, isLoading: isLoadingAll, error: errorAll } = useActiveProductsQuery();
+    const { data: allProducts, isLoading: isLoadingAll, error: errorAll } = useActiveProductsQuery(initialProducts);
     const { data: productsByCategory, isLoading: isLoadingCategory, error: errorCategory } = useProductsByCategoryQuery(categoryId || '');
 
     const isLoading = categoryId ? isLoadingCategory : isLoadingAll;
@@ -167,7 +172,7 @@ const ProductContent = () => {
                                 {categoryName}
                             </h1>
                             <p className="text-xs text-neutral-500 mt-1">
-                                Showing {total} handcrafted {total === 1 ? 'piece' : 'pieces'}
+                                {isLoading ? "Loading handcrafted pieces..." : `Showing ${total} handcrafted ${total === 1 ? 'piece' : 'pieces'}`}
                             </p>
                         </div>
 

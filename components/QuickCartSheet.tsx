@@ -36,7 +36,7 @@ export default function QuickCartSheet({ open, onOpenChange }: QuickCartSheetPro
     removeFromCart,
   } = useCart();
 
-  const freeShippingThreshold = useSettingsStore((state) => state.settings.freeShippingThreshold) || 150;
+  const freeShippingThreshold = useSettingsStore((state) => state.settings.freeShippingThreshold) || 15000;
   const freeDeliveryThreshold = freeShippingThreshold;
   const freeDeliveryProgress = Math.min(100, (subtotal / freeDeliveryThreshold) * 100);
   const remainingForFreeDelivery = Math.max(0, freeDeliveryThreshold - subtotal);

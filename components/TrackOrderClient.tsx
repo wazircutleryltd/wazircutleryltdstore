@@ -195,7 +195,7 @@ export default function TrackOrderClient() {
                     </div>
                     <div>
                       <span className="text-neutral-400 font-bold uppercase tracking-wider text-[10px]">Order Total:</span>
-                      <p className="font-bold text-neutral-800 mt-0.5">${(Number(orderData.total_amount) || 0).toFixed(2)} USD</p>
+                      <p className="font-bold text-neutral-800 mt-0.5">Rs. {Math.round(Number(orderData.total_amount) || 0).toLocaleString('en-PK')}</p>
                     </div>
                   </div>
                 </div>
