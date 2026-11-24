@@ -34,6 +34,21 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'www.wazircutlery.com',
+          },
+        ],
+        destination: 'https://wazircutlery.com/:path*',
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

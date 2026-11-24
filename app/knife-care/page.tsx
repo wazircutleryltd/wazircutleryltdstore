@@ -8,6 +8,17 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://wazircutlery.com/knife-care",
   },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   openGraph: {
     title: "Damascus Knife Care & Maintenance Guide | Wazir Cutlery",
     description: "Learn how to preserve the razor bevel, high-carbon edge, and Damascus patterns of your knife for generations.",
