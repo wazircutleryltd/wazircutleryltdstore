@@ -11,6 +11,17 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://wazircutlery.com/product',
   },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   openGraph: {
     title: "Shop All Products | Wazir Cutlery",
     description: "Shop the full collection of Wazir Cutlery's masterfully crafted blades.",

@@ -8,6 +8,17 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://wazircutlery.com/faq",
   },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   openGraph: {
     title: "Frequently Asked Questions | Wazir Cutlery",
     description: "Learn about authentic Damascus pattern welding, stag horn sourcing, global knife shipping, and custom forge commissions.",

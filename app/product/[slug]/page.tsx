@@ -1,5 +1,6 @@
 import React from "react";
 import type { Metadata } from "next";
+import { notFound, redirect, RedirectType } from "next/navigation";
 import ProductDetailClient from "@/components/ProductDetailClient";
 import { supabase } from '@/lib/supabase';
 
@@ -14,16 +15,27 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
   if (!slug) {
     return {
-      title: 'Product',
-      description: "Explore high-quality, handcrafted knives and swords from Wazir Cutlery."
+      title: 'Product Not Found',
+      robots: { index: false, follow: false },
     };
   }
 
-  const { data: product } = await supabase
+  // 1. Attempt lookup by slug
+  let { data: product } = await supabase
     .from('products')
-    .select('name, description, short_description, price, stock_quantity, main_image')
+    .select('name, description, short_description, price, stock_quantity, main_image, slug, sku')
     .eq('slug', slug)
     .single();
+
+  // 2. Fallback: if not found by slug, check if slug is actually an SKU (e.g. UH-103)
+  if (!product) {
+    const { data: bySku } = await supabase
+      .from('products')
+      .select('name, description, short_description, price, stock_quantity, main_image, slug, sku')
+      .ilike('sku', slug)
+      .single();
+    product = bySku;
+  }
 
   if (product) {
     const description = product.short_description || 
@@ -33,13 +45,24 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: `${product.name} | Wazir Cutlery`,
       description: description,
       alternates: {
-        canonical: `https://wazircutlery.com/product/${slug}`,
+        canonical: `https://wazircutlery.com/product/${product.slug}`,
+      },
+      robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+          index: true,
+          follow: true,
+          'max-video-preview': -1,
+          'max-image-preview': 'large',
+          'max-snippet': -1,
+        },
       },
       openGraph: {
         title: product.name,
         description: description,
         type: 'website',
-        url: `https://wazircutlery.com/product/${slug}`,
+        url: `https://wazircutlery.com/product/${product.slug}`,
         images: [
           {
             url: product.main_image,
@@ -60,21 +83,37 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: "Product Not Found | Wazir Cutlery",
     description: "The product you are looking for is not available. Explore other handcrafted blades from Wazir Cutlery.",
+    robots: {
+      index: false,
+      follow: false,
+    },
   };
 }
 
 export default async function ProductPage({ params }: PageProps) {
   const { slug } = await params;
   
-  // Fetch product for JSON-LD
-  const { data: product } = await supabase
+  // 1. Fetch product by slug
+  let { data: product } = await supabase
     .from('products')
     .select('*')
     .eq('slug', slug)
     .single();
 
+  // 2. If not found by slug, check if the URL parameter is an SKU (fixes Soft 404 for old SKU links like /product/UH-103)
   if (!product) {
-    return <ProductDetailClient slug={slug} initialProduct={null} />;
+    const { data: bySku } = await supabase
+      .from('products')
+      .select('slug')
+      .ilike('sku', slug)
+      .single();
+
+    if (bySku?.slug) {
+      redirect(`/product/${bySku.slug}`, RedirectType.replace);
+    }
+
+    // 3. If neither slug nor SKU exists, trigger standard HTTP 404 (eliminates Soft 404)
+    notFound();
   }
 
   const jsonLd = {

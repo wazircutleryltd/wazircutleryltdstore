@@ -75,6 +75,11 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
       allow: '/',
       disallow: ['/admin', '/api', '/login', '/checkout'],
     },
+    {
+      userAgent: 'Googlebot',
+      allow: '/',
+      disallow: ['/admin', '/api', '/login', '/checkout'],
+    },
   ];
 
   if (disallowedBots.length > 0) {
@@ -95,5 +100,6 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
   return {
     rules,
     sitemap: 'https://wazircutlery.com/sitemap.xml',
+    host: 'https://wazircutlery.com',
   };
 }
