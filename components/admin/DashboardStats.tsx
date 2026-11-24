@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { DollarSign, Package, ShoppingCart, Users } from "lucide-react";
+import { Coins, Package, ShoppingCart, Users } from "lucide-react";
 import type { DashboardSummary } from "@/types";
 
 interface DashboardStatsProps {
@@ -12,9 +12,9 @@ export default function DashboardStats({ stats }: DashboardStatsProps) {
   const items = [
     {
       title: "Total Revenue",
-      value: `$${(stats?.totalRevenue || 0).toLocaleString()}`,
+      value: `Rs. ${(stats?.totalRevenue || 0).toLocaleString()}`,
       description: "Lifetime earnings",
-      icon: DollarSign,
+      icon: Coins,
       color: "bg-emerald-50 text-emerald-600 border-emerald-100",
     },
     {

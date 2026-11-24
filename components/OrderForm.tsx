@@ -53,7 +53,7 @@ export default function OrderForm({
             
             // Calculate totals
             const subtotal = product.price * formData.quantity;
-            const shippingCost = 10; // Fixed shipping cost
+            const shippingCost = subtotal >= 15000 ? 0 : 1000;
             const tax = subtotal * 0.1; // 10% tax
             const total = subtotal + shippingCost + tax;
 
@@ -139,7 +139,7 @@ export default function OrderForm({
                 {/* Product Info */}
                 <div className="bg-gray-50 p-4 rounded-lg">
                     <h3 className="font-semibold text-lg mb-2">{product.name}</h3>
-                    <p className="text-gray-600">Price: ${product.price}</p>
+                    <p className="text-gray-600">Price: {formatPrice(product.price)}</p>
                 </div>
 
                 {/* Quantity */}
@@ -291,7 +291,7 @@ export default function OrderForm({
                         </div>
                         <div className="flex justify-between">
                             <span>Shipping:</span>
-                            <span>{formatPrice(10)}</span>
+                            <span>{product.price * formData.quantity >= 15000 ? 'FREE' : formatPrice(1000)}</span>
                         </div>
                         <div className="flex justify-between">
                             <span>Tax (10%):</span>
@@ -299,7 +299,7 @@ export default function OrderForm({
                         </div>
                         <div className="flex justify-between font-bold text-lg border-t pt-2">
                             <span>Total:</span>
-                            <span>{formatPrice(product.price * formData.quantity * 1.1 + 10)}</span>
+                            <span>{formatPrice(product.price * formData.quantity * 1.1 + (product.price * formData.quantity >= 15000 ? 0 : 1000))}</span>
                         </div>
                     </div>
                 </div>

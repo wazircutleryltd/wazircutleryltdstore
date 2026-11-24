@@ -58,7 +58,7 @@ export default function TermsClient() {
               <ul className="list-disc pl-6 space-y-1 text-xs sm:text-sm text-neutral-600">
                 <li>No two Damascus billets produce identical wave ripples or acid-etched etchings.</li>
                 <li>Antler texture, grain density, natural curves, and coloring will display authentic organic variance.</li>
-                <li>Weight and dimensional tolerances may vary by $\pm 3\%$ due to hand-grinding and finishing.</li>
+                <li>Weight and dimensional tolerances may vary by ±3% due to hand-grinding and finishing.</li>
               </ul>
             </section>
 

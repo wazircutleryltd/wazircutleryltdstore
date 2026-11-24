@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from './supabase';
+import { supabase, PRODUCT_CARD_SELECT } from './supabase';
 import { slugify } from './utils';
 import type { 
   Product, 
@@ -57,7 +57,7 @@ export const queryKeys = {
 };
 
 // Lightweight projection for cards, grids, and catalogs (excludes multi-megabyte base64 galleries and full descriptions)
-export const PRODUCT_CARD_SELECT = 'id, name, slug, price, compare_price, main_image, is_active, is_featured, is_trending, is_top_rated, is_best_selling, rating, delivery_date, category_id, sku, stock_quantity, created_at';
+export { PRODUCT_CARD_SELECT } from './supabase';
 
 // ==========================================
 // Product Queries & Mutations
@@ -109,7 +109,7 @@ export function useAllProductsQuery(
   });
 }
 
-export function useActiveProductsQuery() {
+export function useActiveProductsQuery(initialData?: Product[]) {
   return useQuery<Product[]>({
     queryKey: queryKeys.products.active,
     queryFn: async () => {
@@ -122,10 +122,11 @@ export function useActiveProductsQuery() {
       if (error) throw error;
       return (data || []) as unknown as Product[];
     },
+    initialData: initialData && initialData.length > 0 ? initialData : undefined,
   });
 }
 
-export function useProductBySlugQuery(slug: string) {
+export function useProductBySlugQuery(slug: string, initialData?: Product | null) {
   return useQuery<Product | null>({
     queryKey: queryKeys.products.detail(slug),
     queryFn: async () => {
@@ -139,11 +140,12 @@ export function useProductBySlugQuery(slug: string) {
       if (error) throw error;
       return data as Product;
     },
+    initialData: initialData !== undefined ? initialData : undefined,
     enabled: Boolean(slug),
   });
 }
 
-export function useFeaturedProductsQuery(limit = 10) {
+export function useFeaturedProductsQuery(limit = 10, initialData?: Product[]) {
   return useQuery<Product[]>({
     queryKey: [...queryKeys.products.featured, limit],
     queryFn: async () => {
@@ -162,10 +164,11 @@ export function useFeaturedProductsQuery(limit = 10) {
         return [];
       }
     },
+    initialData: initialData && initialData.length > 0 ? initialData : undefined,
   });
 }
 
-export function useTrendingProductsQuery(limit = 10) {
+export function useTrendingProductsQuery(limit = 10, initialData?: Product[]) {
   return useQuery<Product[]>({
     queryKey: [...queryKeys.products.trending, limit],
     queryFn: async () => {
@@ -185,10 +188,11 @@ export function useTrendingProductsQuery(limit = 10) {
         return [];
       }
     },
+    initialData: initialData && initialData.length > 0 ? initialData : undefined,
   });
 }
 
-export function useProductsByCategorySlugQuery(categorySlug: string, limit = 5) {
+export function useProductsByCategorySlugQuery(categorySlug: string, limit = 5, initialData?: Product[]) {
   return useQuery<Product[]>({
     queryKey: [...queryKeys.products.byCategorySlug(categorySlug), limit],
     queryFn: async () => {
@@ -210,6 +214,7 @@ export function useProductsByCategorySlugQuery(categorySlug: string, limit = 5) 
         return [];
       }
     },
+    initialData: initialData && initialData.length > 0 ? initialData : undefined,
     enabled: Boolean(categorySlug),
   });
 }
@@ -240,7 +245,7 @@ export function useProductsByCategoryQuery(categoryId: string, limit = 5) {
   });
 }
 
-export function useRandomProductsQuery(limit = 5) {
+export function useRandomProductsQuery(limit = 5, initialData?: Product[]) {
   return useQuery<Product[]>({
     queryKey: ['products', 'random', limit],
     queryFn: async () => {
@@ -260,6 +265,7 @@ export function useRandomProductsQuery(limit = 5) {
         return [];
       }
     },
+    initialData: initialData && initialData.length > 0 ? initialData : undefined,
     staleTime: 1000 * 60 * 10,
   });
 }
@@ -388,7 +394,7 @@ export function useCategoriesQuery() {
   });
 }
 
-export function useActiveCategoriesQuery() {
+export function useActiveCategoriesQuery(initialData?: Category[]) {
   return useQuery<Category[]>({
     queryKey: queryKeys.categories.active,
     queryFn: async () => {
@@ -406,6 +412,7 @@ export function useActiveCategoriesQuery() {
         return [];
       }
     },
+    initialData: initialData && initialData.length > 0 ? initialData : undefined,
   });
 }
 

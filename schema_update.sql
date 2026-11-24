@@ -51,7 +51,7 @@ ON storage.objects FOR DELETE
 USING ( bucket_id = 'products' );
 
 -- ==========================================
--- Store Settings Table (USD to PKR Exchange Rate & Global Configuration)
+-- Store Settings Table (PKR Currency & Global Configuration)
 -- ==========================================
 CREATE TABLE IF NOT EXISTS store_settings (
     key TEXT PRIMARY KEY,
@@ -72,9 +72,9 @@ CREATE POLICY IF NOT EXISTS "Allow write access to store_settings"
 ON store_settings FOR ALL
 USING (true);
 
--- Insert default USD to PKR rate (280 PKR per 1 USD)
+-- Insert default PKR currency configuration
 INSERT INTO store_settings (key, value)
-VALUES ('currency', '{"usd_to_pkr_rate": 280.0, "default_currency": "USD"}'::jsonb)
+VALUES ('currency', '{"usd_to_pkr_rate": 280.0, "default_currency": "PKR"}'::jsonb)
 ON CONFLICT (key) DO NOTHING;
 
 

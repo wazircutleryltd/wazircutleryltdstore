@@ -6,6 +6,7 @@ import PaymentForm from '@/components/PaymentForm';
 import OrderSummary from '@/components/OrderSummary';
 import { useCart } from '@/contexts/CartContext';
 import { useCurrencyStore } from '@/stores/currencyStore';
+import { useSettingsStore } from '@/stores/settingsStore';
 
 const PaymentClient = () => {
     return (
@@ -19,6 +20,7 @@ const PaymentContent = () => {
     const router = useRouter();
     const { selectedItems, selectedItemsCount, clearCart } = useCart();
     const { currency, usdToPkrRate } = useCurrencyStore();
+    const settings = useSettingsStore((state) => state.settings);
     const [checkoutData, setCheckoutData] = useState<any>(null);
     const isCompletedRef = useRef(false);
 
@@ -55,6 +57,13 @@ const PaymentContent = () => {
             const orderId = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
             const orderUuid = crypto.randomUUID(); // Generate proper UUID for database
             
+            const subtotal = selectedItems.reduce((sum: number, item: any) => sum + (item.product.price * item.quantity), 0);
+            const freeThreshold = settings?.freeShippingThreshold || 15000;
+            const standardFee = settings?.standardShippingFee || 1000;
+            const shipping_cost = subtotal >= freeThreshold ? 0 : standardFee;
+            const tax = subtotal * 0.1;
+            const total = subtotal + tax + shipping_cost;
+
             // Prepare order data
             const orderData = {
                 id: orderUuid, // Use UUID for database
@@ -69,11 +78,11 @@ const PaymentContent = () => {
                     price: item.product.price,
                     total: item.product.price * item.quantity
                 })),
-                subtotal: selectedItems.reduce((sum: number, item: any) => sum + (item.product.price * item.quantity), 0),
-                shipping_cost: selectedItems.reduce((sum: number, item: any) => sum + (item.product.price * item.quantity), 0) > 200 ? 0 : 15,
-                tax: selectedItems.reduce((sum: number, item: any) => sum + (item.product.price * item.quantity), 0) * 0.1,
-                total: selectedItems.reduce((sum: number, item: any) => sum + (item.product.price * item.quantity), 0) * 1.1 + (selectedItems.reduce((sum: number, item: any) => sum + (item.product.price * item.quantity), 0) > 200 ? 0 : 15),
-                currency: currency,
+                subtotal: subtotal,
+                shipping_cost: shipping_cost,
+                tax: tax,
+                total: total,
+                currency: 'PKR',
                 exchange_rate: usdToPkrRate,
                 shipping_address: {
                     full_name: checkoutData.customerInfo.fullName,

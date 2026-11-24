@@ -41,4 +41,6 @@ if (supabaseUrl && supabaseAnonKey) {
   } as unknown as SupabaseClient;
 }
 
+export const PRODUCT_CARD_SELECT = 'id, name, slug, price, compare_price, main_image, is_active, is_featured, is_trending, is_top_rated, is_best_selling, rating, delivery_date, category_id, sku, stock_quantity, created_at';
+
 export { supabase };

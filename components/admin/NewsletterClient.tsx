@@ -40,7 +40,7 @@ export default function NewsletterClient() {
   const [isBroadcastModalOpen, setIsBroadcastModalOpen] = useState<boolean>(false);
   const [broadcastSubject, setBroadcastSubject] = useState<string>("Exclusive Forge Release: Handcrafted Damascus Blades");
   const [broadcastMessage, setBroadcastMessage] = useState<string>(
-    "Greetings Patron of the Forge,\n\nWe are proud to present our latest batch of custom Damascus hunting knives and stag horn chef cutlery. Crafted with 1095 and 15N20 high-carbon steel, each piece is individually tempered for lasting edge retention.\n\nExplore the collection today with complimentary priority worldwide delivery on orders over $150."
+    "Greetings Patron of the Forge,\n\nWe are proud to present our latest batch of custom Damascus hunting knives and stag horn chef cutlery. Crafted with 1095 and 15N20 high-carbon steel, each piece is individually tempered for lasting edge retention.\n\nExplore the collection today with complimentary priority express delivery on orders over Rs. 15,000."
   );
 
   const { data: subscribers = [], isLoading, error } = useNewsletterSubscribersQuery();

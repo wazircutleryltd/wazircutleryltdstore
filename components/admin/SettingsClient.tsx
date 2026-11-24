@@ -228,12 +228,12 @@ export default function SettingsClient() {
                   value={settings.currency}
                   onChange={(e) => handleChange("currency", e.target.value)}
                   className="h-11 rounded-xl bg-neutral-50/50 border-neutral-200 font-bold"
-                  placeholder="USD ($)"
+                  placeholder="PKR (Rs.)"
                 />
               </div>
             </div>
 
-            {/* Currency & USD to PKR Conversion Engine */}
+            {/* Currency & Financial Engine */}
             <div className="p-5 sm:p-6 bg-gradient-to-br from-neutral-50 via-white to-amber-50/30 rounded-2xl border border-[#D6AF66]/35 shadow-xs space-y-5">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-neutral-200/70">
                 <div className="flex items-center gap-3">
@@ -242,13 +242,13 @@ export default function SettingsClient() {
                   </div>
                   <div>
                     <h4 className="text-sm font-bold text-neutral-900 font-geist flex items-center gap-2">
-                      Multi-Currency & Conversion Engine
+                      Store Currency Configuration
                       <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#D6AF66]/20 text-[#8C6D23] font-bold">
-                        Live Storefront Sync
+                        PKR (Rs.) Native
                       </span>
                     </h4>
                     <p className="text-xs text-neutral-500 mt-0.5">
-                      Base catalog prices are in USD ($). Pakistani patrons can view, cart, and place COD orders in PKR (Rs.) using this conversion rate.
+                      The storefront operates exclusively in Pakistani Rupees (PKR / Rs.). All catalog pricing, inventory valuations, orders, and receipts are processed in PKR.
                     </p>
                   </div>
                 </div>
@@ -268,7 +268,7 @@ export default function SettingsClient() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div className="space-y-2">
                   <Label className="text-xs font-bold text-neutral-800 flex items-center justify-between">
-                    <span>USD to PKR Conversion Rate</span>
+                    <span>USD Reference Rate (Optional Forex Metric)</span>
                     <span className="text-[11px] font-mono text-[#9E7B35] font-semibold">
                       1 USD = {Number(settings.usdToPkrRate || 280).toFixed(2)} PKR
                     </span>
@@ -288,53 +288,25 @@ export default function SettingsClient() {
                     />
                   </div>
                   <p className="text-[11px] text-neutral-500">
-                    Change this anytime. All storefront products, cart items, and order calculations will immediately recompute.
+                    Interbank reference rate for international procurement and vendor calculations.
                   </p>
                 </div>
 
                 <div className="space-y-2">
                   <Label className="text-xs font-bold text-neutral-800">
-                    Storefront Currency Switcher
+                    Storefront Currency Lock
                   </Label>
                   <div className="flex items-center justify-between h-11 px-4 bg-white rounded-xl border border-neutral-200">
                     <span className="text-xs font-medium text-neutral-700">
-                      Enable USD ($) / PKR (Rs.) Navbar Toggle
+                      Standardize Store to PKR (Rs.) Only
                     </span>
-                    <Switch
-                      checked={settings.enableCurrencySwitcher !== false}
-                      onCheckedChange={(checked) => handleChange("enableCurrencySwitcher", checked)}
-                    />
+                    <span className="text-xs font-mono font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded">
+                      ACTIVE
+                    </span>
                   </div>
                   <p className="text-[11px] text-neutral-500">
-                    Allows visitors on desktop and mobile to seamlessly switch their view between USD and PKR.
+                    All visitors see clean Pakistani Rupee (Rs.) pricing everywhere without currency switching ambiguity.
                   </p>
-                </div>
-              </div>
-
-              {/* Live Conversion Preview Card */}
-              <div className="bg-white/90 rounded-xl p-4 border border-neutral-200/80">
-                <div className="text-[11px] font-bold uppercase tracking-wider text-neutral-400 mb-2.5 font-geist">
-                  Live Price Conversion Preview
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div className="p-3 bg-neutral-50 rounded-lg border border-neutral-200/60">
-                    <div className="text-xs text-neutral-500">Utility Knife ($50.00)</div>
-                    <div className="text-sm font-bold text-neutral-900 mt-1 font-mono">
-                      Rs. {Math.round(50 * (Number(settings.usdToPkrRate) || 280)).toLocaleString("en-PK")}
-                    </div>
-                  </div>
-                  <div className="p-3 bg-neutral-50 rounded-lg border border-neutral-200/60">
-                    <div className="text-xs text-neutral-500">Damascus Chef Knife ($120.00)</div>
-                    <div className="text-sm font-bold text-[#8C6D23] mt-1 font-mono">
-                      Rs. {Math.round(120 * (Number(settings.usdToPkrRate) || 280)).toLocaleString("en-PK")}
-                    </div>
-                  </div>
-                  <div className="p-3 bg-neutral-50 rounded-lg border border-neutral-200/60">
-                    <div className="text-xs text-neutral-500">Collector Broadsword ($280.00)</div>
-                    <div className="text-sm font-bold text-neutral-900 mt-1 font-mono">
-                      Rs. {Math.round(280 * (Number(settings.usdToPkrRate) || 280)).toLocaleString("en-PK")}
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -378,16 +350,15 @@ export default function SettingsClient() {
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
               <div className="space-y-2">
-                <Label className="text-xs font-bold text-neutral-700">Support Email</Label>
+                <Label className="text-xs font-bold text-neutral-700">Primary WhatsApp &amp; Phone (Qamar Mughal)</Label>
                 <Input
-                  type="email"
-                  value={settings.storeEmail}
-                  onChange={(e) => handleChange("storeEmail", e.target.value)}
+                  value={settings.storeWhatsapp}
+                  onChange={(e) => handleChange("storeWhatsapp", e.target.value)}
                   className="h-11 rounded-xl bg-neutral-50/50 border-neutral-200 font-mono text-xs"
                 />
               </div>
               <div className="space-y-2">
-                <Label className="text-xs font-bold text-neutral-700">Primary Phone (Hassan)</Label>
+                <Label className="text-xs font-bold text-neutral-700">Secondary Phone (Hassan)</Label>
                 <Input
                   value={settings.storePhone}
                   onChange={(e) => handleChange("storePhone", e.target.value)}
@@ -395,10 +366,11 @@ export default function SettingsClient() {
                 />
               </div>
               <div className="space-y-2">
-                <Label className="text-xs font-bold text-neutral-700">Secondary WhatsApp (Qamar)</Label>
+                <Label className="text-xs font-bold text-neutral-700">Support Email</Label>
                 <Input
-                  value={settings.storeWhatsapp}
-                  onChange={(e) => handleChange("storeWhatsapp", e.target.value)}
+                  type="email"
+                  value={settings.storeEmail}
+                  onChange={(e) => handleChange("storeEmail", e.target.value)}
                   className="h-11 rounded-xl bg-neutral-50/50 border-neutral-200 font-mono text-xs"
                 />
               </div>
@@ -519,7 +491,7 @@ export default function SettingsClient() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div className="space-y-2">
-                <Label className="text-xs font-bold text-neutral-700">Free International Shipping Minimum ($ USD)</Label>
+                <Label className="text-xs font-bold text-neutral-700">Free Shipping Minimum (PKR / Rs.)</Label>
                 <Input
                   type="number"
                   value={settings.freeShippingThreshold}
@@ -529,10 +501,10 @@ export default function SettingsClient() {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-xs font-bold text-neutral-700">Flat Rate Shipping Fee ($ USD)</Label>
+                <Label className="text-xs font-bold text-neutral-700">Flat Rate Shipping Fee (PKR / Rs.)</Label>
                 <Input
                   type="number"
-                  step="0.01"
+                  step="1"
                   value={settings.standardShippingFee}
                   onChange={(e) => handleChange("standardShippingFee", parseFloat(e.target.value) || 0)}
                   className="h-11 rounded-xl bg-neutral-50/50 border-neutral-200 tabular-nums font-bold"

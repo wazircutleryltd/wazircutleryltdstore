@@ -1,9 +1,9 @@
 'use client';
 import Image from "next/image";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useActiveCategoriesQuery } from "@/lib/hooks";
 import TestimonialScroller from "@/components/TestimonialScroller";
-import ContactForm from "@/components/ContactForm";
 import ConditionalLayout from "@/components/ConditionalLayout";
 import React, { useState, useEffect } from "react";
 import TrendingItems from "@/components/TrendingItems";
@@ -12,8 +12,19 @@ import KnivesItems from "@/components/KnivesItems";
 import FeaturedItems from "@/components/FeaturedItems";
 import ForYouItems from "@/components/ForYouItems";
 import Newsletter from "@/components/Newsletter";
-import ArtisanCraftReel from "@/components/ArtisanCraftReel";
 import { FaStar, FaArrowRight, FaHammer } from "react-icons/fa6";
+import type { Category, Product } from "@/types";
+
+// Dynamic import for below-the-fold media-heavy components to minimize initial JS bundle
+const ArtisanCraftReel = dynamic(() => import("@/components/ArtisanCraftReel"), {
+    ssr: true,
+    loading: () => <div className="min-h-[360px] bg-neutral-900/5 animate-pulse rounded-2xl my-12" />,
+});
+
+const ContactForm = dynamic(() => import("@/components/ContactForm"), {
+    ssr: true,
+    loading: () => <div className="min-h-[280px] bg-neutral-100 animate-pulse rounded-2xl" />,
+});
 
 const NewHeroSection = () => {
   return (
@@ -77,6 +88,7 @@ const NewHeroSection = () => {
                             width={440} 
                             height={440} 
                             priority
+                            sizes="(max-width: 640px) 90vw, (max-width: 1024px) 50vw, 440px"
                             className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
                         />
                         <div className="absolute bottom-3 left-3 right-3 bg-neutral-950/85 backdrop-blur-md rounded-xl p-3 border border-white/10 text-white flex items-center justify-between shadow-lg">
@@ -98,16 +110,25 @@ const NewHeroSection = () => {
 
 
 
-export default function HomeClient() {
+export interface HomeInitialData {
+    categories?: Category[];
+    trending?: Product[];
+    swords?: Product[];
+    knives?: Product[];
+    featured?: Product[];
+    forYou?: Product[];
+}
+
+export default function HomeClient({ initialData }: { initialData?: HomeInitialData }) {
     return (
         <ConditionalLayout>
-            <HomeContent />
+            <HomeContent initialData={initialData} />
         </ConditionalLayout>
     );
 }
 
-function HomeContent() {
-    const { data: categories, isLoading: categoriesLoading } = useActiveCategoriesQuery();
+function HomeContent({ initialData }: { initialData?: HomeInitialData }) {
+    const { data: categories, isLoading: categoriesLoading } = useActiveCategoriesQuery(initialData?.categories);
 
     return (
         <>
@@ -169,8 +190,15 @@ function HomeContent() {
                             {categories && categories.length > 0 ? categories.slice(0, 5).map((cat: any) => (
                                 <div key={cat.id} className="w-full">
                                     <Link href={`/product?categoryId=${cat.id}`} className="group block">
-                                        <div className="category-card aspect-[4/5] rounded-xl overflow-hidden shadow-xs hover:shadow-lg transition-all duration-300" style={{backgroundImage: `url('${cat.image_url}')`}}>
-                                            <div className="category-overlay w-full h-full flex flex-col justify-end p-4">
+                                        <div className="category-card relative aspect-[4/5] rounded-xl overflow-hidden shadow-xs hover:shadow-lg transition-all duration-300 bg-neutral-900">
+                                            <Image
+                                                src={cat.image_url || '/product.jpg'}
+                                                alt={cat.name}
+                                                fill
+                                                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                                                className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                                            />
+                                            <div className="category-overlay relative z-10 w-full h-full flex flex-col justify-end p-4">
                                                 <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-[#D6AF66] transition-colors leading-tight capitalize">
                                                     {cat.name}
                                                 </h3>
@@ -192,16 +220,16 @@ function HomeContent() {
                 </div>
             </section>
 
-            <TrendingItems />
-            <SwordsItems />
-            <KnivesItems />
-            <FeaturedItems />
+            <TrendingItems initialProducts={initialData?.trending} />
+            <SwordsItems initialProducts={initialData?.swords} />
+            <KnivesItems initialProducts={initialData?.knives} />
+            <FeaturedItems initialProducts={initialData?.featured} />
 
             {/* Artisanal Damascus Bladesmithing Video Showcase */}
             <ArtisanCraftReel />
 
             <TestimonialScroller />
-            <ForYouItems />
+            <ForYouItems initialProducts={initialData?.forYou} />
             <Newsletter />
 
             {/* Bespoke Commission & Artisan Contact Section */}

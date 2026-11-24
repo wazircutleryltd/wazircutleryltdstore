@@ -8,10 +8,11 @@ import type { Product } from "@/types";
 
 interface ProductDetailClientProps {
   slug: string;
+  initialProduct?: Product | null;
 }
 
-export default function ProductDetailClient({ slug }: ProductDetailClientProps) {
-    const { data: product, isLoading, error } = useProductBySlugQuery(slug);
+export default function ProductDetailClient({ slug, initialProduct }: ProductDetailClientProps) {
+    const { data: product, isLoading, error } = useProductBySlugQuery(slug, initialProduct);
     const { data: relatedProducts, isLoading: isLoadingRelated } = useProductsByCategoryQuery(product?.category_id || '', 6);
     const { data: allProducts, isLoading: isLoadingAll } = useActiveProductsQuery();
     const isLoadingRecommendations = isLoadingRelated || isLoadingAll;

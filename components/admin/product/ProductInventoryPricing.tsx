@@ -2,7 +2,7 @@
 
 import { Label } from "../../ui/label";
 import { Input } from "../../ui/input";
-import { DollarSign, Package, Scale, MoveRight, Calendar } from "lucide-react";
+import { Package, Scale, MoveRight, Calendar } from "lucide-react";
 
 interface ProductInventoryPricingProps {
   formData: {
@@ -30,30 +30,30 @@ export default function ProductInventoryPricing({
         <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 font-geist">Commercial Values</h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label className="text-xs font-bold text-gray-600">List Price *</Label>
+            <Label className="text-xs font-bold text-gray-600">List Price (PKR) *</Label>
             <div className="relative">
-              <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400">Rs.</span>
               <Input
                 type="number"
-                step="0.01"
+                step="1"
                 value={formData.price}
                 onChange={(e) => handleInputChange("price", parseFloat(e.target.value) || 0)}
-                className={`pl-9 h-11 rounded-xl bg-white border-gray-100 shadow-sm transition-all focus:ring-2 focus:ring-emerald-500/20 tabular-nums ${errors.price ? 'border-rose-300 ring-rose-300/20' : ''}`}
+                className={`pl-10 h-11 rounded-xl bg-white border-gray-100 shadow-sm transition-all focus:ring-2 focus:ring-emerald-500/20 tabular-nums font-bold ${errors.price ? 'border-rose-300 ring-rose-300/20' : ''}`}
               />
             </div>
             {errors.price && <p className="text-[10px] font-bold text-rose-500">{errors.price}</p>}
           </div>
 
           <div className="space-y-2">
-            <Label className="text-xs font-bold text-gray-600">Comparison (MSRP)</Label>
+            <Label className="text-xs font-bold text-gray-600">Comparison Price (PKR)</Label>
             <div className="relative">
-              <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400">Rs.</span>
               <Input
                 type="number"
-                step="0.01"
+                step="1"
                 value={formData.comparePrice}
                 onChange={(e) => handleInputChange("comparePrice", parseFloat(e.target.value) || 0)}
-                className="pl-9 h-11 rounded-xl bg-white border-gray-100 shadow-sm transition-all grayscale opacity-60 focus:grayscale-0 focus:opacity-100 tabular-nums"
+                className="pl-10 h-11 rounded-xl bg-white border-gray-100 shadow-sm transition-all grayscale opacity-60 focus:grayscale-0 focus:opacity-100 tabular-nums font-bold"
               />
             </div>
           </div>

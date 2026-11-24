@@ -3,6 +3,9 @@ import type { Metadata } from "next";
 import ProductDetailClient from "@/components/ProductDetailClient";
 import { supabase } from '@/lib/supabase';
 
+// Incremental Static Regeneration (ISR): cache product page HTML for 2 minutes
+export const revalidate = 120;
+
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
@@ -48,7 +51,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       },
       other: {
         'product:price:amount': String(product.price),
-        'product:price:currency': 'USD',
+        'product:price:currency': 'PKR',
         'product:availability': product.stock_quantity > 0 ? 'instock' : 'oos',
       },
     };
@@ -71,7 +74,7 @@ export default async function ProductPage({ params }: PageProps) {
     .single();
 
   if (!product) {
-    return <ProductDetailClient slug={slug} />;
+    return <ProductDetailClient slug={slug} initialProduct={null} />;
   }
 
   const jsonLd = {
@@ -88,7 +91,7 @@ export default async function ProductPage({ params }: PageProps) {
     "offers": {
       "@type": "Offer",
       "url": `https://wazircutlery.com/product/${product.slug}`,
-      "priceCurrency": "USD",
+      "priceCurrency": "PKR",
       "price": product.price,
       "itemCondition": "https://schema.org/NewCondition",
       "availability": product.stock_quantity > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
@@ -143,7 +146,7 @@ export default async function ProductPage({ params }: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
-      <ProductDetailClient slug={slug} />
+      <ProductDetailClient slug={slug} initialProduct={product as any} />
     </>
   );
 }

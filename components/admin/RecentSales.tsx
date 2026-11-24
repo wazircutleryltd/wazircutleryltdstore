@@ -43,7 +43,7 @@ export default function RecentSales() {
             </p>
           </div>
           <div className="ml-auto font-bold text-emerald-600 font-geist tabular-nums">
-            +${(order.total || 0).toLocaleString()}
+            +Rs. {Math.round(Number(order.total || 0)).toLocaleString('en-PK')}
           </div>
         </div>
       ))}

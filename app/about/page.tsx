@@ -60,11 +60,11 @@ export default function AboutPage() {
       founder: [
         {
           '@type': 'Person',
-          name: 'Hassan Mughal',
+          name: 'Qamar Mughal',
         },
         {
           '@type': 'Person',
-          name: 'Qamar',
+          name: 'Hassan Mughal',
         },
       ],
       sameAs: [

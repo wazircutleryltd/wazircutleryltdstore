@@ -1,6 +1,6 @@
 /* TEAM */
     Founder: Hassan Mughal
-    Founder: Qamar Shahzad
+    Founder: Qamar Mughal
     Site: https://wazircutlery.com
     Location: Wazirabad, Punjab, Pakistan
 

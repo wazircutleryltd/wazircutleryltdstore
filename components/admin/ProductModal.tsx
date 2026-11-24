@@ -15,7 +15,6 @@ import {
   FileText, 
   Image as ImageIcon, 
   Sparkles, 
-  DollarSign, 
   Package, 
   Scale, 
   MoveRight, 
@@ -412,22 +411,15 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
                       <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400 font-geist">Commercial Values</h4>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <Label className="text-xs font-bold text-neutral-700">List Price (USD) *</Label>
-                            {Number(formData.price) > 0 && (
-                              <span className="text-[11px] font-mono text-[#8C6D23] font-semibold">
-                                ≈ Rs. {Math.round(Number(formData.price) * (usdToPkrRate || 280)).toLocaleString('en-PK')} PKR
-                              </span>
-                            )}
-                          </div>
+                          <Label className="text-xs font-bold text-neutral-700">List Price (PKR) *</Label>
                           <div className="relative">
-                            <DollarSign className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
+                            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-neutral-400">Rs.</span>
                             <Input
                               type="number"
-                              step="0.01"
+                              step="1"
                               value={formData.price || ""}
                               onChange={(e) => handleInputChange("price", parseFloat(e.target.value) || 0)}
-                              placeholder="185.00"
+                              placeholder="14000"
                               className={`pl-10 h-11 rounded-xl bg-white border-neutral-200 shadow-sm transition-all focus:ring-2 focus:ring-[#D6AF66]/20 tabular-nums font-bold ${errors.price ? "border-rose-400 ring-rose-300/20" : ""}`}
                             />
                           </div>
@@ -435,16 +427,16 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
                         </div>
 
                         <div className="space-y-2">
-                          <Label className="text-xs font-bold text-neutral-700">Comparison (MSRP Strike-through)</Label>
+                          <Label className="text-xs font-bold text-neutral-700">Comparison Price (PKR)</Label>
                           <div className="relative">
-                            <DollarSign className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
+                            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-neutral-400">Rs.</span>
                             <Input
                               type="number"
-                              step="0.01"
+                              step="1"
                               value={formData.comparePrice || ""}
                               onChange={(e) => handleInputChange("comparePrice", parseFloat(e.target.value) || 0)}
-                              placeholder="240.00"
-                              className="pl-10 h-11 rounded-xl bg-white border-neutral-200 shadow-sm transition-all tabular-nums text-neutral-500"
+                              placeholder="18000"
+                              className="pl-10 h-11 rounded-xl bg-white border-neutral-200 shadow-sm transition-all tabular-nums text-neutral-500 font-bold"
                             />
                           </div>
                         </div>
